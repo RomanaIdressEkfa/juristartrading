@@ -425,10 +425,10 @@ function homePage() {
   const scene3d = (s) => `<div class="relative overflow-hidden rounded-[var(--panel-radius)] border border-line bg-gradient-to-b from-tint to-white"><div class="scene-wrap aspect-[5/4] w-full" data-scene="${s.scene}" role="img" aria-label="${esc(t(s.title))} — 3D"><div class="scene-fallback"><img src="${s.img}" alt="" class="h-full w-full object-cover"></div></div><span class="absolute bottom-4 start-4 rounded-full border border-line bg-white px-3 py-1 text-xs font-semibold text-ink">${tr('3D · move to look around', 'ثلاثي الأبعاد · حرّك للمشاهدة')}</span></div>`;
   const body = `
 <section class="hero-bg">
-  <div class="container-site relative grid items-center gap-2 pt-10 lg:grid-cols-[0.78fr_1.5fr] lg:gap-0 lg:pt-6">
+  <div class="container-site relative grid items-center gap-4 py-10 lg:grid-cols-[1fr_1.2fr] lg:gap-6 lg:py-8">
     <div class="relative z-10 lg:py-16">
       <span class="chip-dot" data-hero>${tr('Interior decoration · Epoxy &amp; zigzag flooring', 'الديكور الداخلي · أرضيات الإيبوكسي والزجزاج')}</span>
-      <h1 class="mt-5 text-[2.5rem] font-bold leading-[1.06] sm:text-5xl lg:text-[3.6rem]" data-hero>${tr('From bare shell<br>to <span class="text-grad">signature space.</span>', 'من هيكل خام<br>إلى <span class="text-grad">مساحة استثنائية.</span>')}</h1>
+      <h1 class="mt-5 text-[2.4rem] font-bold leading-[1.08] sm:text-5xl lg:text-[3.3rem]" data-hero>${tr('From bare shell<br>to <span class="text-grad">signature space.</span>', 'من هيكل خام<br>إلى <span class="text-grad">مساحة استثنائية.</span>')}</h1>
       <p class="sub mt-5 max-w-sm" data-hero>${tr('Zigzag epoxy floors, gypsum ceilings, feature walls and complete interiors — designed, supplied and installed by one Qatar team.', 'أرضيات إيبوكسي زجزاج، أسقف جبس، جدران مميزة وديكور متكامل — تصميم وتوريد وتركيب بفريق واحد في قطر.')}</p>
       <div class="mt-8 flex flex-wrap items-center gap-3" data-hero>
         <a href="${href('quote/')}" class="btn btn-primary">${tr('Get a free quote', 'احصل على عرض سعر')} ${arrow()}</a>
