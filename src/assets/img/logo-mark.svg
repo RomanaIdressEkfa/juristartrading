@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="4 4 116 92" role="img" aria-label="Juri Star Trading">
+  <!-- JS monogram with two swooshes, redrawn from the shopfront sign (green + red) -->
+  <path d="M30 30 C50 14 76 8 96 12 C78 12 56 18 36 32 Z" fill="#0fa958"/>
+  <path d="M92 10 C112 24 110 52 76 78 C98 54 102 30 92 10 Z" fill="#e0262f"/>
+  <path d="M106 22 C122 48 100 76 56 92 C92 74 112 50 106 22 Z" fill="#0fa958"/>
+  <g transform="translate(9 0) skewX(-14)" fill="none" stroke="#0fa958" stroke-width="10" stroke-linejoin="miter">
+    <path d="M24 39 H50 V62 Q50 72 40 72 H18"/>
+    <path d="M90 39 H69 Q61 39 61 47 Q61 55 69 55 H77 Q85 55 85 63.5 Q85 72 77 72 H56"/>
+  </g>
+</svg>
