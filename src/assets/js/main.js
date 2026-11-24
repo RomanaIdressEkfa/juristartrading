@@ -32,24 +32,36 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  /* ---- Services mega menu (hover on desktop, click/keyboard everywhere) ---- */
-  $$('[data-mega]').forEach(function (li) {
-    var trigger = li.querySelector('.nav-link');
-    var timer;
-    var set = function (open) {
-      li.classList.toggle('open', open);
-      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-    };
-    li.addEventListener('mouseenter', function () { clearTimeout(timer); set(true); });
-    li.addEventListener('mouseleave', function () { timer = setTimeout(function () { set(false); }, 150); });
-    trigger.addEventListener('click', function (e) {
-      if (!li.classList.contains('open')) { e.preventDefault(); set(true); }
-    });
-    li.addEventListener('keydown', function (e) { if (e.key === 'Escape') { set(false); trigger.focus(); } });
-    d.addEventListener('click', function (e) { if (!li.contains(e.target)) set(false); });
+  /* ---- Header dropdowns (LoanTube-style): click or hover, categories switch on hover ---- */
+  var openDD = null, openedAt = 0;
+  var setDD = function (name) {
+    if (name && name !== openDD) openedAt = Date.now();
+    openDD = name;
+    $$('[data-dd]').forEach(function (b) { b.setAttribute('aria-expanded', b.getAttribute('data-dd') === name ? 'true' : 'false'); });
+    $$('[data-panel]').forEach(function (p) { p.classList.toggle('open', p.getAttribute('data-panel') === name); });
+  };
+  var ddTimer;
+  $$('[data-dd]').forEach(function (b) {
+    var name = b.getAttribute('data-dd');
+    b.addEventListener('click', function (e) { e.stopPropagation(); setDD(openDD === name && Date.now() - openedAt > 500 ? null : name); }); // a click right after hover-open keeps it open
+    b.addEventListener('mouseenter', function () { clearTimeout(ddTimer); setDD(name); });
   });
+  $$('[data-panel]').forEach(function (panel) {
+    panel.addEventListener('mouseenter', function () { clearTimeout(ddTimer); });
+    var cats = $$('[data-cat]', panel);
+    var pick = function (i) {
+      cats.forEach(function (c) { c.classList.toggle('active', c.getAttribute('data-cat') === i); });
+      $$('[data-pane]', panel).forEach(function (el) { el.hidden = el.getAttribute('data-pane') !== i; });
+    };
+    cats.forEach(function (c) {
+      ['mouseenter', 'focus', 'click'].forEach(function (ev) { c.addEventListener(ev, function () { pick(c.getAttribute('data-cat')); }); });
+    });
+  });
+  var hdr = $('[data-nav]');
+  if (hdr) hdr.addEventListener('mouseleave', function () { ddTimer = setTimeout(function () { setDD(null); }, 250); });
+  d.addEventListener('click', function (e) { if (openDD && !e.target.closest('[data-panel]')) setDD(null); });
 
-  /* ---- Mobile drawer ---- */
+  /* ---- Mobile side menu: segments + slide-in sub-lists ---- */
   var drawer = $('[data-drawer]');
   var backdrop = $('.drawer-backdrop');
   var toggleDrawer = function (open) {
@@ -57,10 +69,22 @@
     drawer.classList.toggle('open', open);
     backdrop.classList.toggle('open', open);
     d.body.style.overflow = open ? 'hidden' : '';
+    if (!open) $$('.drw-sub.open').forEach(function (s) { s.classList.remove('open'); });
   };
   $$('[data-drawer-open]').forEach(function (b) { b.addEventListener('click', function () { toggleDrawer(true); }); });
   $$('[data-drawer-close]').forEach(function (b) { b.addEventListener('click', function () { toggleDrawer(false); }); });
-  d.addEventListener('keydown', function (e) { if (e.key === 'Escape') { toggleDrawer(false); closeLightbox(); } });
+  $$('[data-seg]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var seg = b.getAttribute('data-seg');
+      $$('[data-seg]').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      $$('[data-seg-pane]').forEach(function (p) { p.hidden = p.getAttribute('data-seg-pane') !== seg; });
+    });
+  });
+  $$('[data-sub]').forEach(function (b) {
+    b.addEventListener('click', function () { var s = $('[data-subpanel="' + b.getAttribute('data-sub') + '"]'); if (s) s.classList.add('open'); });
+  });
+  $$('[data-sub-back]').forEach(function (b) { b.addEventListener('click', function () { b.closest('.drw-sub').classList.remove('open'); }); });
+  d.addEventListener('keydown', function (e) { if (e.key === 'Escape') { toggleDrawer(false); setDD(null); closeLightbox(); } });
 
   /* ---- Filter pills + search (projects, shop) ---- */
   $$('[data-filter-scope]').forEach(function (scope) {

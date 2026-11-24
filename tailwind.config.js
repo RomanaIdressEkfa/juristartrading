@@ -13,8 +13,8 @@ module.exports = {
         signal: { 50: '#E9F6EE', 100: '#D3EEDD', 400: '#34B26E', 500: '#0C9A4F', 600: '#0A8443', 700: '#087A3E' },
       },
       fontFamily: {
-        sans: ['"Figtree"', '"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
-        head: ['"Urbanist"', '"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
+        sans: ['"Inter"', '"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
+        head: ['"Inter"', '"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
         arabic: ['"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
       },
       maxWidth: { site: '78rem' },

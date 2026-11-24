@@ -116,56 +116,65 @@ const navItems = () => [
 const header = (page) => {
   const other = L === 'ar' ? 'en' : 'ar';
   const otherUrl = base(other) + page.path;
-  const mega = C.services.map((s, i) => `<a class="mg-item" href="${href('services/' + s.slug + '/')}">
-      <span class="ico ${i % 2 ? 'ico-red' : ''} !h-10 !w-10 !rounded-xl">${icon(s.icon, 'h-5 w-5')}</span>
-      <span><span class="mg-t block font-bold text-[.95rem]">${esc(t(s.title))}</span><span class="block text-xs text-muted mt-0.5">${esc(t(s.menu))}</span></span>
-    </a>`).join('');
-  const links = navItems().map(([p, label, key]) => key === 'services'
-    ? `<li class="has-mega" data-mega>
-        <a class="nav-link" href="${href(p)}" ${page.nav === key ? 'aria-current="page"' : ''} aria-haspopup="true" aria-expanded="false">${label} ${icon('chevron', 'chev h-4 w-4')}</a>
-        <div class="mega" role="menu">
-          <div class="grid grid-cols-2 gap-1">${mega}</div>
-          <a href="${href('quote/')}" class="btn btn-primary btn-sm mt-2 w-full" data-track="quote">${tr('Get a free site visit &amp; quote', 'احصل على زيارة وعرض سعر مجاني')} ${arrow()}</a>
-        </div>
-      </li>`
-    : `<li><a class="nav-link" href="${href(p)}" ${page.nav === key ? 'aria-current="page"' : ''}>${label}</a></li>`).join('');
-  const drawerLinks = navItems().map(([p, label, key]) => `<a href="${href(p)}" class="flex items-center justify-between rounded-xl px-4 py-3 text-base font-semibold ${page.nav === key ? 'bg-tint text-brand-700' : 'text-ink'}">${label} ${arrow('h-4 w-4 opacity-40')}</a>${key === 'services' ? `<div class="mb-2 grid gap-1 ps-4">${C.services.map((s) => `<a href="${href('services/' + s.slug + '/')}" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink-2">${icon(s.icon, 'h-4 w-4 text-brand-600')} ${esc(t(s.title))}</a>`).join('')}</div>` : ''}`).join('');
+  const chevR = icon('chevron', 'h-3.5 w-3.5 -rotate-90 rtl:rotate-90', 2.4);
+  const cur = (key) => (page.nav === key ? 'aria-current="page"' : '');
+  // dropdown data: [label, links[[text, url]], image]
+  const svcCats = C.services.map((s) => [t(s.title), [
+    [tr('Overview', 'نظرة عامة'), href('services/' + s.slug + '/')],
+    ...s.options.map((o) => [t(o.t), href('services/' + s.slug + '/')]),
+    [tr('Price guide & data sheet', 'دليل الأسعار وملف المواصفات'), href('services/' + s.slug + '/datasheet/')],
+    [tr('Request a quote', 'اطلب عرض سعر'), href('quote/?service=' + s.slug)],
+  ], s.img]);
+  const shopCats = C.categories.map((c) => [t(c.t), C.products.filter((p) => p.cat === c.key).map((p) => [t(p.name), href('shop/' + p.slug + '/')]).concat([[tr('View category', 'عرض القسم'), href('shop/?category=' + c.key)]]), (c.service && svc(c.service) && svc(c.service).img) || '/assets/img/shop-front.jpg']);
+  const panel = (key, cats, allLink) => `<div class="dd-panel" data-panel="${key}">
+    <div class="dd-in">
+      <div class="dd-cats" role="tablist">${cats.map(([label], i) => `<button type="button" class="dd-cat${i ? '' : ' active'}" data-cat="${i}" role="tab">${esc(label)}<span class="dd-chev">${chevR}</span></button>`).join('')}</div>
+      <div class="dd-card">
+        ${cats.map(([, links], i) => `<ul class="dd-links" data-pane="${i}"${i ? ' hidden' : ''}>${links.map(([txt, url]) => `<li><a href="${url}">${esc(txt)}</a></li>`).join('')}</ul>`).join('')}
+        <a class="dd-all" href="${allLink[0]}">${allLink[1]} ${arrow()}</a>
+      </div>
+      <div class="dd-media">${cats.map(([label, , img], i) => `<img data-pane="${i}"${i ? ' hidden' : ''} src="${img}" alt="${esc(label)}" loading="lazy">`).join('')}</div>
+    </div>
+  </div>`;
+  const rows = (cats, prefix) => cats.map(([label], i) => `<button type="button" class="drw-row" data-sub="${prefix}${i}">${esc(label)}${chevR}</button>`).join('');
+  const subs = (cats, prefix) => cats.map(([label, links], i) => `<div class="drw-sub" data-subpanel="${prefix}${i}">
+      <button type="button" class="drw-back" data-sub-back>${icon('chevron', 'h-4 w-4 rotate-90 rtl:-rotate-90', 2.4)} ${tr('Back', 'رجوع')}</button>
+      <p class="drw-subtitle">${esc(label)}</p>
+      ${links.map(([txt, url]) => `<a class="drw-link" href="${url}">${esc(txt)}</a>`).join('')}
+    </div>`).join('');
+  const right = [['projects/', tr('Projects', 'المشاريع'), 'projects'], ['about/', tr('About Us', 'من نحن'), 'about'], ['blog/', tr('Blog', 'المدونة'), 'blog'], ['contact/', tr('Contact Us', 'اتصل بنا'), 'contact']];
 
-  return `<div class="topbar hidden md:block">
-  <div class="container-site flex h-10 items-center justify-between gap-6">
-    <div class="flex items-center gap-6">
-      <a href="tel:${C.site.phoneHref}" class="flex items-center gap-2" data-track="call">${icon('phone', 'h-3.5 w-3.5 text-brand-600')} <span dir="ltr">${C.site.phone}</span></a>
-      <a href="${waHello()}" target="_blank" rel="noopener" class="flex items-center gap-2" data-track="whatsapp">${waIcon('h-3.5 w-3.5 text-brand-600')} <span dir="ltr">${C.site.whatsappDisplay}</span></a>
-      <a href="mailto:${C.site.email}" class="hidden lg:flex items-center gap-2">${icon('mail', 'h-3.5 w-3.5 text-brand-600')} ${C.site.email}</a>
-    </div>
-    <div class="flex items-center gap-5">
-      <span class="hidden lg:flex items-center gap-2">${icon('pin', 'h-3.5 w-3.5 text-signal-500')} ${esc(t(C.site.address))} · ${tr('CR No.', 'س.ت')} ${C.site.cr}</span>
-      <a href="${otherUrl}" hreflang="${other}" lang="${other}" class="flex items-center gap-1.5 font-bold text-ink">${icon('globe', 'h-3.5 w-3.5')} ${other === 'ar' ? 'العربية' : 'English'}</a>
-    </div>
+  return `<div class="announce no-print">
+  <div class="announce-in">
+    <span class="hidden sm:inline"><b>${tr('Free site visit', 'زيارة مجانية')}</b> ${tr('across Qatar — supply &amp; installation by our own team.', 'في جميع أنحاء قطر — توريد وتركيب بفريقنا.')}</span>
+    <a href="tel:${C.site.phoneHref}" data-track="call"><b dir="ltr">${C.site.phone}</b></a>
+    <a href="${otherUrl}" hreflang="${other}" lang="${other}" class="announce-lang">${other === 'ar' ? 'العربية' : 'English'}</a>
   </div>
 </div>
-<header class="nav-wrap sticky top-0 z-50" data-nav>
-  <div class="container-site flex h-[76px] items-center justify-between gap-4">
+<header class="site-header" data-nav>
+  <div class="container-site hdr">
+    <button type="button" class="hdr-burger lg:hidden" data-drawer-open aria-label="${tr('Open menu', 'فتح القائمة')}">${icon('menu', 'h-7 w-7', 2)}</button>
     ${logo()}
-    <nav class="hidden xl:block" aria-label="${tr('Main', 'الرئيسية')}">
-      <ul class="nav-pill flex items-center gap-0.5 p-1">${links}</ul>
-    </nav>
-    <div class="flex items-center gap-2">
-      <a href="${otherUrl}" hreflang="${other}" class="btn btn-white btn-sm md:hidden" aria-label="${other === 'ar' ? 'العربية' : 'English'}">${other === 'ar' ? 'ع' : 'EN'}</a>
-      <a href="tel:${C.site.phoneHref}" class="hidden lg:inline-flex btn btn-outline btn-sm" data-track="call">${icon('phone', 'h-4 w-4')} ${tr('Call', 'اتصل')}</a>
-      <a href="${href('quote/')}" class="hidden sm:inline-flex btn btn-primary btn-sm">${tr('Free Quote', 'عرض سعر مجاني')} ${arrow()}</a>
-      <button type="button" class="xl:hidden grid h-11 w-11 place-items-center rounded-xl bg-tint text-ink" data-drawer-open aria-label="${tr('Open menu', 'فتح القائمة')}">${icon('menu', 'h-6 w-6')}</button>
+    <div class="hdr-pill hidden lg:flex">
+      <button type="button" class="hdr-dd" data-dd="services" aria-expanded="false" ${cur('services')}>${tr('Services', 'الخدمات')} ${icon('chevron', 'chev h-4 w-4', 2.4)}</button>
+      <button type="button" class="hdr-dd" data-dd="shop" aria-expanded="false" ${cur('shop')}>${tr('Shop', 'المتجر')} ${icon('chevron', 'chev h-4 w-4', 2.4)}</button>
     </div>
+    <nav class="hdr-links hidden lg:flex" aria-label="${tr('Main', 'الرئيسية')}">${right.map(([p, label, key]) => `<a href="${href(p)}" ${cur(key)}>${label}</a>`).join('')}</nav>
   </div>
+  ${panel('services', svcCats, [href('services/'), tr('All services', 'كل الخدمات')])}
+  ${panel('shop', shopCats, [href('shop/'), tr('Visit the shop', 'تصفح المتجر')])}
 </header>
-<div class="drawer-backdrop fixed inset-0 z-[55] bg-ink/50 backdrop-blur-sm" data-drawer-close></div>
-<aside class="drawer fixed inset-y-0 end-0 z-[60] flex w-[86%] max-w-sm flex-col bg-white shadow-2xl" data-drawer aria-label="${tr('Menu', 'القائمة')}">
-  <div class="flex items-center justify-between border-b border-line p-4">${logo()}<button type="button" class="grid h-10 w-10 place-items-center rounded-xl bg-tint" data-drawer-close aria-label="${tr('Close menu', 'إغلاق القائمة')}">${icon('x', 'h-5 w-5')}</button></div>
-  <nav class="flex-1 overflow-y-auto p-3">${drawerLinks}</nav>
-  <div class="grid gap-2 border-t border-line p-4">
-    <a href="${href('quote/')}" class="btn btn-primary w-full">${tr('Get a Free Quote', 'احصل على عرض سعر مجاني')} ${arrow()}</a>
-    <a href="${waHello()}" target="_blank" rel="noopener" class="btn btn-wa w-full" data-track="whatsapp">${waIcon()} WhatsApp</a>
+<div class="drawer-backdrop" data-drawer-close></div>
+<aside class="drawer" data-drawer aria-label="${tr('Menu', 'القائمة')}">
+  <div class="drw-top"><button type="button" class="drw-x" data-drawer-close aria-label="${tr('Close menu', 'إغلاق القائمة')}">${icon('x', 'h-6 w-6', 1.8)}</button>${logo()}</div>
+  <div class="drw-seg"><button type="button" data-seg="services" aria-pressed="true">${tr('Services', 'الخدمات')}</button><button type="button" data-seg="shop" aria-pressed="false">${tr('Shop', 'المتجر')}</button></div>
+  <div class="drw-body">
+    <div data-seg-pane="services">${rows(svcCats, 's')}</div>
+    <div data-seg-pane="shop" hidden>${rows(shopCats, 'c')}</div>
+    <div class="drw-more">${right.map(([p, label]) => `<a href="${href(p)}">${label}</a>`).join('')}<a href="${otherUrl}" hreflang="${other}">${other === 'ar' ? 'العربية' : 'English'}</a></div>
   </div>
+  <div class="drw-cta"><a href="${href('quote/')}" class="btn btn-primary w-full">${tr('Get a Free Quote', 'احصل على عرض سعر مجاني')} ${arrow()}</a></div>
+  ${subs(svcCats, 's')}${subs(shopCats, 'c')}
 </aside>`;
 };
 
@@ -258,7 +267,7 @@ ${page.noindex ? '<meta name="robots" content="noindex">' : ''}
 <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=${L === 'ar' ? 'IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=' : ''}Figtree:wght@400;500;600;700&family=Urbanist:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=${L === 'ar' ? 'IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=' : ''}Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/app.css">
 <script>(function(d){d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('gsap-ready');setTimeout(function(){if(!window.__gsapOn)d.classList.remove('gsap-ready')},4000)}})(document.documentElement)</script>
 ${uses3d ? '<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>' : ''}
@@ -424,21 +433,18 @@ function homePage() {
   const photo = (src, alt) => `<img src="${src}" alt="${esc(alt)}" class="aspect-[5/4] w-full rounded-[var(--panel-radius)] object-cover" loading="lazy">`;
   const scene3d = (s) => `<div class="relative overflow-hidden rounded-[var(--panel-radius)] border border-line bg-gradient-to-b from-tint to-white"><div class="scene-wrap aspect-[5/4] w-full" data-scene="${s.scene}" role="img" aria-label="${esc(t(s.title))} — 3D"><div class="scene-fallback"><img src="${s.img}" alt="" class="h-full w-full object-cover"></div></div><span class="absolute bottom-4 start-4 rounded-full border border-line bg-white px-3 py-1 text-xs font-semibold text-ink">${tr('3D · move to look around', 'ثلاثي الأبعاد · حرّك للمشاهدة')}</span></div>`;
   const body = `
-<section class="hero-bg">
-  <div class="container-site relative grid items-center gap-4 py-10 lg:grid-cols-[1fr_1.2fr] lg:gap-6 lg:py-8">
-    <div class="relative z-10 lg:py-16">
-      <span class="chip-dot" data-hero>${tr('Interior decoration · Epoxy &amp; zigzag flooring', 'الديكور الداخلي · أرضيات الإيبوكسي والزجزاج')}</span>
-      <h1 class="mt-5 text-[2.4rem] font-bold leading-[1.08] sm:text-5xl lg:text-[3.3rem]" data-hero>${tr('From bare shell<br>to <span class="text-grad">signature space.</span>', 'من هيكل خام<br>إلى <span class="text-grad">مساحة استثنائية.</span>')}</h1>
-      <p class="sub mt-5 max-w-sm" data-hero>${tr('Zigzag epoxy floors, gypsum ceilings, feature walls and complete interiors — designed, supplied and installed by one Qatar team.', 'أرضيات إيبوكسي زجزاج، أسقف جبس، جدران مميزة وديكور متكامل — تصميم وتوريد وتركيب بفريق واحد في قطر.')}</p>
-      <div class="mt-8 flex flex-wrap items-center gap-3" data-hero>
+<section class="hero-lux">
+  <div class="container-site relative grid items-center gap-4 py-12 lg:min-h-[660px] lg:grid-cols-[0.9fr_1.3fr] lg:gap-2 lg:py-8">
+    <div class="relative z-10">
+      <h1 class="text-[2.6rem] font-extrabold leading-[1.05] text-white sm:text-[3.4rem] lg:text-[4.1rem]" data-hero>${tr('Interior decoration<br>&amp; <span class="text-brand-300">zigzag epoxy</span><br>floors', 'الديكور الداخلي<br>و<span class="text-brand-300">أرضيات الإيبوكسي</span><br>الزجزاج')}</h1>
+      <p class="mt-6 max-w-md text-lg text-white/70" data-hero>${tr('Designed, supplied and installed in Qatar.', 'تصميم وتوريد وتركيب في قطر.')}</p>
+      <div class="mt-9 flex flex-wrap items-center gap-3" data-hero>
         <a href="${href('quote/')}" class="btn btn-primary">${tr('Get a free quote', 'احصل على عرض سعر')} ${arrow()}</a>
-        <a href="${waHello()}" target="_blank" rel="noopener" class="btn btn-wa" data-track="whatsapp">${waIcon()} WhatsApp</a>
+        <a href="${waHello()}" target="_blank" rel="noopener" class="btn btn-glass" data-track="whatsapp">${waIcon()} WhatsApp</a>
       </div>
     </div>
-    <div class="room-host" data-room data-hero role="img" aria-label="${tr('3D majlis transformation: bare concrete becomes a zigzag epoxy floor, gypsum ceiling with cove lighting, marble and mashrabiya feature wall and designer furniture', 'تحويل مجلس ثلاثي الأبعاد: من خرسانة خام إلى أرضية إيبوكسي زجزاج وسقف جبس بإضاءة مخفية وجدار رخام ومشربية وأثاث فاخر')}">
+    <div class="room-host" data-room data-hero role="img" aria-label="${tr('3D room: a bare concrete room gets a zigzag epoxy floor, feature walls and full decoration', 'غرفة ثلاثية الأبعاد: غرفة خرسانية تحصل على أرضية إيبوكسي زجزاج وجدران مميزة وديكور كامل')}">
       <canvas></canvas>
-      <span class="hs" data-spot="floor"><i></i><b>${tr('Zigzag epoxy floor', 'أرضية إيبوكسي زجزاج')}</b></span><span class="hs" data-spot="ceiling"><i></i><b>${tr('Gypsum ceiling + cove light', 'سقف جبس + إضاءة مخفية')}</b></span><span class="hs" data-spot="walls"><i></i><b>${tr('Marble &amp; mashrabiya wall', 'جدار رخام ومشربية')}</b></span><span class="hs" data-spot="decor"><i></i><b>${tr('Furniture &amp; décor', 'الأثاث والديكور')}</b></span>
-      <div class="room-steps" role="group" aria-label="${tr('Transformation steps', 'مراحل التحويل')}"><button type="button" data-ch="shell" aria-pressed="false"><span>0</span>${tr('Before', 'قبل')}</button><button type="button" data-ch="floor" aria-pressed="false"><span>1</span>${tr('Zigzag epoxy', 'إيبوكسي زجزاج')}</button><button type="button" data-ch="ceiling" aria-pressed="false"><span>2</span>${tr('Gypsum ceiling', 'سقف جبس')}</button><button type="button" data-ch="walls" aria-pressed="false"><span>3</span>${tr('Feature walls', 'جدران مميزة')}</button><button type="button" data-ch="decor" aria-pressed="false"><span>4</span>${tr('Décor', 'الديكور')}</button></div>
     </div>
   </div>
 </section>

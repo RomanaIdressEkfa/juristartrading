@@ -1,11 +1,9 @@
 /* ======================================================================
    Hero 3D majlis (Three.js + GSAP) — based on the Exotic Tint hero
-   A Juri Star transformation, step by step:
-     bare concrete shell -> glossy zigzag epoxy floor -> floating coffered
-     gypsum ceiling with cove light and a gold ring chandelier -> feature
-     walls (fluted walnut TV wall, backlit marble with mashrabiya, arched
-     niche) -> furniture & decor.
-   Plays on its own; visitors can jump to any step. Labels follow the model.
+   Plays once and then stays finished:
+     bare concrete shell -> glossy zigzag epoxy floor -> feature walls
+     (fluted walnut TV wall, backlit marble with mashrabiya) -> room
+     decoration (paint, wallpaper, curtains, art, wall lights).
    ====================================================================== */
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -30,6 +28,7 @@ else if (host) host.classList.add('room-fallback');
 
 function init() {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  gsap.defaults({ overwrite: 'auto' }); // a newer step cancels an older tween on the same object
 
   /* ---------- renderer / scene / camera ---------- */
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
@@ -155,8 +154,8 @@ function init() {
     marble: new THREE.MeshPhysicalMaterial({ map: marbleTile, roughness: 0.25, clearcoat: 0.6, envMapIntensity: 0.8 }),
     tileWall: M('#ffffff', { map: marbleTile, roughness: 0.35, envMapIntensity: 0.7 }),
     pavers: M('#ffffff', { map: pavers, roughness: 0.95 }),
-    wall: M('#d9c9b0', { roughness: 0.92 }),
-    wallCap: M('#cdbb9f', { roughness: 0.9 }),
+    wall: M('#cfcbc4', { roughness: 0.95 }),
+    wallCap: M('#c4bfb6', { roughness: 0.9 }),
     gypsum: M('#fbfaf7', { roughness: 0.85 }),
     cove: new THREE.MeshStandardMaterial({ color: '#fff4dc', emissive: '#ffd58a', emissiveIntensity: 0, roughness: 0.4 }),
     trim: M('#fbf8f2', { roughness: 0.5 }),
@@ -266,29 +265,8 @@ function init() {
   add(new THREE.BoxGeometry(W - 0.3, 0.12, 0.04), mat.trim, [0, 0.06, z + 0.15], { parent: walls, cast: false });
   add(new THREE.BoxGeometry(0.04, 0.12, D - 0.3), mat.trim, [X0 + T + 0.02, 0.06, 0], { parent: walls, cast: false });
 
-  /* ---------- stage 2: floating coffered gypsum ceiling + cove light ---------- */
-  const ceiling = new THREE.Group(); house.add(ceiling);
-  add(box(0.8, 0.28, D, 0.03), mat.gypsum, [X0 + T + 0.4, H - 0.14, 0], { parent: ceiling });
-  add(box(W, 0.28, 0.8, 0.03), mat.gypsum, [0, H - 0.14, ZB + T + 0.4], { parent: ceiling });
-  const RX = 0.6, RZ = 0.4; // chandelier position (over the coffee table)
-  // glowing cove strips (emissive) along the walls
-  [[X0 + T + 0.85, H - 0.33, 0.3, 0.05, 0.05, D - 1.4], [0.3, H - 0.33, ZB + T + 0.85, W - 1.4, 0.05, 0.05]]
-    .forEach(([x, y, zz, w, h, d]) => add(new THREE.BoxGeometry(w, h, d), mat.cove, [x, y, zz], { parent: ceiling, cast: false }));
-  // gold ring chandelier hanging in the coffer
-  const chandelier = new THREE.Group();
-  [[-0.5, 0], [0.5, 0], [0, -0.5], [0, 0.5]].forEach(([dx, dz]) => add(new THREE.CylinderGeometry(0.005, 0.005, 1.0, 6), mat.brass, [dx * 1.6, -0.5, dz * 1.6], { parent: chandelier, cast: false }));
-  add(new THREE.TorusGeometry(0.85, 0.05, 16, 96), mat.brass, [0, -1.0, 0], { parent: chandelier, rot: [Math.PI / 2, 0, 0] });
-  add(new THREE.TorusGeometry(0.85, 0.022, 8, 96), mat.cove, [0, -1.05, 0], { parent: chandelier, rot: [Math.PI / 2, 0, 0], cast: false });
-  add(new THREE.TorusGeometry(0.5, 0.035, 16, 72), mat.brass, [0, -1.25, 0], { parent: chandelier, rot: [Math.PI / 2, 0, 0] });
-  add(new THREE.TorusGeometry(0.5, 0.016, 8, 72), mat.cove, [0, -1.29, 0], { parent: chandelier, rot: [Math.PI / 2, 0, 0], cast: false });
-  chandelier.position.set(-0.6, H - 0.2, 0.6); ceiling.add(chandelier);
-  const pendants = [{ g: chandelier }];
-  const coveL = new THREE.RectAreaLight('#ffd08a', 0, D - 1.4, 0.25);
-  coveL.position.set(X0 + T + 0.85, H - 0.4, 0.3); coveL.lookAt(X0 + T - 1, H - 1.6, 0.3);
-  const coveB = new THREE.RectAreaLight('#ffd08a', 0, W - 1.4, 0.25);
-  coveB.position.set(0.3, H - 0.4, ZB + T + 0.85); coveB.lookAt(0.3, H - 1.6, ZB + T - 1);
-  const warm = new THREE.PointLight('#ffc779', 0, 7, 1.6); warm.position.set(-0.6, 2.6, 0.6);
-  scene.add(coveL, coveB, warm);
+  const warm = new THREE.PointLight('#ffc779', 0, 9, 1.6); warm.position.set(-0.6, 2.8, 0.6);
+  scene.add(warm);
 
   /* ---------- stage 3: feature walls ---------- */
   const feature = new THREE.Group(); house.add(feature);
@@ -321,18 +299,43 @@ function init() {
   add(new THREE.PlaneGeometry(1.5, 2.25), new THREE.MeshStandardMaterial({ map: lattice, transparent: true, alphaTest: 0.4, metalness: 0.9, roughness: 0.3, side: THREE.DoubleSide }), [slabX, 1.95, z + 0.29], { parent: feature, cast: false });
   add(box(2.2, 0.5, 0.45, 0.04), mat.wood, [slabX, 0.4, z + 0.45], { parent: feature });
   // sheer curtains
+  let room = feature; // parent for curtains; set to the decoration group below
   const curtain = (x) => {
     const g = new THREE.PlaneGeometry(0.7, H - 0.6, 18, 1);
     const p = g.attributes.position;
     for (let i = 0; i < p.count; i++) p.setZ(i, Math.sin(p.getX(i) * 14) * 0.05);
     g.computeVertexNormals();
-    return add(g, mat.sheer, [x, (H - 0.6) / 2 + 0.05, z + 0.34], { parent: feature, cast: false, receive: false });
+    return add(g, mat.sheer, [x, (H - 0.6) / 2 + 0.05, z + 0.34], { parent: room, cast: false, receive: false });
   };
-  curtain(winL - 0.25); curtain(winR + 0.25);
 
-  /* ---------- stage 4: furniture & décor ---------- */
+  /* ---------- stage 4: room decoration (paint, wallpaper, curtains, art, lights) ---------- */
   const decor = [];
   const piece = () => { const g = new THREE.Group(); house.add(g); decor.push(g); return g; };
+  const deco = piece();
+  room = deco;
+  curtain(winL - 0.25); curtain(winR + 0.25);
+  // damask wallpaper accent on the left wall (front part), framed with a brass trim
+  const damask = canvasTex(256, 256, (g, w, h) => {
+    g.fillStyle = '#e4d6bd'; g.fillRect(0, 0, w, h);
+    g.fillStyle = 'rgba(160,125,70,.45)';
+    const motif = (cx, cy, r) => { g.beginPath(); for (let k = 0; k < 8; k++) { const a = (k * Math.PI) / 4; g.ellipse(cx + Math.cos(a) * r * 0.55, cy + Math.sin(a) * r * 0.55, r * 0.34, r * 0.14, a, 0, Math.PI * 2); } g.fill(); g.beginPath(); g.arc(cx, cy, r * 0.18, 0, Math.PI * 2); g.fill(); };
+    motif(w / 2, h / 2, 90); motif(0, 0, 90); motif(w, 0, 90); motif(0, h, 90); motif(w, h, 90);
+  }, [2, 3]);
+  add(new THREE.PlaneGeometry(2.5, H - 0.75), new THREE.MeshStandardMaterial({ map: damask, roughness: 0.85 }), [X0 + T + 0.015, (H - 0.75) / 2 + 0.15, 3.55], { parent: deco, cast: false, rot: [0, Math.PI / 2, 0] });
+  [[3.55 - 1.25, 0], [3.55 + 1.25, 0]].forEach(([zz]) => add(new THREE.BoxGeometry(0.03, H - 0.75, 0.04), mat.brass, [X0 + T + 0.03, (H - 0.75) / 2 + 0.15, zz], { parent: deco, cast: false }));
+  // framed art on the wallpaper
+  const artTex = canvasTex(256, 320, (g, w, h) => { const grd = g.createLinearGradient(0, 0, 0, h); grd.addColorStop(0, '#efe7d8'); grd.addColorStop(1, '#d5ddd3'); g.fillStyle = grd; g.fillRect(0, 0, w, h); g.strokeStyle = '#0c9a4f'; g.lineWidth = 10; g.beginPath(); g.arc(w * 0.5, h * 0.42, w * 0.26, 0, Math.PI * 2); g.stroke(); g.fillStyle = '#c9a25e'; g.fillRect(w * 0.18, h * 0.72, w * 0.64, 6); });
+  add(box(0.05, 1.25, 1.0, 0.02), mat.dark, [X0 + T + 0.05, 2.25, 3.55], { parent: deco });
+  add(new THREE.PlaneGeometry(0.88, 1.12), new THREE.MeshStandardMaterial({ map: artTex, roughness: 0.8 }), [X0 + T + 0.08, 2.25, 3.55], { parent: deco, cast: false, rot: [0, Math.PI / 2, 0] });
+  // brass wall sconces either side of the marble wall
+  const sconceGlow = new THREE.MeshStandardMaterial({ color: '#fff4dc', emissive: '#ffcf87', emissiveIntensity: 0, roughness: 0.4 });
+  [slabX - 1.95, slabX + 1.95].forEach((x) => {
+    add(new THREE.CylinderGeometry(0.05, 0.05, 0.12, 16), mat.brass, [x, 2.55, z + 0.2], { parent: deco, rot: [Math.PI / 2, 0, 0] });
+    add(new THREE.CylinderGeometry(0.09, 0.14, 0.32, 24, 1, true), sconceGlow, [x, 2.6, z + 0.32], { parent: deco, cast: false });
+  });
+  // decorative vases on the marble console
+  add(new THREE.LatheGeometry([[0, 0], [0.1, 0], [0.14, 0.1], [0.11, 0.3], [0.05, 0.38], [0.07, 0.44]].map(([a, b]) => new THREE.Vector2(a, b)), 32), mat.brass, [slabX - 0.6, 0.66, z + 0.45], { parent: deco });
+  add(new THREE.LatheGeometry([[0, 0], [0.08, 0], [0.12, 0.12], [0.1, 0.24], [0.04, 0.3]].map(([a, b]) => new THREE.Vector2(a, b)), 32), mat.ceramic, [slabX + 0.55, 0.66, z + 0.45], { parent: deco });
   const rug = piece();
   add(box(5.0, 0.035, 3.8, 0.015), mat.rug, [0, 0.04, 0], { parent: rug, cast: false });
   rug.position.set(-0.6, 0, 0.6);
@@ -441,78 +444,56 @@ function init() {
     g.setAttribute('fade', new THREE.Float32BufferAttribute(fade, 1));
     scene.add(new THREE.Mesh(g, rayMat));
   });
-  /* ---------- stages: bare shell → epoxy → ceiling → walls → décor ---------- */
-  const pills = host.querySelectorAll('[data-ch]');
-  const spots = host.querySelectorAll('[data-spot]');
-  const SPOT_POS = {
-    floor: new THREE.Vector3(1.6, 0.05, 3.6),
-    ceiling: new THREE.Vector3(-0.6, H - 1.4, 0.6),
-    walls: new THREE.Vector3(slabX, 3.5, z + 0.2),
-    decor: new THREE.Vector3(-0.6, 1.0, 0.6),
-  };
-  const STAGES = ['shell', 'floor', 'ceiling', 'walls', 'decor'];
+  /* ---------- stages: bare shell -> epoxy -> feature walls -> decoration ---------- */
+  const STAGES = ['shell', 'floor', 'walls', 'decor'];
   const CAM = {
-    shell: { x: 0, y: 1.0, z: 0.2, d: 31 },
-    floor: { x: 0.2, y: 0.6, z: 0.6, d: 29.5 },
-    ceiling: { x: 0.2, y: 1.6, z: 0, d: 30 },
-    walls: { x: -0.6, y: 1.6, z: -0.6, d: 28.5 },
-    decor: { x: 0, y: 1.2, z: 0.3, d: 30 },
+    shell: { x: 0, y: 1.0, z: 0.2, d: 27 },
+    floor: { x: 0.2, y: 0.6, z: 0.6, d: 26 },
+    walls: { x: -0.4, y: 1.5, z: -0.4, d: 25.5 },
+    decor: { x: 0, y: 1.2, z: 0.3, d: 26 },
   };
   Object.assign(focus, CAM.shell);
   // hidden start state for every later stage
-  ceiling.position.y = 5; ceiling.visible = false;
   feature.scale.set(1, 0.001, 1); feature.visible = false;
-  decor.forEach((g) => { g.userData.y = g.position.y; g.position.y += 6; g.visible = false; });
+  decor.forEach((g) => { g.userData.y = g.position.y; g.visible = false; if (g === deco) g.scale.setScalar(0.001); else g.position.y += 2.5; });
 
-  let stage = -1;
   function setStage(n, instant) {
     const d = instant ? 0 : 1;
-    const prev = stage;
-    stage = n;
-    pills.forEach((p) => p.setAttribute('aria-pressed', String(STAGES.indexOf(p.dataset.ch) === n)));
-    spots.forEach((s) => s.classList.toggle('is-active', s.dataset.spot === STAGES[n]));
-    host.dataset.stage = STAGES[n];
-    gsap.to(focus, { ...CAM[STAGES[n]], duration: 1.2 * d, ease: 'power3.inOut' });
-    // floor
-    const floorOn = n >= 1;
-    gsap.to(coat.scale, { x: floorOn ? 1 : 0.001, duration: (floorOn && prev < 1 ? 1.6 : 0.6) * d, ease: 'power2.inOut',
-      onUpdate: () => { sheen.position.x = X0 + coat.scale.x * (W - 0.04); sheen.material.opacity = coat.scale.x > 0.01 && coat.scale.x < 0.99 ? 0.8 : 0; } });
-    // ceiling + light
-    const ceilOn = n >= 2;
-    if (ceilOn) ceiling.visible = true;
-    gsap.to(ceiling.position, { y: ceilOn ? 0 : 5, duration: 1.2 * d, ease: ceilOn ? 'expo.out' : 'power2.in', onComplete: () => { if (!ceilOn) ceiling.visible = false; } });
-    gsap.to(mat.cove, { emissiveIntensity: ceilOn ? 2.6 : 0, duration: 1.2 * d, delay: ceilOn ? 0.8 * d : 0 });
-    gsap.to([coveL, coveB], { intensity: ceilOn ? 12 : 0, duration: 1.4 * d, delay: ceilOn ? 0.8 * d : 0 });
-    gsap.to(warm, { intensity: ceilOn ? 6 : 0, duration: 1.4 * d, delay: ceilOn ? 0.9 * d : 0 });
+    gsap.to(focus, { ...CAM[STAGES[n]], duration: 1.4 * d, ease: 'power3.inOut' });
+    // floor: the zigzag coat sweeps across
+    if (n >= 1) {
+      gsap.to(coat.scale, { x: 1, duration: 1.8 * d, ease: 'power2.inOut',
+        onUpdate: () => { sheen.position.x = X0 + coat.scale.x * (W - 0.04); sheen.material.opacity = coat.scale.x > 0.01 && coat.scale.x < 0.99 ? 0.8 : 0; } });
+    }
     // feature walls grow up from the floor
-    const wallsOn = n >= 3;
-    if (wallsOn) feature.visible = true;
-    gsap.to(feature.scale, { y: wallsOn ? 1 : 0.001, duration: 1.2 * d, ease: wallsOn ? 'expo.out' : 'power2.in', onComplete: () => { if (!wallsOn) feature.visible = false; } });
-    gsap.to(halo.material, { opacity: wallsOn && ceilOn ? 1 : 0, duration: 1 * d, delay: wallsOn ? 0.8 * d : 0 });
-    gsap.to(mashGlow.material, { emissiveIntensity: wallsOn ? 1.3 : 0, duration: 1.2 * d, delay: wallsOn ? 0.6 * d : 0 });
-    // furniture drops in one piece at a time
-    const decorOn = n >= 4;
-    decor.forEach((g, i) => {
-      if (decorOn) g.visible = true;
-      gsap.to(g.position, { y: decorOn ? g.userData.y : g.userData.y + 6, duration: (decorOn ? 0.7 : 0.4) * d, delay: (decorOn ? i * 0.08 : 0) * d, ease: decorOn ? 'back.out(1.4)' : 'power2.in', onComplete: () => { if (!decorOn) g.visible = false; } });
-    });
+    if (n >= 2) {
+      feature.visible = true;
+      gsap.to(feature.scale, { y: 1, duration: 1.2 * d, ease: 'expo.out' });
+      gsap.to(halo.material, { opacity: 1, duration: 1 * d, delay: 0.8 * d });
+      gsap.to(mashGlow.material, { emissiveIntensity: 1.3, duration: 1.2 * d, delay: 0.6 * d });
+    }
+    // decoration: repaint, wallpaper, curtains, art, lights — then the furniture settles in
+    if (n >= 3) {
+      const paint = new THREE.Color('#dccdb4'), capPaint = new THREE.Color('#cdbb9f');
+      gsap.to(mat.wall.color, { r: paint.r, g: paint.g, b: paint.b, duration: 1.2 * d });
+      gsap.to(mat.wallCap.color, { r: capPaint.r, g: capPaint.g, b: capPaint.b, duration: 1.2 * d });
+      gsap.to(sconceGlow, { emissiveIntensity: 2.2, duration: 1 * d, delay: 0.6 * d });
+      gsap.to(warm, { intensity: 5, duration: 1.4 * d, delay: 0.6 * d });
+      decor.forEach((g, i) => {
+        g.visible = true;
+        if (g === deco) gsap.to(g.scale, { x: 1, y: 1, z: 1, duration: 0.9 * d, ease: 'power3.out' });
+        else gsap.to(g.position, { y: g.userData.y, duration: 0.7 * d, delay: (0.5 + i * 0.08) * d, ease: 'back.out(1.4)' });
+      });
+    }
   }
 
-  /* ---------- intro: shell assembles, then the story plays and loops ---------- */
+  /* ---------- intro: shell assembles, then the room is finished once ---------- */
   const intro = gsap.timeline({ delay: 0.3, paused: true });
   intro.from(shell.scale, { x: 0.001, z: 0.001, duration: 1, ease: 'expo.out' }, 0);
   intro.from(walls.position, { y: -6, duration: 1.1, ease: 'expo.out' }, 0.3);
   intro.from(house.rotation, { y: -0.45, duration: 2.6, ease: 'expo.out' }, 0);
-
-  let auto = !reduce, timer = null;
-  const STEP_MS = [1400, 2600, 2400, 2300, 5000];
-  const play = (n) => {
-    clearTimeout(timer);
-    if (!auto) return;
-    setStage(n);
-    timer = setTimeout(() => play((n + 1) % STAGES.length), STEP_MS[n]);
-  };
-  pills.forEach((p) => p.addEventListener('click', () => { auto = false; clearTimeout(timer); setStage(STAGES.indexOf(p.dataset.ch)); }));
+  const STEP_MS = [0, 2100, 1900];
+  const play = (n) => { setStage(n); if (n < STAGES.length - 1) setTimeout(() => play(n + 1), STEP_MS[n + 1] || 2000); };
 
   /* ---------- sizing ---------- */
   const size = { w: 1, h: 1 };
@@ -541,7 +522,6 @@ function init() {
   /* ---------- render loop (only while visible) ---------- */
   let running = false, started = false, raf = 0;
   const clock = new THREE.Clock();
-  const tmp = new THREE.Vector3();
   const target = new THREE.Vector3();
   const UP = new THREE.Vector3(0, 1, 0);
   function frame() {
@@ -553,13 +533,7 @@ function init() {
     camera.position.copy(target).addScaledVector(dir, focus.d);
     camera.position.y += -look.y * 1.2 + Math.sin(tt * 0.5) * 0.1;
     camera.lookAt(target);
-    chandelier.rotation.y = tt * 0.08;
     renderer.render(scene, camera);
-    spots.forEach((s) => {
-      if (!s.classList.contains('is-active')) return;
-      tmp.copy(SPOT_POS[s.dataset.spot]).project(camera);
-      s.style.transform = `translate(${((tmp.x + 1) / 2) * size.w}px, ${((1 - tmp.y) / 2) * size.h}px)`;
-    });
     raf = requestAnimationFrame(frame);
   }
   new IntersectionObserver((entries) => {
@@ -568,8 +542,8 @@ function init() {
       if (!started) {
         started = true;
         host.classList.add('is-ready');
-        if (reduce) setStage(STAGES.length - 1, true);
-        else { setStage(0, true); intro.play(); intro.call(() => play(1), null, '+=0.3'); }
+        if (reduce) { setStage(STAGES.length - 1, true); gsap.globalTimeline.progress(1); }
+        else { setStage(0, true); intro.play(); intro.call(() => play(1), null, '+=0.1'); }
       }
       cancelAnimationFrame(raf);
       frame();
