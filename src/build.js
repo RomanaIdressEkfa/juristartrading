@@ -309,12 +309,15 @@ const pageHero = ({ chip, title, text, crumbs = [], actions = '', aside = '' }) 
   </div>
 </section>`;
 
-const serviceCard = (s, i) => `<a href="${href('services/' + s.slug + '/')}" class="svc-card" ${reveal('up', i * 70)}>
-  <h3 class="text-lg font-bold leading-snug">${esc(t(s.title))}</h3>
-  <p class="mt-1.5 text-sm text-muted">${esc(t(s.menu))}</p>
-  <p class="mt-3 text-sm text-ink">${fromQar(s.price)}</p>
-  <span class="btn btn-white btn-sm mt-auto self-start">${tr('Learn more', 'اعرف المزيد')}</span>
-  <span class="svc-ill" aria-hidden="true">${icon(s.icon, 'h-8 w-8', 1.6)}</span>
+/** Photo card: big for the first two services on the home page. */
+const serviceCard = (s, i, big = false) => `<a href="${href('services/' + s.slug + '/')}" class="photo-card group ${big ? 'lg:col-span-3 aspect-[16/10]' : 'lg:col-span-2 aspect-[4/3]'}" ${reveal('up', i * 70)}>
+  ${s.img ? `<img src="${s.img}" alt="${esc(t(s.title))}" class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy">` : media({ ph: s.ph, ic: s.icon, alt: t(s.title), cls: 'absolute inset-0 h-full w-full' })}
+  <span class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"></span>
+  <span class="absolute end-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-white text-ink transition group-hover:bg-brand-500 group-hover:text-white">${arrow()}</span>
+  <span class="absolute inset-x-0 bottom-0 p-5 text-white">
+    <span class="block font-head ${big ? 'text-2xl' : 'text-xl'} font-bold">${esc(t(s.title))}</span>
+    <span class="mt-1 block text-sm text-white/75">${esc(t(s.menu))}</span>
+  </span>
 </a>`;
 
 const projectCard = (p, i) => {
@@ -401,46 +404,55 @@ const GENERAL_FAQ = [
 
 function homePage() {
   const page = { key: 'home', path: '', nav: 'home', scene: true };
-  const [s1, ...rest] = C.services;
-  const body = `
-<section class="hero-bg">
-  <div class="container-site grid items-center gap-10 py-12 lg:grid-cols-[1.05fr_1fr] lg:py-16">
+  const heater = svc('central-water-heaters');
+  const greenLast = (txt) => txt.replace(/(\S+)$/, '<span class="text-grad">$1</span>');
+  const feature = (s, i, visual, list) => `<section class="sec">
+  <div class="container-site grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+    <div class="${i % 2 ? 'lg:order-2' : ''}" ${reveal(i % 2 ? 'right' : 'left')}>${visual}</div>
     <div>
-      <span class="chip-dot" data-hero>${tr('Supply &amp; installation in Qatar', 'توريد وتركيب في قطر')}</span>
-      <h1 class="mt-5 text-[2.4rem] font-bold leading-[1.12] sm:text-5xl lg:text-[3.2rem]" data-hero>${tr('Comfort for your home, <span class="text-grad">installed right.</span>', 'راحة لمنزلك، <span class="text-grad">بتركيب صحيح.</span>')}</h1>
-      <p class="sub mt-5 max-w-md" data-hero>${tr('Water heaters, tank chillers, epoxy &amp; PVC flooring and interiors from one team.', 'سخانات المياه ومبردات الخزانات وأرضيات الإيبوكسي وPVC والديكور من فريق واحد.')}</p>
-      <div class="mt-8 flex flex-wrap items-center gap-3" data-hero>
-        <a href="${href('quote/')}" class="btn btn-primary">${tr('Get a free quote', 'احصل على عرض سعر')} ${arrow()}</a>
-        <a href="${waHello()}" target="_blank" rel="noopener" class="btn btn-wa" data-track="whatsapp">${waIcon()} WhatsApp</a>
+      ${sectionHead({ eyebrow: esc(t(s.menu)), title: greenLast(esc(t(s.title))), text: esc(t(s.tagline)) })}
+      <ul class="mt-6 grid gap-3">${list.map((x) => `<li class="flex items-center gap-3 font-medium"><span class="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-50 text-brand-600">${icon('check', 'h-3.5 w-3.5', 3)}</span>${esc(t(x))}</li>`).join('')}</ul>
+      <p class="mt-6 text-ink">${fromQar(s.price)}</p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="${href('quote/?service=' + s.slug)}" class="btn btn-primary">${tr('Get a quote', 'اطلب عرض سعر')} ${arrow()}</a>
+        <a href="${href('services/' + s.slug + '/')}" class="btn btn-white">${tr('View details', 'التفاصيل')}</a>
       </div>
     </div>
-    <div data-hero>
-      <div class="scene-wrap relative aspect-[5/4] w-full" data-scene="hero" aria-label="${tr('3D illustration of a water heater, tank chiller and epoxy floor', 'رسم ثلاثي الأبعاد لسخان مياه ومبرد خزان وأرضية إيبوكسي')}" role="img">
-        <div class="scene-fallback"><img src="/assets/img/logo-mark.svg" alt="" class="w-1/3 opacity-90"></div>
+  </div>
+</section>`;
+  const photo = (src, alt) => `<img src="${src}" alt="${esc(alt)}" class="aspect-[5/4] w-full rounded-[var(--panel-radius)] object-cover" loading="lazy">`;
+  const main = C.services.slice(0, 4);
+  const body = `
+<section class="hero-photo">
+  <img src="${C.photos.hero}" alt="${tr('Living room interior decoration', 'ديكور داخلي لغرفة معيشة')}" class="absolute inset-0 h-full w-full object-cover" fetchpriority="high">
+  <div class="hero-shade absolute inset-0"></div>
+  <div class="container-site relative flex min-h-[600px] flex-col justify-between gap-10 py-10 lg:min-h-[660px] lg:py-14">
+    <div class="max-w-xl pt-6 lg:pt-12">
+      <span class="chip-glass" data-hero>${tr('Juri Star Trading · Doha, Qatar', 'جوري ستار للتجارة · الدوحة، قطر')}</span>
+      <h1 class="mt-5 text-[2.5rem] font-bold leading-[1.1] text-white sm:text-5xl lg:text-[3.6rem]" data-hero>${tr('Interiors, floors &amp; <span class="text-brand-300">water systems</span> done right.', 'ديكور وأرضيات <span class="text-brand-300">وأنظمة مياه</span> بإتقان.')}</h1>
+      <p class="mt-5 max-w-md text-lg text-white/80" data-hero>${tr('Supply and installation by our own team, with a free site visit.', 'توريد وتركيب بواسطة فريقنا، مع زيارة موقع مجانية.')}</p>
+      <div class="mt-8 flex flex-wrap gap-3" data-hero>
+        <a href="${href('quote/')}" class="btn btn-primary">${tr('Get a free quote', 'احصل على عرض سعر')} ${arrow()}</a>
+        <a href="${waHello()}" target="_blank" rel="noopener" class="btn btn-glass" data-track="whatsapp">${waIcon()} WhatsApp</a>
       </div>
+    </div>
+    <div class="grid grid-cols-2 gap-2 lg:grid-cols-4" data-hero>
+      ${main.map((s) => `<a href="${href('services/' + s.slug + '/')}" class="glass-link"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-brand-600">${icon(s.icon, 'h-5 w-5')}</span><span class="min-w-0"><span class="block truncate font-semibold text-white">${esc(t(s.title))}</span><span class="block truncate text-xs text-white/65">${esc(t(s.menu))}</span></span></a>`).join('')}
     </div>
   </div>
 </section>
 
 <section class="sec">
   <div class="container-site">
-    ${sectionRow({ title: tr('Find the right <span class="text-grad">service</span>', 'اختر <span class="text-grad">الخدمة</span> المناسبة'), text: tr('Supply and installation, with a free site visit.', 'توريد وتركيب مع زيارة موقع مجانية.'), link: [href('services/'), tr('All services', 'كل الخدمات')] })}
-    <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">${C.services.map(serviceCard).join('')}</div>
+    ${sectionRow({ title: tr('Our <span class="text-grad">services</span>', '<span class="text-grad">خدماتنا</span>'), text: tr('Supply and installation across Qatar.', 'توريد وتركيب في جميع أنحاء قطر.'), link: [href('services/'), tr('All services', 'كل الخدمات')] })}
+    <div class="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-6">${C.services.map((s, i) => serviceCard(s, i, i < 2)).join('')}</div>
   </div>
 </section>
 
-<section class="sec sec-dark">
-  <div class="container-site">
-    ${sectionRow({ eyebrow: tr('Hot water package', 'باقة المياه الساخنة'), title: tr('One system, <span class="text-grad">four parts</span>', 'نظام واحد، <span class="text-grad">أربعة أجزاء</span>'), text: `${tr('Complete central hot water', 'مياه ساخنة مركزية متكاملة')} · ${fromQar(s1.price)}`, link: [href('services/' + s1.slug + '/'), tr('Learn more', 'اعرف المزيد')], primary: true })}
-    <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      ${s1.package.map((p, i) => `<div class="rounded-[var(--radius)] bg-white p-6 text-ink" ${reveal('up', i * 80)}>
-        <span class="font-head text-3xl font-bold text-brand-500">0${i + 1}</span>
-        <h3 class="mt-4 text-lg font-bold !text-ink">${esc(t(p.t))}</h3>
-        <p class="mt-1.5 text-sm text-muted">${esc(t(p.d))}</p>
-      </div>`).join('')}
-    </div>
-  </div>
-</section>
+${feature(main[0], 0, photo(C.photos.interior, t(main[0].title)), main[0].features.slice(0, 4))}
+${feature(main[1], 1, `<div class="grid grid-cols-5 gap-3"><img src="${C.photos.zigzag}" alt="${tr('Zigzag pattern floor', 'أرضية بنقشة زجزاج')}" class="col-span-3 h-full max-h-[460px] w-full rounded-[var(--panel-radius)] object-cover" loading="lazy"><div class="col-span-2 grid gap-3"><img src="${main[1].img}" alt="${tr('Glossy epoxy floor', 'أرضية إيبوكسي لامعة')}" class="h-full w-full rounded-[var(--radius)] object-cover" loading="lazy"><img src="${C.photos.epoxyInstall}" alt="${tr('Epoxy floor being applied', 'تطبيق أرضية الإيبوكسي')}" class="h-full w-full rounded-[var(--radius)] object-cover" loading="lazy"></div></div>`, main[1].features.slice(0, 4))}
+${feature(main[2], 2, `<div class="relative overflow-hidden rounded-[var(--panel-radius)] border border-line bg-tint"><div class="scene-wrap aspect-[5/4] w-full" data-scene="heater" role="img" aria-label="${tr('3D model: heater, pump, filter and piping', 'نموذج ثلاثي الأبعاد: سخان ومضخة وفلتر وتمديدات')}"><div class="scene-fallback"><img src="${heater.img}" alt="" class="h-full w-full object-cover"></div></div><span class="absolute bottom-4 start-4 rounded-full bg-white px-3 py-1 text-xs font-semibold text-ink shadow-card">${tr('3D · drag to look around', 'ثلاثي الأبعاد · حرّك للمشاهدة')}</span></div>`, heater.package.map((x) => x.t))}
+${feature(main[3], 3, photo(main[3].img, t(main[3].title)), main[3].features.slice(0, 4))}
 
 <section class="sec sec-tint">
   <div class="container-site grid items-center gap-10 lg:grid-cols-2">
@@ -456,33 +468,20 @@ function homePage() {
 
 <section class="sec">
   <div class="container-site">
-    ${sectionRow({ title: tr('Popular <span class="text-grad">products</span>', 'منتجات <span class="text-grad">مطلوبة</span>'), text: tr('In stock at our trading shop in Doha.', 'متوفرة في محلنا التجاري في الدوحة.'), link: [href('shop/'), tr('Visit the shop', 'تصفح المتجر')] })}
-    <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">${C.products.filter((p) => p.featured).slice(0, 4).map(productCard).join('')}</div>
-  </div>
-</section>
-
-<section class="sec">
-  <div class="container-site">
-    ${sectionRow({ title: tr('Recent <span class="text-grad">projects</span>', 'مشاريع <span class="text-grad">حديثة</span>'), text: tr('Homes and businesses across Qatar.', 'منازل وشركات في أنحاء قطر.'), link: [href('projects/'), tr('View all', 'عرض الكل')] })}
-    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${C.projects.slice(0, 3).map(projectCard).join('')}</div>
-  </div>
-</section>
-
-<section class="sec">
-  <div class="container-site">
     <div class="grid overflow-hidden rounded-[var(--panel-radius)] border border-line lg:grid-cols-[1.35fr_1fr]">
       <div class="p-6 sm:p-10" ${reveal('up')}>
         ${sectionHead({ title: tr('Get a <span class="text-grad">free quote</span>', 'احصل على <span class="text-grad">عرض سعر مجاني</span>'), text: tr('Send your details on WhatsApp. We reply the same day.', 'أرسل التفاصيل عبر واتساب. نرد في نفس اليوم.') })}
         <div class="mt-8">${quoteForm({ source: 'home', bare: true })}</div>
       </div>
-      <div class="flex flex-col justify-between gap-8 bg-ink p-6 text-white sm:p-10">
-        <div>
+      <div class="relative flex flex-col justify-between gap-8 overflow-hidden bg-ink p-6 text-white sm:p-10">
+        <img src="${C.photos.interior}" alt="" class="absolute inset-0 h-full w-full object-cover opacity-20">
+        <div class="relative">
           <p class="eyebrow !text-brand-300">${tr('Talk to us', 'تحدث معنا')}</p>
           <ul class="mt-6 grid gap-5">
             ${[['phone', tr('Mobile', 'الجوال'), C.site.phone, `tel:${C.site.phoneHref}`, 'call'], ['building', tr('Landline', 'الهاتف الأرضي'), C.site.landline, `tel:${C.site.landlineHref}`, 'call'], ['chat', 'WhatsApp', C.site.whatsappDisplay, waHello(), 'whatsapp']].map(([ic, label, val, link, tk]) => `<li><a href="${link}" ${tk === 'whatsapp' ? 'target="_blank" rel="noopener"' : ''} class="flex items-center gap-4" data-track="${tk}"><span class="grid h-11 w-11 place-items-center rounded-full bg-white/10 text-brand-300">${icon(ic)}</span><span><span class="block text-xs text-white/55">${label}</span><span class="block font-head text-xl font-bold" dir="ltr">${val}</span></span></a></li>`).join('')}
           </ul>
         </div>
-        <p class="flex items-center gap-2 text-sm text-white/60">${icon('clock', 'h-4 w-4 text-brand-300')} ${esc(t(C.site.hours))}</p>
+        <p class="relative flex items-center gap-2 text-sm text-white/60">${icon('clock', 'h-4 w-4 text-brand-300')} ${esc(t(C.site.hours))}</p>
       </div>
     </div>
   </div>
@@ -496,7 +495,7 @@ function homePage() {
 function servicesPage() {
   const page = { key: 'services', path: 'services/', nav: 'services' };
   const body = `${pageHero({ chip: tr('What we do', 'ماذا نقدم'), title: tr('Our <span class="text-grad">services</span>', '<span class="text-grad">خدماتنا</span>'), text: tr('Supply and installation by one team, with a free site visit and a written quote for every job.', 'توريد وتركيب بواسطة فريق واحد، مع زيارة موقع مجانية وعرض سعر مكتوب لكل عمل.'), crumbs: [[tr('Services', 'الخدمات')]] })}
-<section class="sec"><div class="container-site grid gap-6 md:grid-cols-2 lg:grid-cols-3">${C.services.map((s, i) => serviceCard(s, i)).join('')}
+<section class="sec"><div class="container-site grid gap-4 md:grid-cols-2 lg:grid-cols-6">${C.services.map((s, i) => serviceCard(s, i, i < 2)).join('')}
   <a href="${href('quote/')}" class="card flex flex-col justify-between overflow-hidden bg-tint-2 p-8" ${reveal('up', 400)}>
     <span class="ico ico-red">${icon('file')}</span>
     <div><h3 class="mt-6 text-2xl font-bold">${tr('Not sure what you need?', 'لست متأكداً مما تحتاجه؟')}</h3><p class="mt-2 text-muted">${tr('Book a free site visit and we will recommend the right solution.', 'احجز زيارة مجانية وسنقترح الحل المناسب.')}</p></div>
@@ -507,7 +506,7 @@ function servicesPage() {
 }
 
 function servicePage(s) {
-  const page = { key: 'service', path: `services/${s.slug}/`, nav: 'services', scene: true };
+  const page = { key: 'service', path: `services/${s.slug}/`, nav: 'services' };
   const idx = C.services.indexOf(s);
   const related = C.projects.filter((p) => p.service === s.slug).slice(0, 3);
   const prods = C.products.filter((p) => cat(p.cat).service === s.slug).slice(0, 4);
@@ -520,7 +519,7 @@ function servicePage(s) {
     actions: `<a href="${href('quote/?service=' + s.slug)}" class="btn btn-primary">${tr('Get a Free Quote', 'احصل على عرض سعر مجاني')} ${arrow()}</a>
       <a href="${waHello(topic)}" target="_blank" rel="noopener" class="btn btn-wa" data-track="whatsapp">${waIcon()} WhatsApp</a>
       ${s.price ? `<span class="flex items-center rounded-full bg-white px-5 py-3 text-sm shadow-card">${icon('tag', 'me-2 h-4 w-4 text-signal-500')} <span>${fromQar(s.price)}</span></span>` : ''}`,
-    aside: `<div class="scene-wrap relative aspect-square w-full overflow-hidden rounded-[2.2rem] bg-tint-2 ring-1 ring-line" data-scene="${s.scene}" role="img" aria-label="${esc(t(s.title))}" data-hero><div class="scene-fallback">${icon(s.icon, 'h-24 w-24 text-brand-500', 1.2)}</div></div>`,
+    aside: `<img src="${s.img}" alt="${esc(t(s.title))}" class="aspect-[5/4] w-full rounded-[var(--radius)] object-cover" data-hero>`,
   })}
 
 <section class="sec">
@@ -554,7 +553,7 @@ ${s.package ? `<section class="sec sec-dark">
     ${sectionHead({ eyebrow: tr('Options', 'الخيارات'), title: tr(`Types of ${esc(t(s.title)).toLowerCase()}`, `أنواع ${esc(t(s.title))}`) })}
     <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       ${s.options.map((o, i) => `<div class="card card-hover overflow-hidden" ${reveal('up', (i % 3) * 80)}>
-        ${o.ph ? media({ ph: o.ph, ic: s.icon, alt: t(o.t), cls: 'aspect-[16/9]' }) : ''}
+        ${o.ph ? media({ img: o.img, ph: o.ph, ic: s.icon, alt: t(o.t), cls: 'aspect-[16/9]' }) : ''}
         <div class="p-6">${o.ph ? '' : `<span class="ico ${i % 2 ? 'ico-red' : 'ico-soft'}">${icon(s.icon)}</span>`}
         <h3 class="${o.ph ? '' : 'mt-4'} text-lg font-bold">${esc(t(o.t))}</h3><p class="mt-2 text-sm leading-relaxed text-muted">${esc(t(o.d))}</p></div>
       </div>`).join('')}

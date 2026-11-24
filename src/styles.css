@@ -137,6 +137,20 @@
     .drawer-backdrop { opacity: 0; visibility: hidden; transition: opacity .3s; }
     .drawer-backdrop.open { opacity: 1; visibility: visible; }
 
+    /* ---------- Photo hero ---------- */
+    .hero-photo { position: relative; margin: .625rem .625rem 0; border-radius: var(--panel-radius); overflow: hidden; color: #fff; background: var(--ink); }
+    .hero-shade { background: linear-gradient(90deg, rgb(8 14 11 / .82) 0%, rgb(8 14 11 / .55) 45%, rgb(8 14 11 / .1) 100%), linear-gradient(0deg, rgb(8 14 11 / .6) 0%, transparent 45%); }
+    [dir='rtl'] .hero-shade { background: linear-gradient(270deg, rgb(8 14 11 / .82) 0%, rgb(8 14 11 / .55) 45%, rgb(8 14 11 / .1) 100%), linear-gradient(0deg, rgb(8 14 11 / .6) 0%, transparent 45%); }
+    .chip-glass { display: inline-flex; align-items: center; gap: .45rem; border-radius: 999px; padding: .35rem .85rem; font-size: .8rem; font-weight: 500; color: #fff; background: rgb(255 255 255 / .12); border: 1px solid rgb(255 255 255 / .22); backdrop-filter: blur(8px); }
+    .chip-glass::before { content: ''; width: 6px; height: 6px; border-radius: 99px; background: #6ddd99; }
+    .btn-glass { background: rgb(255 255 255 / .12); color: #fff; border: 1px solid rgb(255 255 255 / .25); backdrop-filter: blur(8px); }
+    .btn-glass:hover { background: rgb(255 255 255 / .2); }
+    .glass-link { display: flex; align-items: center; gap: .75rem; padding: .7rem; border-radius: 16px; background: rgb(255 255 255 / .1); border: 1px solid rgb(255 255 255 / .18); backdrop-filter: blur(10px); transition: background .2s ease; min-width: 0; }
+    .glass-link:hover { background: rgb(255 255 255 / .2); }
+
+    /* Photo card (services) */
+    .photo-card { position: relative; display: block; overflow: hidden; border-radius: var(--radius); background: var(--ink); isolation: isolate; }
+
     /* ---------- Hero: rounded inset panel ---------- */
     .hero-bg { margin: .625rem .625rem 0; border-radius: var(--panel-radius); background: linear-gradient(180deg, var(--tint) 0%, #fff 100%); border: 1px solid var(--line); overflow: hidden; }
     .grid-lines { display: none; }

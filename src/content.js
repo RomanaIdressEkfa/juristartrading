@@ -53,8 +53,9 @@ const services = [
     icon: 'flame',
     scene: 'heater',
     ph: 'heater',
+    img: '/assets/img/photos/heater-install.jpg',
     title: ['Central Water Heaters', 'سخانات المياه المركزية'],
-    menu: ['Heater, pump, filter & piping package', 'باقة سخان ومضخة وفلتر وتمديدات'],
+    menu: ['With heater, pump, filter & piping', 'مع السخان والمضخة والفلتر والتمديدات'],
     tagline: ['Hot water in every bathroom and kitchen — instantly, at steady pressure.', 'مياه ساخنة في كل حمام ومطبخ — فوراً وبضغط ثابت.'],
     summary: ['Complete central hot water systems for villas, apartments and buildings: heater, circulation pump, filter and insulated piping, supplied and installed.', 'أنظمة مياه ساخنة مركزية متكاملة للفلل والشقق والمباني: سخان ومضخة تدوير وفلتر وتمديدات معزولة، توريد وتركيب.'],
     intro: [
@@ -102,8 +103,9 @@ const services = [
     icon: 'snow',
     scene: 'chiller',
     ph: 'chiller',
-    title: ['Water Tank Chillers', 'مبردات خزانات المياه'],
-    menu: ['Cool tank water in Qatar summer', 'تبريد مياه الخزان في صيف قطر'],
+    img: '/assets/img/photos/water-tank-roof.jpg',
+    title: ['Water Cooling', 'تبريد المياه'],
+    menu: ['Water tank chillers for Qatar summer', 'مبردات خزانات المياه لصيف قطر'],
     tagline: ['No more boiling tap water in summer.', 'وداعاً لمياه الحنفية الساخنة في الصيف.'],
     summary: ['Water tank chillers that cool your roof or ground tank so taps and showers run comfortably cool, even at 45 °C outside.', 'مبردات خزانات مياه تبرد خزان السطح أو الأرضي لتكون مياه الحنفيات والدش باردة ومريحة حتى مع حرارة 45 درجة.'],
     intro: [
@@ -143,8 +145,9 @@ const services = [
     icon: 'layers',
     scene: 'epoxy',
     ph: 'epoxy zig',
+    img: '/assets/img/photos/epoxy-gloss.jpg',
     title: ['Epoxy Flooring', 'أرضيات الإيبوكسي'],
-    menu: ['Zigzag / chevron, 3D & metallic', 'زجزاج / شيفرون، ثلاثي الأبعاد ومعدني'],
+    menu: ['Zigzag flooring, 3D & metallic', 'أرضيات زجزاج، ثلاثي الأبعاد ومعدني'],
     tagline: ['Seamless, glossy floors — from zigzag chevron to 3D and metallic designs.', 'أرضيات لامعة بدون فواصل — من الزجزاج الشيفرون إلى التصاميم ثلاثية الأبعاد والمعدنية.'],
     summary: ['Decorative and industrial epoxy flooring: zigzag / chevron patterns, 3D floors, metallic marble effects, self-levelling and anti-slip coatings.', 'أرضيات إيبوكسي ديكورية وصناعية: نقشات زجزاج / شيفرون، أرضيات ثلاثية الأبعاد، تأثيرات رخامية معدنية، ذاتية التسوية ومضادة للانزلاق.'],
     intro: [
@@ -161,12 +164,12 @@ const services = [
       ['Diamond grinding & crack repair prep', 'تجهيز بالجلخ الماسي وإصلاح الشقوق'],
     ],
     options: [
-      { t: ['Zigzag / Chevron', 'زجزاج / شيفرون'], d: ['Precise taped chevron patterns — our signature design.', 'نقشات شيفرون دقيقة — تصميمنا المميز.'], ph: 'epoxy zig' },
+      { t: ['Zigzag / Chevron', 'زجزاج / شيفرون'], d: ['Precise taped chevron patterns — our signature design.', 'نقشات شيفرون دقيقة — تصميمنا المميز.'], ph: 'epoxy zig', img: '/assets/img/photos/zigzag-floor.jpg' },
       { t: ['3D Epoxy', 'إيبوكسي ثلاثي الأبعاد'], d: ['Printed 3D artwork sealed under clear epoxy.', 'رسومات ثلاثية الأبعاد مطبوعة ومغطاة بإيبوكسي شفاف.'], ph: 'epoxy3d' },
       { t: ['Metallic Epoxy', 'إيبوكسي معدني'], d: ['Pearl and metallic pigments for a liquid-marble look.', 'أصباغ لؤلؤية ومعدنية لمظهر رخام سائل.'], ph: 'metallic' },
-      { t: ['Self-levelling', 'ذاتي التسوية'], d: ['Smooth high-gloss solid colour, 2–3 mm.', 'لون موحد لامع وأملس بسماكة 2–3 ملم.'], ph: 'epoxy' },
+      { t: ['Self-levelling', 'ذاتي التسوية'], d: ['Smooth high-gloss solid colour, 2–3 mm.', 'لون موحد لامع وأملس بسماكة 2–3 ملم.'], ph: 'epoxy', img: '/assets/img/photos/epoxy-gloss.jpg' },
       { t: ['Flake / Chip', 'رقائق ملونة'], d: ['Decorative flakes for garages and kitchens.', 'رقائق ديكورية للكراجات والمطابخ.'], ph: 'flake' },
-      { t: ['Industrial & anti-slip', 'صناعي ومضاد للانزلاق'], d: ['Heavy-duty coating for warehouses and workshops.', 'طلاء قوي للمستودعات والورش.'], ph: 'epoxy' },
+      { t: ['Industrial & anti-slip', 'صناعي ومضاد للانزلاق'], d: ['Heavy-duty coating for warehouses and workshops.', 'طلاء قوي للمستودعات والورش.'], ph: 'epoxy', img: '/assets/img/photos/epoxy-install.jpg' },
     ],
     specs: [
       [['System', 'النظام'], ['Primer + body coat + top coat (epoxy / PU)', 'برايمر + طبقة أساسية + طبقة نهائية (إيبوكسي / بولي يوريثان)']],
@@ -188,6 +191,7 @@ const services = [
     icon: 'planks',
     scene: 'pvc',
     ph: 'pvc',
+    img: '/assets/img/photos/pvc-herringbone.jpg',
     title: ['PVC Barkia Flooring', 'أرضيات باركيه PVC'],
     menu: ['Wood-look, waterproof vinyl floors', 'أرضيات فينيل مقاومة للماء بمظهر الخشب'],
     tagline: ['The warm look of wood — waterproof, quiet and fast to install.', 'دفء مظهر الخشب — مقاومة للماء، هادئة وسريعة التركيب.'],
@@ -229,6 +233,7 @@ const services = [
     icon: 'sofa',
     scene: 'interior',
     ph: 'interior',
+    img: '/assets/img/photos/interior-lounge.jpg',
     title: ['Interior Decoration', 'الديكور الداخلي'],
     menu: ['Gypsum, wall panels, paint & fit-out', 'جبس، ألواح جدران، دهانات وتشطيبات'],
     tagline: ['Gypsum ceilings, feature walls, paint and fit-out — one team from idea to handover.', 'أسقف جبس، جدران مميزة، دهانات وتشطيبات — فريق واحد من الفكرة حتى التسليم.'],
@@ -349,4 +354,16 @@ const projects = [
   { service: 'interior-decoration', ph: 'interior', img: '', title: ['Office fit-out & painting', 'تشطيب ودهان مكتب'], place: ['Office · West Bay', 'مكتب · الخليج الغربي'], text: ['Partition walls, gypsum ceiling, paint and PVC flooring.', 'جدران فاصلة وسقف جبس ودهان وأرضيات PVC.'] },
 ];
 
-module.exports = { site, areas, process, why, services, categories, products, projects };
+// Display order: the client's four main services first, PVC barkia last.
+const ORDER = ['interior-decoration', 'epoxy-flooring', 'central-water-heaters', 'water-tank-chillers', 'pvc-barkia-flooring'];
+services.sort((a, b) => ORDER.indexOf(a.slug) - ORDER.indexOf(b.slug));
+
+// Stock photos (Unsplash licence) used until the client's own job photos arrive.
+const photos = {
+  hero: '/assets/img/photos/interior-living.jpg',
+  interior: '/assets/img/photos/interior-lounge.jpg',
+  zigzag: '/assets/img/photos/zigzag-floor.jpg',
+  epoxyInstall: '/assets/img/photos/epoxy-install.jpg',
+};
+
+module.exports = { photos, site, areas, process, why, services, categories, products, projects };

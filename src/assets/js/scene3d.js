@@ -298,7 +298,7 @@ const BUILDERS = {
   heater(root) {
     const h = heaterSystem(); root.add(h);
     const pad = box(3.6, 0.12, 2, new THREE.MeshPhysicalMaterial({ color: 0xeef0ef, roughness: 0.2, clearcoat: 1 }), 0.05); pad.position.y = -0.06; root.add(pad);
-    return { ticks: [h.userData.tick], cam: [4.6, 3.6, 6.8], look: [0, 1.15, 0] };
+    return { ticks: [h.userData.tick], cam: [5.2, 4.0, 7.6], look: [0, 1.05, 0] };
   },
   chiller(root) {
     const c = chillerSystem(); root.add(c);

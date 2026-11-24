@@ -31,7 +31,7 @@ Every text is a pair: `['English', 'العربية']`.
 - **Prices** in `content.js` (`price.from`, product `price`) are placeholders.
 - **Projects** in `content.js` are sample entries. Replace them with real jobs and add photos (`img: '/assets/img/projects/xyz.jpg'`).
 - **Opening hours, email, social links**.
-- **Product/service photos**: set `img` on products/projects. Until then a branded pattern placeholder is shown.
+- **Photos**: service photos in `src/assets/img/photos/` are free stock photos (Unsplash licence, no attribution required) used until the client's own job photos arrive. Swap them for real work photos when available. Products/projects still use pattern placeholders until `img` is set.
 - **Google Analytics / Ads**: set `analytics.ga4`, `analytics.ads` and the conversion labels. Calls, WhatsApp clicks and quote submits are then tracked as events / conversions.
 - **PDF data sheets**: each service has a printable data sheet at `/services/<slug>/datasheet/` (Print → Save as PDF).
 
