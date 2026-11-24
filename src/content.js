@@ -54,8 +54,8 @@ const services = [
     scene: 'heater',
     ph: 'heater',
     img: '/assets/img/photos/heater-install.jpg',
-    title: ['Central Water Heaters', 'سخانات المياه المركزية'],
-    menu: ['With heater, pump, filter & piping', 'مع السخان والمضخة والفلتر والتمديدات'],
+    title: ['Central Water Heater System', 'نظام سخانات المياه المركزية'],
+    menu: ['Supply, installation & maintenance', 'توريد وتركيب وصيانة'],
     tagline: ['Hot water in every bathroom and kitchen — instantly, at steady pressure.', 'مياه ساخنة في كل حمام ومطبخ — فوراً وبضغط ثابت.'],
     summary: ['Complete central hot water systems for villas, apartments and buildings: heater, circulation pump, filter and insulated piping, supplied and installed.', 'أنظمة مياه ساخنة مركزية متكاملة للفلل والشقق والمباني: سخان ومضخة تدوير وفلتر وتمديدات معزولة، توريد وتركيب.'],
     intro: [
@@ -99,13 +99,13 @@ const services = [
     ],
   },
   {
-    slug: 'water-tank-chillers',
+    slug: 'water-cooling-system',
     icon: 'snow',
     scene: 'chiller',
     ph: 'chiller',
     img: '/assets/img/photos/water-tank-roof.jpg',
-    title: ['Water Cooling', 'تبريد المياه'],
-    menu: ['Water tank chillers for Qatar summer', 'مبردات خزانات المياه لصيف قطر'],
+    title: ['Water Cooling System', 'نظام تبريد المياه'],
+    menu: ['Supply, installation & maintenance', 'توريد وتركيب وصيانة'],
     tagline: ['No more boiling tap water in summer.', 'وداعاً لمياه الحنفية الساخنة في الصيف.'],
     summary: ['Water tank chillers that cool your roof or ground tank so taps and showers run comfortably cool, even at 45 °C outside.', 'مبردات خزانات مياه تبرد خزان السطح أو الأرضي لتكون مياه الحنفيات والدش باردة ومريحة حتى مع حرارة 45 درجة.'],
     intro: [
@@ -141,13 +141,13 @@ const services = [
     ],
   },
   {
-    slug: 'epoxy-flooring',
+    slug: 'epoxy-zigzag-flooring',
     icon: 'layers',
     scene: 'epoxy',
     ph: 'epoxy zig',
     img: '/assets/img/photos/epoxy-gloss.jpg',
-    title: ['Epoxy Flooring', 'أرضيات الإيبوكسي'],
-    menu: ['Zigzag flooring, 3D & metallic', 'أرضيات زجزاج، ثلاثي الأبعاد ومعدني'],
+    title: ['Epoxy & Zigzag Flooring', 'أرضيات الإيبوكسي والزجزاج'],
+    menu: ['Epoxy flooring & decorative zigzag flooring', 'أرضيات إيبوكسي وأرضيات زجزاج ديكورية'],
     tagline: ['Seamless, glossy floors — from zigzag chevron to 3D and metallic designs.', 'أرضيات لامعة بدون فواصل — من الزجزاج الشيفرون إلى التصاميم ثلاثية الأبعاد والمعدنية.'],
     summary: ['Decorative and industrial epoxy flooring: zigzag / chevron patterns, 3D floors, metallic marble effects, self-levelling and anti-slip coatings.', 'أرضيات إيبوكسي ديكورية وصناعية: نقشات زجزاج / شيفرون، أرضيات ثلاثية الأبعاد، تأثيرات رخامية معدنية، ذاتية التسوية ومضادة للانزلاق.'],
     intro: [
@@ -187,55 +187,13 @@ const services = [
     ],
   },
   {
-    slug: 'pvc-barkia-flooring',
-    icon: 'planks',
-    scene: 'pvc',
-    ph: 'pvc',
-    img: '/assets/img/photos/pvc-herringbone.jpg',
-    title: ['PVC Barkia Flooring', 'أرضيات باركيه PVC'],
-    menu: ['Wood-look, waterproof vinyl floors', 'أرضيات فينيل مقاومة للماء بمظهر الخشب'],
-    tagline: ['The warm look of wood — waterproof, quiet and fast to install.', 'دفء مظهر الخشب — مقاومة للماء، هادئة وسريعة التركيب.'],
-    summary: ['PVC barkia (vinyl parquet) flooring in wood and stone looks: waterproof, scratch-resistant and installed over existing tiles in a day or two.', 'أرضيات باركيه PVC (فينيل) بمظهر الخشب والحجر: مقاومة للماء والخدوش وتركب فوق البلاط الموجود خلال يوم أو يومين.'],
-    intro: [
-      ['PVC barkia gives you the look of real wood without its problems in Qatar’s climate: it does not swell with humidity, it is fully waterproof and it stays comfortable underfoot.', 'يمنحك باركيه PVC مظهر الخشب الطبيعي بدون مشاكله في مناخ قطر: لا ينتفخ مع الرطوبة، مقاوم للماء تماماً ومريح تحت القدمين.'],
-      ['Choose from click-lock SPC planks, glue-down LVT or rolls, in oak, walnut, grey and stone designs. We level the floor, install skirting and finish the edges neatly.', 'اختر من ألواح SPC بنظام القفل أو LVT اللاصق أو الرولات، بتصاميم البلوط والجوز والرمادي والحجر. نقوم بتسوية الأرضية وتركيب النعلات وإنهاء الأطراف بدقة.'],
-    ],
-    price: { from: 35, unit: ['per m² installed', 'للمتر المربع شامل التركيب'] },
-    features: [
-      ['100% waterproof — suits kitchens & majlis', 'مقاوم للماء 100% — مناسب للمطابخ والمجالس'],
-      ['Installs over existing tiles', 'يركب فوق البلاط الموجود'],
-      ['Scratch- and stain-resistant wear layer', 'طبقة حماية مقاومة للخدوش والبقع'],
-      ['Quiet and warm underfoot', 'هادئ ودافئ تحت القدمين'],
-      ['Matching skirting & profiles', 'نعلات وزوايا مطابقة'],
-      ['Most rooms done in 1–2 days', 'معظم الغرف تنجز في 1–2 يوم'],
-    ],
-    options: [
-      { t: ['SPC click planks', 'ألواح SPC بنظام القفل'], d: ['Rigid stone-core planks, 4–6 mm, floating install.', 'ألواح بنواة حجرية صلبة 4–6 ملم، تركيب عائم.'] },
-      { t: ['LVT glue-down', 'LVT لاصق'], d: ['Thin, stable planks for offices and shops.', 'ألواح رقيقة وثابتة للمكاتب والمحلات.'] },
-      { t: ['Vinyl rolls', 'رولات فينيل'], d: ['Economical, fast coverage for large areas.', 'تغطية سريعة واقتصادية للمساحات الكبيرة.'] },
-    ],
-    specs: [
-      [['Types', 'الأنواع'], ['SPC click, LVT glue-down, vinyl roll', 'SPC بالقفل، LVT لاصق، رولات فينيل']],
-      [['Thickness', 'السماكة'], ['2 mm – 6 mm', '2 – 6 ملم']],
-      [['Wear layer', 'طبقة الحماية'], ['0.3 mm – 0.55 mm', '0.3 – 0.55 ملم']],
-      [['Water resistance', 'مقاومة الماء'], ['100% waterproof core', 'نواة مقاومة للماء 100%']],
-      [['Designs', 'التصاميم'], ['Oak, walnut, grey wash, marble & stone', 'بلوط، جوز، رمادي، رخام وحجر']],
-      [['Underlay', 'العازل السفلي'], ['IXPE / foam acoustic underlay', 'عازل صوتي IXPE / فوم']],
-    ],
-    faqs: [
-      [['Is PVC barkia the same as laminate?', 'هل باركيه PVC هو نفسه اللامينيت؟'], ['No. Laminate has a wood-fibre core that swells with water. PVC / SPC has a plastic or stone-plastic core that is completely waterproof.', 'لا. اللامينيت نواته من ألياف الخشب وتنتفخ مع الماء. أما PVC / SPC فنواته بلاستيكية أو حجرية بلاستيكية ومقاومة للماء تماماً.']],
-      [['Do you remove my old tiles?', 'هل تزيلون البلاط القديم؟'], ['Usually not needed. If the tiles are level and solid we install directly on top, saving time, dust and cost.', 'عادةً لا حاجة لذلك. إذا كان البلاط مستوياً وثابتاً نركب فوقه مباشرة، مما يوفر الوقت والغبار والتكلفة.']],
-      [['Can I see samples?', 'هل يمكنني رؤية عينات؟'], ['Yes — visit our shop or ask on WhatsApp and we will bring samples to your site visit.', 'نعم — زر محلنا أو اطلب عبر واتساب وسنحضر العينات معنا في زيارة الموقع.']],
-    ],
-  },
-  {
     slug: 'interior-decoration',
     icon: 'sofa',
     scene: 'interior',
     ph: 'interior',
     img: '/assets/img/photos/interior-lounge.jpg',
     title: ['Interior Decoration', 'الديكور الداخلي'],
-    menu: ['Gypsum, wall panels, paint & fit-out', 'جبس، ألواح جدران، دهانات وتشطيبات'],
+    menu: ['Interior design & decoration services', 'خدمات التصميم والديكور الداخلي'],
     tagline: ['Gypsum ceilings, feature walls, paint and fit-out — one team from idea to handover.', 'أسقف جبس، جدران مميزة، دهانات وتشطيبات — فريق واحد من الفكرة حتى التسليم.'],
     summary: ['Interior decoration and fit-out for villas, majlis, offices and shops: gypsum ceilings with lighting, wall panels, painting, wallpaper and flooring.', 'ديكور داخلي وتشطيبات للفلل والمجالس والمكاتب والمحلات: أسقف جبس مع الإضاءة، ألواح جدران، دهانات، ورق جدران وأرضيات.'],
     intro: [
@@ -270,16 +228,99 @@ const services = [
       [['How is the price calculated?', 'كيف يُحسب السعر؟'], ['Most work is priced per square metre or per item. After the site visit you get a written, itemised quote.', 'معظم الأعمال تُسعّر بالمتر المربع أو بالقطعة. بعد زيارة الموقع تحصل على عرض سعر مكتوب ومفصل.']],
     ],
   },
+  {
+    slug: 'automatic-water-pump-system',
+    icon: 'pump',
+    scene: 'pump',
+    ph: 'spark',
+    img: '/assets/img/photos/pump-room.jpg',
+    title: ['Automatic Water Pump System', 'نظام مضخات المياه الأوتوماتيكي'],
+    menu: ['Commercial building pumps, automatic control & installation', 'مضخات المباني التجارية، تحكم أوتوماتيكي وتركيب'],
+    tagline: ['Steady water pressure on every floor — automatically.', 'ضغط مياه ثابت في كل طابق — تلقائياً.'],
+    summary: ['Booster and transfer pump systems for villas, commercial and residential buildings, with automatic pressure control, control panels and installation.', 'أنظمة مضخات رفع ونقل للفلل والمباني التجارية والسكنية، مع تحكم أوتوماتيكي بالضغط ولوحات تحكم وتركيب.'],
+    intro: [
+      ['Weak pressure on upper floors, pumps that run all day and tanks that run dry are common problems in Qatar buildings. An automatic pump system keeps pressure steady and switches pumps on and off by itself.', 'ضعف الضغط في الطوابق العليا، والمضخات التي تعمل طوال اليوم، والخزانات التي تفرغ مشاكل شائعة في مباني قطر. نظام المضخات الأوتوماتيكي يحافظ على ضغط ثابت ويشغّل المضخات ويوقفها تلقائياً.'],
+      ['We size the pumps to your building, install twin duty/standby sets with pressure vessels and control panels, and connect float switches between the ground and roof tanks.', 'نحدد حجم المضخات حسب مبناك، ونركّب مجموعات مزدوجة (تشغيل/احتياط) مع خزانات ضغط ولوحات تحكم، ونوصل عوامات المستوى بين الخزان الأرضي وخزان السطح.'],
+    ],
+    price: { from: 1800, unit: ['supply & installation', 'توريد وتركيب'] },
+    features: [
+      ['Constant pressure on every floor', 'ضغط ثابت في كل طابق'],
+      ['Automatic start / stop control', 'تشغيل وإيقاف أوتوماتيكي'],
+      ['Twin duty / standby pumps', 'مضخات مزدوجة تشغيل / احتياط'],
+      ['Dry-run and overload protection', 'حماية من التشغيل الجاف والحمل الزائد'],
+      ['Control panel with alarms', 'لوحة تحكم مع إنذارات'],
+      ['Annual maintenance contracts', 'عقود صيانة سنوية'],
+    ],
+    options: [
+      { t: ['Booster pump sets', 'مجموعات مضخات الرفع'], d: ['Pressure boosting for villas and buildings.', 'رفع الضغط للفلل والمباني.'] },
+      { t: ['Transfer pumps', 'مضخات النقل'], d: ['Ground tank to roof tank, with float switches.', 'من الخزان الأرضي إلى خزان السطح مع العوامات.'] },
+      { t: ['Variable-speed (VFD) systems', 'أنظمة السرعة المتغيرة'], d: ['Quiet, energy-saving constant pressure.', 'ضغط ثابت بهدوء وتوفير للطاقة.'] },
+    ],
+    specs: [
+      [['Pump type', 'نوع المضخة'], ['Multistage centrifugal / booster', 'طرد مركزي متعدد المراحل / رفع']],
+      [['Flow', 'التدفق'], ['1 – 30 m³/h', '1 – 30 م³/ساعة']],
+      [['Head', 'الرفع'], ['Up to 80 m', 'حتى 80 متر']],
+      [['Control', 'التحكم'], ['Pressure switch, float switch or VFD panel', 'مفتاح ضغط أو عوامة أو لوحة سرعة متغيرة']],
+      [['Power', 'الكهرباء'], ['230 V single phase / 415 V three phase', '230 فولت أحادي / 415 فولت ثلاثي']],
+      [['Materials', 'المواد'], ['Stainless-steel impellers, cast-iron or SS body', 'مراوح ستانلس ستيل، جسم حديد زهر أو ستانلس']],
+    ],
+    faqs: [
+      [['Why is the pressure weak on my top floor?', 'لماذا الضغط ضعيف في الطابق العلوي؟'], ['Gravity from the roof tank is not enough for the highest floors. A booster set adds pressure automatically whenever a tap opens.', 'الجاذبية من خزان السطح لا تكفي للطوابق العليا. مجموعة الرفع تضيف الضغط تلقائياً عند فتح أي حنفية.']],
+      [['Do I need two pumps?', 'هل أحتاج مضختين؟'], ['For buildings we recommend duty / standby: if one pump fails or is serviced, the other keeps the water running.', 'للمباني ننصح بنظام تشغيل / احتياط: إذا تعطلت مضخة أو كانت في الصيانة، تستمر الأخرى بالعمل.']],
+      [['Can you service my existing pumps?', 'هل يمكنكم صيانة مضخاتي الحالية؟'], ['Yes — seals, bearings, pressure switches, panels and vessel recharge for any brand.', 'نعم — الأختام، الرولمانات، مفاتيح الضغط، اللوحات وإعادة شحن خزانات الضغط لجميع الماركات.']],
+    ],
+  },
+  {
+    slug: 'building-maintenance',
+    icon: 'wrench',
+    scene: 'maintenance',
+    ph: 'spark',
+    img: '/assets/img/photos/building-maintenance.jpg',
+    title: ['Building Maintenance Services', 'خدمات صيانة المباني'],
+    menu: ['Complete building maintenance, repair & renovation', 'صيانة شاملة للمباني وإصلاح وتجديد'],
+    tagline: ['One call for repairs, renovation and planned maintenance.', 'اتصال واحد للإصلاحات والتجديد والصيانة الدورية.'],
+    summary: ['Complete maintenance for villas, buildings, offices and shops: plumbing, electrical, painting, repairs and renovation.', 'صيانة متكاملة للفلل والمباني والمكاتب والمحلات: سباكة، كهرباء، دهانات، إصلاحات وتجديد.'],
+    intro: [
+      ['From a leaking pipe to a full renovation, our maintenance team handles every trade so you deal with one company only.', 'من تسريب في أنبوب إلى تجديد كامل، يتولى فريق الصيانة لدينا جميع الأعمال لتتعامل مع شركة واحدة فقط.'],
+      ['Choose one-off repairs or an annual maintenance contract with planned visits and priority response.', 'اختر إصلاحات لمرة واحدة أو عقد صيانة سنوي بزيارات مجدولة واستجابة ذات أولوية.'],
+    ],
+    price: { from: 150, unit: ['per visit', 'للزيارة'] },
+    features: [
+      ['Plumbing & leak repairs', 'السباكة وإصلاح التسريبات'],
+      ['Electrical repairs & lighting', 'إصلاحات الكهرباء والإضاءة'],
+      ['Painting & wall repairs', 'الدهانات وإصلاح الجدران'],
+      ['Renovation & fit-out', 'التجديد والتشطيبات'],
+      ['Annual maintenance contracts', 'عقود صيانة سنوية'],
+      ['Fast response across Qatar', 'استجابة سريعة في أنحاء قطر'],
+    ],
+    options: [
+      { t: ['Repairs on call', 'إصلاحات عند الطلب'], d: ['Plumbing, electrical, carpentry and more.', 'سباكة وكهرباء ونجارة وغيرها.'] },
+      { t: ['Annual maintenance contracts', 'عقود الصيانة السنوية'], d: ['Planned visits and priority response.', 'زيارات مجدولة واستجابة ذات أولوية.'] },
+      { t: ['Renovation', 'التجديد'], d: ['Paint, gypsum, flooring and fit-out.', 'دهانات وجبس وأرضيات وتشطيبات.'] },
+    ],
+    specs: [
+      [['Properties', 'العقارات'], ['Villas, buildings, offices, shops, accommodation', 'فلل، مباني، مكاتب، محلات، سكن']],
+      [['Trades', 'الأعمال'], ['Plumbing, electrical, painting, carpentry, gypsum', 'سباكة، كهرباء، دهانات، نجارة، جبس']],
+      [['Contracts', 'العقود'], ['One-off, monthly or annual', 'لمرة واحدة، شهري أو سنوي']],
+      [['Response', 'الاستجابة'], ['Same or next day', 'في نفس اليوم أو اليوم التالي']],
+      [['Materials', 'المواد'], ['Supplied from our own shop', 'من محلنا مباشرة']],
+    ],
+    faqs: [
+      [['What does an annual maintenance contract include?', 'ماذا يشمل عقد الصيانة السنوي؟'], ['Planned inspection visits, minor repairs and priority call-outs. We agree the scope and visit frequency with you.', 'زيارات فحص مجدولة وإصلاحات بسيطة واستجابة ذات أولوية. نتفق معك على نطاق العمل وعدد الزيارات.']],
+      [['How fast can you come?', 'متى يمكنكم الحضور؟'], ['Usually the same or next day. Urgent leaks and electrical faults are prioritised.', 'عادةً في نفس اليوم أو اليوم التالي. التسريبات والأعطال الكهربائية العاجلة لها الأولوية.']],
+      [['Do you renovate occupied homes?', 'هل تجددون المنازل المأهولة؟'], ['Yes. We work room by room, protect furniture and clean up every day.', 'نعم. نعمل غرفة بغرفة ونحمي الأثاث وننظف يومياً.']],
+    ],
+  },
 ];
 
 // Shop categories (the trading side of the business, as seen on the shopfront)
 const categories = [
   { key: 'heaters', t: ['Water Heaters & Pumps', 'السخانات والمضخات'], service: 'central-water-heaters' },
-  { key: 'chillers', t: ['Water Chillers', 'مبردات المياه'], service: 'water-tank-chillers' },
-  { key: 'flooring', t: ['Epoxy & Flooring', 'الإيبوكسي والأرضيات'], service: 'epoxy-flooring' },
-  { key: 'plumbing', t: ['Pipes & Plumbing', 'الأنابيب والسباكة'] },
+  { key: 'chillers', t: ['Water Chillers', 'مبردات المياه'], service: 'water-cooling-system' },
+  { key: 'flooring', t: ['Epoxy & Flooring', 'الإيبوكسي والأرضيات'], service: 'epoxy-zigzag-flooring' },
+  { key: 'plumbing', t: ['Pumps, Pipes & Plumbing', 'المضخات والأنابيب والسباكة'], service: 'automatic-water-pump-system' },
   { key: 'paint', t: ['Paints & Decoration', 'الدهانات والديكور'], service: 'interior-decoration' },
-  { key: 'tools', t: ['Tools & Electrical', 'العدد والكهرباء'] },
+  { key: 'tools', t: ['Tools & Electrical', 'العدد والكهرباء'], service: 'building-maintenance' },
 ];
 
 const products = [
@@ -343,19 +384,21 @@ const products = [
 
 // ⚠ SAMPLE project entries — replace with the client's real jobs and photos (img: '/assets/img/projects/…').
 const projects = [
-  { service: 'epoxy-flooring', ph: 'epoxy zig', img: '', title: ['Zigzag epoxy majlis floor', 'أرضية مجلس إيبوكسي زجزاج'], place: ['Villa · Doha', 'فيلا · الدوحة'], text: ['Two-tone chevron epoxy with a clear high-gloss top coat.', 'إيبوكسي شيفرون بلونين مع طبقة نهائية شفافة لامعة.'] },
+  { service: 'epoxy-zigzag-flooring', ph: 'epoxy zig', img: '', title: ['Zigzag epoxy majlis floor', 'أرضية مجلس إيبوكسي زجزاج'], place: ['Villa · Doha', 'فيلا · الدوحة'], text: ['Two-tone chevron epoxy with a clear high-gloss top coat.', 'إيبوكسي شيفرون بلونين مع طبقة نهائية شفافة لامعة.'] },
   { service: 'central-water-heaters', ph: 'heater', img: '', title: ['Villa central hot water system', 'نظام مياه ساخنة مركزي لفيلا'], place: ['Villa · Al Rayyan', 'فيلا · الريان'], text: ['Heater, circulation pump, filter and insulated PPR lines to 5 bathrooms.', 'سخان ومضخة تدوير وفلتر وخطوط PPR معزولة لخمسة حمامات.'] },
-  { service: 'water-tank-chillers', ph: 'chiller', img: '', title: ['Roof tank chiller installation', 'تركيب مبرد خزان السطح'], place: ['Villa · Al Wakrah', 'فيلا · الوكرة'], text: ['Chiller with digital thermostat for a 2,000-gallon roof tank.', 'مبرد مع ثرموستات رقمي لخزان سطح سعة 2000 جالون.'] },
-  { service: 'pvc-barkia-flooring', ph: 'pvc', img: '', title: ['Oak PVC barkia bedrooms', 'غرف نوم باركيه PVC بلون البلوط'], place: ['Apartment · Lusail', 'شقة · لوسيل'], text: ['SPC click planks installed over existing tiles with matching skirting.', 'ألواح SPC بالقفل فوق البلاط الموجود مع نعلات مطابقة.'] },
+  { service: 'water-cooling-system', ph: 'chiller', img: '', title: ['Roof tank chiller installation', 'تركيب مبرد خزان السطح'], place: ['Villa · Al Wakrah', 'فيلا · الوكرة'], text: ['Chiller with digital thermostat for a 2,000-gallon roof tank.', 'مبرد مع ثرموستات رقمي لخزان سطح سعة 2000 جالون.'] },
+  { service: 'interior-decoration', ph: 'pvc', img: '', title: ['Oak PVC barkia bedrooms', 'غرف نوم باركيه PVC بلون البلوط'], place: ['Apartment · Lusail', 'شقة · لوسيل'], text: ['SPC click planks installed over existing tiles with matching skirting.', 'ألواح SPC بالقفل فوق البلاط الموجود مع نعلات مطابقة.'] },
   { service: 'interior-decoration', ph: 'interior', img: '', title: ['Majlis gypsum ceiling & wall panels', 'سقف جبس وألواح جدران لمجلس'], place: ['Villa · Umm Salal', 'فيلا · أم صلال'], text: ['Gypsum ceiling with cove lighting and a fluted WPC feature wall.', 'سقف جبس بإضاءة مخفية وجدار مميز من ألواح WPC المضلعة.'] },
-  { service: 'epoxy-flooring', ph: 'metallic', img: '', title: ['Metallic epoxy showroom', 'صالة عرض بإيبوكسي معدني'], place: ['Showroom · Doha', 'صالة عرض · الدوحة'], text: ['Pearl-white metallic epoxy with a marble flow effect.', 'إيبوكسي معدني أبيض لؤلؤي بتأثير الرخام المتدفق.'] },
-  { service: 'epoxy-flooring', ph: 'epoxy', img: '', title: ['Warehouse anti-slip epoxy', 'إيبوكسي مضاد للانزلاق لمستودع'], place: ['Industrial Area', 'المنطقة الصناعية'], text: ['Heavy-duty epoxy with anti-slip grit and line marking.', 'إيبوكسي قوي بحبيبات مانعة للانزلاق وخطوط تحديد.'] },
-  { service: 'water-tank-chillers', ph: 'chiller', img: '', title: ['Labour accommodation chillers', 'مبردات لسكن العمال'], place: ['Accommodation · Mesaieed', 'سكن · مسيعيد'], text: ['High-capacity chillers for large ground tanks.', 'مبردات بسعة عالية لخزانات أرضية كبيرة.'] },
+  { service: 'epoxy-zigzag-flooring', ph: 'metallic', img: '', title: ['Metallic epoxy showroom', 'صالة عرض بإيبوكسي معدني'], place: ['Showroom · Doha', 'صالة عرض · الدوحة'], text: ['Pearl-white metallic epoxy with a marble flow effect.', 'إيبوكسي معدني أبيض لؤلؤي بتأثير الرخام المتدفق.'] },
+  { service: 'epoxy-zigzag-flooring', ph: 'epoxy', img: '', title: ['Warehouse anti-slip epoxy', 'إيبوكسي مضاد للانزلاق لمستودع'], place: ['Industrial Area', 'المنطقة الصناعية'], text: ['Heavy-duty epoxy with anti-slip grit and line marking.', 'إيبوكسي قوي بحبيبات مانعة للانزلاق وخطوط تحديد.'] },
+  { service: 'water-cooling-system', ph: 'chiller', img: '', title: ['Labour accommodation chillers', 'مبردات لسكن العمال'], place: ['Accommodation · Mesaieed', 'سكن · مسيعيد'], text: ['High-capacity chillers for large ground tanks.', 'مبردات بسعة عالية لخزانات أرضية كبيرة.'] },
   { service: 'interior-decoration', ph: 'interior', img: '', title: ['Office fit-out & painting', 'تشطيب ودهان مكتب'], place: ['Office · West Bay', 'مكتب · الخليج الغربي'], text: ['Partition walls, gypsum ceiling, paint and PVC flooring.', 'جدران فاصلة وسقف جبس ودهان وأرضيات PVC.'] },
+  { service: 'automatic-water-pump-system', ph: 'spark', img: '', title: ['Booster pump set for residential building', 'مجموعة مضخات رفع لمبنى سكني'], place: ['Building · Al Sadd', 'مبنى · السد'], text: ['Twin duty / standby pumps with pressure vessel and control panel.', 'مضختان تشغيل / احتياط مع خزان ضغط ولوحة تحكم.'] },
+  { service: 'building-maintenance', ph: 'spark', img: '', title: ['Villa repaint & renovation', 'دهان وتجديد فيلا'], place: ['Villa · Al Gharrafa', 'فيلا · الغرافة'], text: ['Exterior repaint, plumbing repairs and new lighting.', 'دهان خارجي وإصلاحات سباكة وإضاءة جديدة.'] },
 ];
 
-// Display order: the client's four main services first, PVC barkia last.
-const ORDER = ['interior-decoration', 'epoxy-flooring', 'central-water-heaters', 'water-tank-chillers', 'pvc-barkia-flooring'];
+// Display order, as given by the client.
+const ORDER = ['central-water-heaters', 'water-cooling-system', 'epoxy-zigzag-flooring', 'interior-decoration', 'automatic-water-pump-system', 'building-maintenance'];
 services.sort((a, b) => ORDER.indexOf(a.slug) - ORDER.indexOf(b.slug));
 
 // Stock photos (Unsplash licence) used until the client's own job photos arrive.

@@ -287,35 +287,207 @@ function interiorRoom() {
   return g;
 }
 
+/* ---------------- diorama kit (matches the hero room) ---------------- */
+const wallMat = () => new THREE.MeshStandardMaterial({ color: 0xece4d6, roughness: 0.92 });
+const tileTex = () => canvasTex(256, 256, (g, w, h) => {
+  g.fillStyle = '#f4f3ef'; g.fillRect(0, 0, w, h);
+  g.strokeStyle = 'rgba(120,120,110,.25)'; g.lineWidth = 2;
+  for (let i = 0; i <= 4; i++) { g.beginPath(); g.moveTo(0, i * h / 4); g.lineTo(w, i * h / 4); g.stroke(); g.beginPath(); g.moveTo(i * w / 4, 0); g.lineTo(i * w / 4, h); g.stroke(); }
+}, [3, 2]);
+
+/** White plinth with a green rim, like the hero room. */
+function plinth(root, w, d) {
+  const g = new THREE.Group();
+  const rimM = new THREE.MeshStandardMaterial({ color: GREEN, roughness: 0.45 });
+  const baseM = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 });
+  const rim = box(w + 0.34, 0.16, d + 0.34, rimM, 0.08); rim.position.y = -0.3; rim.castShadow = false; g.add(rim);
+  const base = box(w + 0.2, 0.2, d + 0.2, baseM, 0.07); base.position.y = -0.2; base.castShadow = false; g.add(base);
+  root.add(g);
+  return g;
+}
+
+/** Back + left walls (cut-away corner). */
+function corner(root, w, d, h, mat = wallMat()) {
+  const g = new THREE.Group();
+  const back = box(w, h, 0.12, mat, 0.02); back.position.set(0, h / 2, -d / 2 + 0.06); g.add(back);
+  const left = box(0.12, h, d, mat, 0.02); left.position.set(-w / 2 + 0.06, h / 2, 0); g.add(left);
+  root.add(g);
+  return g;
+}
+
+/** Beads of water travelling along a pipe route (glowing dots). */
+function flow(pts, count, color, r = 0.08, speed = 0.3) {
+  const path = new THREE.CurvePath();
+  for (let i = 0; i < pts.length - 1; i++) path.add(new THREE.LineCurve3(new THREE.Vector3(...pts[i]), new THREE.Vector3(...pts[i + 1])));
+  const mesh = new THREE.InstancedMesh(new THREE.SphereGeometry(r, 12, 8), new THREE.MeshBasicMaterial({ color }), count);
+  const m4 = new THREE.Matrix4();
+  let t = 0;
+  const tick = (dt) => {
+    t += dt * speed;
+    for (let i = 0; i < count; i++) { const p = path.getPointAt((t + i / count) % 1); m4.makeTranslation(p.x, p.y, p.z); mesh.setMatrixAt(i, m4); }
+    mesh.instanceMatrix.needsUpdate = true;
+  };
+  tick(0);
+  return { mesh, tick };
+}
+
+function pumpRoom() {
+  const g = new THREE.Group();
+  const ticks = [];
+  const floor = box(4.4, 0.08, 3.2, new THREE.MeshPhysicalMaterial({ color: 0xdfe4e1, roughness: 0.25, clearcoat: 0.8 }), 0.03); floor.position.y = -0.04; g.add(floor);
+  // control panel with blinking LEDs
+  const panel = box(0.9, 1.1, 0.22, mat.white(), 0.04); panel.position.set(-1.35, 1.35, -1.38); g.add(panel);
+  const screen = box(0.5, 0.28, 0.02, new THREE.MeshStandardMaterial({ color: INK, emissive: GREEN, emissiveIntensity: 0.6 }), 0.01); screen.position.set(-1.35, 1.6, -1.26); g.add(screen);
+  const leds = [0, 1, 2].map((i) => { const l = new THREE.Mesh(new THREE.SphereGeometry(0.04, 12, 8), new THREE.MeshStandardMaterial({ color: 0x9ff0c0, emissive: GREEN, emissiveIntensity: 1 })); l.position.set(-1.55 + i * 0.2, 1.22, -1.26); g.add(l); return l; });
+  ticks.push((dt, t) => leds.forEach((l, i) => { l.material.emissiveIntensity = (Math.sin(t * 3 + i * 1.7) > 0.2) ? 1.6 : 0.15; }));
+  // skid + two vertical multistage pumps
+  const skid = box(2.0, 0.1, 1.0, mat.dark(), 0.03); skid.position.set(0.1, 0.05, 0.05); g.add(skid);
+  const pumpGreen = new THREE.MeshPhysicalMaterial({ color: GREEN, roughness: 0.35, clearcoat: 0.6 });
+  const fans = [];
+  [-0.4, 0.55].forEach((x) => {
+    const foot = box(0.42, 0.12, 0.42, mat.dark(), 0.03); foot.position.set(x, 0.16, 0.05); g.add(foot);
+    const body = cyl(0.17, 0.17, 0.7, mat.steel(), 32); body.position.set(x, 0.57, 0.05); g.add(body);
+    const motor = cyl(0.2, 0.2, 0.5, pumpGreen, 32); motor.position.set(x, 1.17, 0.05); g.add(motor);
+    const cap = cyl(0.21, 0.21, 0.06, mat.dark(), 32); cap.position.set(x, 1.45, 0.05); g.add(cap);
+    const fan = new THREE.Group(); fan.position.set(x, 1.49, 0.05);
+    for (let k = 0; k < 3; k++) { const b2 = box(0.3, 0.015, 0.05, mat.steel(), 0.005); const piv = new THREE.Group(); piv.rotation.y = (k * Math.PI * 2) / 3; b2.position.x = 0.1; piv.add(b2); fan.add(piv); }
+    g.add(fan); fans.push(fan);
+    g.add(pipe([[x, 0.4, 0.05], [x, 0.4, 0.55]], 0.06, mat.steel()));
+    g.add(pipe([[x, 0.75, 0.05], [x, 0.75, -0.45]], 0.06, mat.steel()));
+  });
+  ticks.push((dt) => fans.forEach((f) => { f.rotation.y += dt * 14; }));
+  // manifolds, pressure vessel and riser
+  g.add(pipe([[-0.7, 0.4, 0.55], [1.5, 0.4, 0.55]], 0.07, mat.steel()));
+  g.add(pipe([[-0.7, 0.75, -0.45], [-1.9, 0.75, -0.45], [-1.9, 0.2, -0.45]], 0.07, mat.steel()));
+  const vessel = new THREE.Group();
+  const vb = cyl(0.3, 0.3, 0.7, pumpGreen, 32); vb.position.y = 0.75; vessel.add(vb);
+  const vt = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), pumpGreen); vt.position.y = 1.1; vt.castShadow = true; vessel.add(vt);
+  const vbot = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), pumpGreen); vbot.position.y = 0.4; vessel.add(vbot);
+  [[-0.2, -0.2], [0.2, -0.2], [0, 0.22]].forEach(([dx, dz]) => { const leg = cyl(0.025, 0.025, 0.3, mat.dark(), 8); leg.position.set(dx, 0.15, dz); vessel.add(leg); });
+  vessel.position.set(1.55, 0, 0.1); g.add(vessel);
+  const riserPts = [[1.5, 0.4, 0.55], [1.9, 0.4, 0.55], [1.9, 0.4, -1.3], [1.9, 2.5, -1.3]];
+  g.add(pipe(riserPts, 0.07, mat.steel()));
+  const fl = flow(riserPts, 12, 0x5fc3ff, 0.09, 0.35); g.add(fl.mesh); ticks.push(fl.tick);
+  // pressure gauge with a wobbling needle
+  const gauge = new THREE.Group();
+  const face = cyl(0.17, 0.17, 0.05, mat.white(), 32); face.rotation.x = Math.PI / 2; gauge.add(face);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.02, 8, 32), mat.steel()); gauge.add(ring);
+  const needle = box(0.02, 0.13, 0.01, new THREE.MeshStandardMaterial({ color: GREEN }), 0.005); needle.geometry.translate(0, 0.06, 0); needle.position.z = 0.03; gauge.add(needle);
+  gauge.position.set(1.9, 1.5, -1.12); g.add(gauge);
+  ticks.push((dt, t) => { needle.rotation.z = -0.6 + Math.sin(t * 1.3) * 0.25; });
+  g.userData.tick = (dt, t) => ticks.forEach((f) => f(dt, t));
+  return g;
+}
+
+function maintenanceSite() {
+  const g = new THREE.Group();
+  const ticks = [];
+  const ground = box(4.6, 0.08, 3.4, new THREE.MeshStandardMaterial({ color: 0xe7e4dd, roughness: 0.9 }), 0.03); ground.position.y = -0.04; g.add(ground);
+  // small building: older beige facade
+  const old = new THREE.MeshStandardMaterial({ color: 0xd6c7ab, roughness: 0.95 });
+  const bld = box(3.0, 2.7, 1.3, old, 0.03); bld.position.set(-0.4, 1.35, -0.95); g.add(bld);
+  const parapet = box(3.1, 0.12, 1.4, mat.white(), 0.02); parapet.position.set(-0.4, 2.76, -0.95); g.add(parapet);
+  // fresh paint sweeping up the facade (pivot at the bottom)
+  const fresh = new THREE.MeshStandardMaterial({ color: 0xf7f5f0, roughness: 0.8 });
+  const coatGeo = new THREE.BoxGeometry(2.98, 2.66, 0.02); coatGeo.translate(0, 1.33, 0);
+  const coat = new THREE.Mesh(coatGeo, fresh); coat.position.set(-0.4, 0.02, -0.29); coat.receiveShadow = true; g.add(coat);
+  // windows + door on top of the paint
+  const glass = new THREE.MeshStandardMaterial({ color: 0x1e2a26, roughness: 0.15, metalness: 0.4 });
+  for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) { const w = box(0.55, 0.6, 0.04, glass, 0.02); w.position.set(-1.35 + c * 0.95, 1.15 + r * 0.95, -0.27); g.add(w); }
+  const door = box(0.6, 0.85, 0.04, new THREE.MeshStandardMaterial({ color: 0x6b5a49, roughness: 0.5 }), 0.02); door.position.set(-0.4, 0.43, -0.27); g.add(door);
+  // paint roller riding the top edge of the fresh coat
+  const roller = new THREE.Group();
+  const drum = cyl(0.08, 0.08, 0.5, new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9 }), 16); drum.rotation.z = Math.PI / 2; roller.add(drum);
+  const handle = cyl(0.015, 0.015, 0.7, mat.dark(), 8); handle.rotation.x = 0.5; handle.position.set(0, -0.32, 0.18); roller.add(handle);
+  roller.position.set(0.55, 0.1, -0.18); g.add(roller);
+  // scaffold in front of the right half
+  const sc = new THREE.MeshStandardMaterial({ color: 0x9aa39f, metalness: 0.6, roughness: 0.4 });
+  [[0.15, -0.1], [1.05, -0.1], [0.15, 0.35], [1.05, 0.35]].forEach(([x, z]) => { const p2 = cyl(0.025, 0.025, 2.4, sc, 8); p2.position.set(x, 1.2, z); g.add(p2); });
+  [0.9, 1.8].forEach((y) => { const plank = box(1.05, 0.05, 0.5, new THREE.MeshStandardMaterial({ color: 0xc49a6c, roughness: 0.8 }), 0.01); plank.position.set(0.6, y, 0.12); g.add(plank); });
+  // ladder, toolbox, cones
+  const ladder = new THREE.Group();
+  [-0.17, 0.17].forEach((x) => { const rail = box(0.04, 2.0, 0.04, sc, 0.01); rail.position.set(x, 1.0, 0); ladder.add(rail); });
+  for (let i = 0; i < 6; i++) { const rung = box(0.34, 0.03, 0.03, sc, 0.01); rung.position.set(0, 0.25 + i * 0.32, 0); ladder.add(rung); }
+  ladder.position.set(-1.85, 0, -0.1); ladder.rotation.x = -0.18; g.add(ladder);
+  const tb = new THREE.Group();
+  tb.add(box(0.6, 0.28, 0.3, new THREE.MeshPhysicalMaterial({ color: GREEN, roughness: 0.4, clearcoat: 0.5 }), 0.04));
+  const hdl = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.02, 8, 24, Math.PI), mat.dark()); hdl.position.y = 0.14; tb.add(hdl);
+  tb.position.set(-0.9, 0.14, 0.95); g.add(tb);
+  [[1.6, 1.1], [1.95, 0.6]].forEach(([x, z]) => { const cone = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.42, 24), new THREE.MeshStandardMaterial({ color: GREEN, roughness: 0.5 })); cone.position.set(x, 0.21, z); cone.castShadow = true; g.add(cone); const band = cyl(0.09, 0.105, 0.06, mat.white(), 24); band.position.set(x, 0.24, z); g.add(band); });
+  // floating wrench
+  const wrench = new THREE.Group();
+  wrench.add(box(0.12, 0.7, 0.05, mat.steel(), 0.02));
+  const jaw = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.05, 10, 24, Math.PI * 1.4), mat.steel()); jaw.position.y = 0.42; jaw.rotation.z = -Math.PI * 0.2; wrench.add(jaw);
+  wrench.position.set(0.0, 1.0, 0.95); g.add(wrench);
+  let t = 0;
+  g.userData.tick = (dt) => {
+    t = (t + dt) % 8;
+    const k = Math.min(1, t / 5.5);
+    const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+    const fade = t > 7 ? (t - 7) : 0;
+    coat.scale.y = Math.max(0.001, e * (1 - fade));
+    roller.position.y = 0.1 + e * 2.55 * (1 - fade);
+    drum.rotation.x += dt * 6;
+    wrench.rotation.y += dt * 1.2;
+    wrench.position.y = 1.0 + Math.sin(t * 1.6) * 0.08;
+  };
+  return g;
+}
+
 /* ---------------- scene setup ---------------- */
 const BUILDERS = {
   hero(root) {
     const slab = epoxySlab(4.0); root.add(slab);
     const heater = heaterSystem(); heater.scale.setScalar(0.72); heater.position.set(-1.05, 0, -0.6); root.add(heater);
     const chiller = chillerSystem(); chiller.scale.setScalar(0.55); chiller.position.set(1.1, 0, 0.35); root.add(chiller);
+    plinth(root, 4.0, 4.0);
     return { ticks: [slab.userData.tick, heater.userData.tick, chiller.userData.tick], cam: [5.0, 3.9, 5.9], look: [0, 0.55, 0] };
   },
   heater(root) {
-    const h = heaterSystem(); root.add(h);
-    const pad = box(3.6, 0.12, 2, new THREE.MeshPhysicalMaterial({ color: 0xeef0ef, roughness: 0.2, clearcoat: 1 }), 0.05); pad.position.y = -0.06; root.add(pad);
-    return { ticks: [h.userData.tick], cam: [5.2, 4.0, 7.6], look: [0, 1.05, 0] };
+    const floor = box(3.8, 0.08, 2.4, new THREE.MeshStandardMaterial({ map: tileTex(), roughness: 0.5 }), 0.03); floor.position.y = -0.04; root.add(floor);
+    corner(root, 3.8, 2.4, 2.9, new THREE.MeshStandardMaterial({ map: tileTex(), roughness: 0.6 }));
+    const h = heaterSystem(); h.position.z = -0.25; root.add(h);
+    plinth(root, 3.8, 2.4);
+    return { ticks: [h.userData.tick], cam: [5.4, 4.2, 7.4], look: [0, 1.15, 0] };
   },
   chiller(root) {
+    const roof = box(4.2, 0.08, 3.0, new THREE.MeshStandardMaterial({ color: 0xe3e1dc, roughness: 0.9 }), 0.03); roof.position.y = -0.04; root.add(roof);
+    const par = new THREE.MeshStandardMaterial({ color: 0xf2ede4, roughness: 0.9 });
+    const pb = box(4.2, 0.45, 0.14, par, 0.02); pb.position.set(0, 0.22, -1.43); root.add(pb);
+    const pl = box(0.14, 0.45, 3.0, par, 0.02); pl.position.set(-2.03, 0.22, 0); root.add(pl);
     const c = chillerSystem(); root.add(c);
-    const pad = box(4, 0.12, 2.6, new THREE.MeshPhysicalMaterial({ color: 0xeef0ef, roughness: 0.2, clearcoat: 1 }), 0.05); pad.position.y = -0.06; root.add(pad);
-    return { ticks: [c.userData.tick], cam: [4.6, 3.8, 6.6], look: [0, 0.7, 0] };
+    plinth(root, 4.2, 3.0);
+    return { ticks: [c.userData.tick], cam: [4.8, 3.8, 6.4], look: [0, 0.7, 0] };
   },
   epoxy(root) {
-    const s = epoxySlab(3.8); root.add(s);
-    return { ticks: [s.userData.tick], cam: [4.8, 4.6, 5.8], look: [0, 0, 0] };
-  },
-  pvc(root) {
-    const f = pvcFloor(); root.add(f);
-    return { ticks: [f.userData.tick], cam: [4.2, 4.4, 5.4], look: [0, 0.2, 0] };
+    const s2 = epoxySlab(3.8); root.add(s2);
+    corner(root, 3.8, 3.8, 2.2, new THREE.MeshStandardMaterial({ color: 0xf6f4ef, roughness: 0.9 }));
+    // roller gliding across the fresh coat
+    const roller = new THREE.Group();
+    const drum = cyl(0.12, 0.12, 0.9, new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9 }), 20); drum.rotation.x = Math.PI / 2; roller.add(drum);
+    const h = cyl(0.02, 0.02, 1.4, mat.dark(), 8); h.position.set(0.45, 0.6, 0); h.rotation.z = 0.7; roller.add(h);
+    roller.position.set(0, 0.14, 0.4); root.add(roller);
+    const bucket = cyl(0.25, 0.22, 0.42, new THREE.MeshPhysicalMaterial({ color: GREEN, roughness: 0.4, clearcoat: 0.6 }), 24); bucket.position.set(1.4, 0.21, -1.3); root.add(bucket);
+    let t = 0;
+    const tickRoll = (dt) => { t += dt; roller.position.x = Math.sin(t * 0.6) * 1.3; drum.rotation.y = -roller.position.x / 0.12; };
+    plinth(root, 3.8, 3.8);
+    return { ticks: [s2.userData.tick, tickRoll], cam: [5.2, 4.6, 6.2], look: [0, 0.4, 0] };
   },
   interior(root) {
     const r = interiorRoom(); root.add(r);
-    return { ticks: [r.userData.tick], cam: [4.2, 3.0, 5.4], look: [-0.2, 1.0, -0.4] };
+    plinth(root, 4.2, 4.2);
+    return { ticks: [r.userData.tick], cam: [5.6, 4.0, 7.0], look: [-0.2, 1.0, -0.4] };
+  },
+  pump(root) {
+    const pr = pumpRoom(); root.add(pr);
+    corner(root, 4.4, 3.2, 2.7);
+    plinth(root, 4.4, 3.2);
+    return { ticks: [pr.userData.tick], cam: [5.2, 3.9, 6.6], look: [0, 0.95, 0] };
+  },
+  maintenance(root) {
+    const m = maintenanceSite(); root.add(m);
+    plinth(root, 4.6, 3.4);
+    return { ticks: [m.userData.tick], cam: [5.0, 3.6, 6.8], look: [0, 1.1, 0] };
   },
 };
 
@@ -351,7 +523,7 @@ function mount(el) {
 
   // Soft contact shadow under everything
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(14, 14), new THREE.ShadowMaterial({ opacity: 0.18 }));
-  ground.rotation.x = -Math.PI / 2; ground.position.y = -0.19; ground.receiveShadow = true; scene.add(ground);
+  ground.rotation.x = -Math.PI / 2; ground.position.y = -0.39; ground.receiveShadow = true; scene.add(ground);
 
   const root = new THREE.Group();
   scene.add(root);
@@ -400,7 +572,7 @@ function mount(el) {
     last = now;
     time += dt;
     if (!reduce) {
-      cfg.ticks.forEach((f) => f && f(dt));
+      cfg.ticks.forEach((f) => f && f(dt, time));
       root.rotation.y += ((Math.sin(time * 0.25) * 0.25 + target.x * 0.35) - root.rotation.y) * 0.05;
       root.rotation.x += ((target.y * 0.06) - root.rotation.x) * 0.05;
       root.position.y = Math.sin(time * 0.8) * 0.04;

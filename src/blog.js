@@ -37,7 +37,7 @@ module.exports = [
   {
     slug: 'zigzag-3d-metallic-epoxy-flooring-guide',
     date: '2026-11-12',
-    service: 'epoxy-flooring',
+    service: 'epoxy-zigzag-flooring',
     ph: 'epoxy zig',
     title: ['Zigzag, 3D or metallic? A guide to decorative epoxy floors', 'زجزاج أم ثلاثي الأبعاد أم معدني؟ دليل أرضيات الإيبوكسي الديكورية'],
     excerpt: ['Compare the most popular epoxy floor designs and find the right one for your majlis, showroom or garage.', 'قارن بين أشهر تصاميم أرضيات الإيبوكسي واختر الأنسب لمجلسك أو صالة العرض أو الكراج.'],
@@ -67,7 +67,7 @@ module.exports = [
   {
     slug: 'why-your-tap-water-is-hot-in-summer',
     date: '2026-11-03',
-    service: 'water-tank-chillers',
+    service: 'water-cooling-system',
     ph: 'chiller',
     title: ['Why your tap water is hot in summer — and how a tank chiller fixes it', 'لماذا تكون مياه الحنفية ساخنة في الصيف — وكيف يحل مبرد الخزان المشكلة'],
     excerpt: ['Roof tanks in Qatar can reach 45 °C+. Here is how water tank chillers work and how to size one.', 'قد تتجاوز حرارة خزانات السطح في قطر 45 درجة. إليك كيف تعمل مبردات الخزانات وكيف تختار الحجم المناسب.'],
