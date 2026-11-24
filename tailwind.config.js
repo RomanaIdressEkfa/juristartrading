@@ -4,28 +4,26 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Forest #04241A · Signage Green #0FA958 · Neon #3BE477 · Signage Red #E0262F
-        ink: { DEFAULT: '#0D1512', 2: '#26302C', 3: '#3A4541' },
-        muted: '#66716C',
-        line: '#E6EAE8',
-        tint: { DEFAULT: '#F4F6F5', 2: '#F7F8F7' },
-        brand: {
-          50: '#EBFBF1', 100: '#D1F6DF', 200: '#A5ECC0', 300: '#6DDD99', 400: '#3BE477',
-          500: '#0C9A4F', 600: '#0A8443', 700: '#086C37', 800: '#06502B',
-        },
-        signal: { 50: '#FFF1F1', 100: '#FFDFE0', 400: '#F2525A', 500: '#E0262F', 600: '#B5161F', 700: '#8F121A' },
+        // One accent colour (green). "signal" is kept as an alias of green so no red appears outside the logo.
+        ink: { DEFAULT: '#0E1A14', 2: '#2A3530', 3: '#45514B' },
+        muted: '#5F6B66',
+        line: '#E7EBE9',
+        tint: { DEFAULT: '#F3F8F5', 2: '#F7F9F8' },
+        brand: { 50: '#E9F6EE', 100: '#D3EEDD', 200: '#A9DDBD', 300: '#6DDD99', 400: '#34B26E', 500: '#0C9A4F', 600: '#0A8443', 700: '#087A3E', 800: '#065C2F' },
+        signal: { 50: '#E9F6EE', 100: '#D3EEDD', 400: '#34B26E', 500: '#0C9A4F', 600: '#0A8443', 700: '#087A3E' },
       },
       fontFamily: {
-        sans: ['"Inter"', '"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
+        sans: ['"Figtree"', '"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
+        head: ['"Urbanist"', '"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
         arabic: ['"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
       },
-      maxWidth: { site: '82rem' },
+      maxWidth: { site: '78rem' },
       boxShadow: {
-        soft: '0 20px 40px -15px rgba(4,36,26,.18)',
-        card: '0 10px 30px -12px rgba(4,36,26,.12)',
-        float: '0 20px 40px -15px rgba(4,36,26,.3)',
-        brand: '0 10px 22px -12px rgba(13,21,18,.25)',
-        glow: '0 2px 4px rgba(13,21,18,.04), 0 28px 56px -24px rgba(13,21,18,.22)',
+        card: '0 1px 2px rgba(14,26,20,.04), 0 12px 32px -18px rgba(14,26,20,.16)',
+        soft: '0 2px 4px rgba(14,26,20,.04), 0 24px 48px -22px rgba(14,26,20,.24)',
+        glow: '0 2px 4px rgba(14,26,20,.04), 0 24px 48px -22px rgba(14,26,20,.24)',
+        float: '0 1px 2px rgba(14,26,20,.04), 0 12px 32px -18px rgba(14,26,20,.16)',
+        brand: '0 1px 2px rgba(14,26,20,.04), 0 12px 32px -18px rgba(14,26,20,.16)',
       },
     },
   },

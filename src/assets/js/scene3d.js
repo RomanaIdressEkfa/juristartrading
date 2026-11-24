@@ -9,7 +9,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const GREEN = 0x0fa958, GREEN_D = 0x08803f, RED = 0xe0262f, INK = 0x04241a;
+const GREEN = 0x0c9a4f, RED = 0x9aa39f, INK = 0x0e1a14;
 
 function webgl() {
   try {
@@ -34,7 +34,7 @@ const canvasTex = (w, h, draw, rep = [1, 1]) => {
 };
 
 // Zigzag / chevron epoxy: horizontal bands of V shapes
-const chevronTex = (colors = ['#078a45', '#eef3ef', '#c4161f', '#eef3ef'], rep = [2, 2]) => canvasTex(512, 512, (g, w, h) => {
+const chevronTex = (colors = ['#0c9a4f', '#ffffff', '#dfe5e2', '#ffffff'], rep = [2, 2]) => canvasTex(512, 512, (g, w, h) => {
   const band = h / colors.length / 2;
   for (let i = -2; i < colors.length * 2 + 2; i++) {
     g.fillStyle = colors[((i % colors.length) + colors.length) % colors.length];
@@ -48,7 +48,7 @@ const chevronTex = (colors = ['#078a45', '#eef3ef', '#c4161f', '#eef3ef'], rep =
 
 const metallicTex = () => canvasTex(512, 512, (g, w, h) => {
   g.fillStyle = '#b9c0c8'; g.fillRect(0, 0, w, h);
-  const cols = ['#e9e3d3', '#8d959f', '#d4c08e', '#f7f7f7', '#6f7780', '#0fa958'];
+  const cols = ['#f2f2f0', '#c9ced2', '#e6dfcf', '#ffffff', '#aab1b6', '#dfe3e1'];
   for (let i = 0; i < 70; i++) {
     const x = Math.random() * w, y = Math.random() * h, r = 30 + Math.random() * 120;
     const grd = g.createRadialGradient(x, y, 0, x, y, r);
@@ -85,8 +85,8 @@ const woodTex = (tone = 0) => canvasTex(512, 128, (g, w, h) => {
 /* ---------------- materials ---------------- */
 const mat = {
   white: () => new THREE.MeshPhysicalMaterial({ color: 0xf4f6f5, roughness: 0.25, metalness: 0.1, clearcoat: 1, clearcoatRoughness: 0.15 }),
-  steel: () => new THREE.MeshStandardMaterial({ color: 0xc8d0d6, roughness: 0.25, metalness: 0.9 }),
-  dark: () => new THREE.MeshStandardMaterial({ color: INK, roughness: 0.4, metalness: 0.3 }),
+  steel: () => new THREE.MeshStandardMaterial({ color: 0xd9dee2, roughness: 0.18, metalness: 0.95 }),
+  dark: () => new THREE.MeshStandardMaterial({ color: 0x2b3230, roughness: 0.45, metalness: 0.3 }),
   green: () => new THREE.MeshPhysicalMaterial({ color: GREEN, roughness: 0.3, metalness: 0.2, clearcoat: 0.8 }),
   red: () => new THREE.MeshPhysicalMaterial({ color: RED, roughness: 0.3, metalness: 0.2, clearcoat: 0.8 }),
   blue: () => new THREE.MeshPhysicalMaterial({ color: 0x2b8fd6, roughness: 0.3, metalness: 0.2, clearcoat: 0.8 }),
@@ -146,17 +146,16 @@ function heaterSystem() {
   const tank = cyl(0.62, 0.62, 2.1, mat.white(), 48); tank.position.set(0, 1.15, 0); g.add(tank);
   const topCap = cyl(0.64, 0.64, 0.14, mat.dark()); topCap.position.set(0, 2.24, 0); g.add(topCap);
   const baseCap = cyl(0.66, 0.6, 0.16, mat.dark()); baseCap.position.set(0, 0.08, 0); g.add(baseCap);
-  const band = cyl(0.625, 0.625, 0.12, mat.red()); band.position.set(0, 1.85, 0); g.add(band);
-  const band2 = cyl(0.625, 0.625, 0.05, mat.green()); band2.position.set(0, 1.74, 0); g.add(band2);
+    const band2 = cyl(0.625, 0.625, 0.04, mat.green()); band2.position.set(0, 1.8, 0); g.add(band2);
   // Display panel (glows)
-  const panel = box(0.42, 0.26, 0.06, new THREE.MeshStandardMaterial({ color: INK, emissive: 0x3be477, emissiveIntensity: 0.35, roughness: 0.3 }), 0.03);
+  const panel = box(0.42, 0.26, 0.06, new THREE.MeshStandardMaterial({ color: INK, emissive: 0xffffff, emissiveIntensity: 0.15, roughness: 0.3 }), 0.03);
   panel.position.set(0, 1.35, 0.62); g.add(panel);
   // Hot (red) out, cold (blue) in
-  const hot = pipe([[0.25, 2.3, 0], [0.25, 2.6, 0], [1.35, 2.6, 0], [1.35, 0.55, 0]], 0.065, mat.red()); g.add(hot);
-  const cold = pipe([[-1.35, 1.4, 0], [-1.35, 0.35, 0], [-0.62, 0.35, 0]], 0.065, mat.blue()); g.add(cold);
+  const hot = pipe([[0.25, 2.3, 0], [0.25, 2.6, 0], [1.35, 2.6, 0], [1.35, 0.55, 0]], 0.06, mat.steel()); g.add(hot);
+  const cold = pipe([[-1.35, 1.4, 0], [-1.35, 0.35, 0], [-0.62, 0.35, 0]], 0.06, mat.steel()); g.add(cold);
   // Circulation pump on the hot line
   const pump = new THREE.Group();
-  const body = cyl(0.26, 0.26, 0.34, mat.green()); body.rotation.z = Math.PI / 2; pump.add(body);
+  const body = cyl(0.26, 0.26, 0.34, mat.white()); body.rotation.z = Math.PI / 2; pump.add(body);
   const motor = cyl(0.2, 0.2, 0.3, mat.dark()); motor.rotation.x = Math.PI / 2; motor.position.z = 0.28; pump.add(motor);
   const fan = box(0.05, 0.3, 0.04, mat.steel(), 0.02); fan.position.z = 0.45; pump.add(fan);
   pump.position.set(1.35, 0.6, 0); g.add(pump);
@@ -165,10 +164,10 @@ function heaterSystem() {
   const filt = new THREE.Group();
   const housing = cyl(0.2, 0.2, 0.65, mat.glass()); filt.add(housing);
   const cart = cyl(0.12, 0.12, 0.55, new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9 })); filt.add(cart);
-  const head = cyl(0.24, 0.24, 0.1, mat.blue()); head.position.y = 0.36; filt.add(head);
+  const head = cyl(0.24, 0.24, 0.1, mat.steel()); head.position.y = 0.36; filt.add(head);
   filt.position.set(-1.35, 1.0, 0); g.add(filt);
   // Heat shimmer
-  const heat = particles(70, 0xff6a3d, [0.5, 1.6, 0.5], 1, 0.12); heat.position.set(1.35, 2.7, 0); g.add(heat);
+  const heat = particles(40, 0xbdbdbd, [0.5, 1.6, 0.5], 1, 0.09); heat.position.set(1.35, 2.7, 0); g.add(heat);
   ticks.push(heat.userData.tick);
   g.userData.tick = (dt) => ticks.forEach((f) => f(dt));
   return g;
@@ -178,10 +177,10 @@ function chillerSystem() {
   const g = new THREE.Group();
   const ticks = [];
   // Water tank (horizontal)
-  const tank = cyl(0.75, 0.75, 2.2, new THREE.MeshPhysicalMaterial({ color: 0x9fdcf5, roughness: 0.3, clearcoat: 1 }), 48);
+  const tank = cyl(0.75, 0.75, 2.2, mat.white(), 48);
   tank.rotation.z = Math.PI / 2; tank.position.set(-0.6, 0.95, -0.4); g.add(tank);
   [-1.6, 0.4].forEach((x) => { const s = box(0.25, 0.3, 1.2, mat.dark(), 0.04); s.position.set(x, 0.15, -0.4); g.add(s); });
-  const ring1 = cyl(0.77, 0.77, 0.06, mat.blue()); ring1.rotation.z = Math.PI / 2; ring1.position.set(-1.3, 0.95, -0.4); g.add(ring1);
+  const ring1 = cyl(0.77, 0.77, 0.05, mat.steel()); ring1.rotation.z = Math.PI / 2; ring1.position.set(-1.3, 0.95, -0.4); g.add(ring1);
   const ring2 = ring1.clone(); ring2.position.x = 0.1; g.add(ring2);
   // Chiller unit
   const unit = new THREE.Group();
@@ -191,21 +190,21 @@ function chillerSystem() {
   for (let i = 0; i < 4; i++) { const b = box(0.36, 0.02, 0.1, mat.steel(), 0.01); b.position.x = 0.18; const piv = new THREE.Group(); piv.rotation.y = (i * Math.PI) / 2; piv.add(b); fanG.add(piv); }
   unit.add(fanG);
   const stripe = box(1.32, 0.12, 1.02, mat.green(), 0.03); stripe.position.y = -0.2; unit.add(stripe);
-  const disp = box(0.34, 0.18, 0.04, new THREE.MeshStandardMaterial({ color: INK, emissive: 0x5ee0ff, emissiveIntensity: 0.5 }), 0.02); disp.position.set(0.3, 0.15, 0.51); unit.add(disp);
+  const disp = box(0.34, 0.18, 0.04, new THREE.MeshStandardMaterial({ color: INK, emissive: 0xffffff, emissiveIntensity: 0.15 }), 0.02); disp.position.set(0.3, 0.15, 0.51); unit.add(disp);
   unit.position.set(1.35, 0.5, 0.55); g.add(unit);
   ticks.push((dt) => { fanG.rotation.y += dt * 9; });
   // Supply/return lines
-  g.add(pipe([[0.5, 0.95, -0.4], [0.75, 0.95, -0.4], [0.75, 0.75, 0.55]], 0.06, mat.blue()));
-  g.add(pipe([[0.5, 0.65, -0.4], [0.62, 0.65, -0.4], [0.62, 0.3, 0.55], [0.7, 0.3, 0.55]], 0.06, mat.green()));
+  g.add(pipe([[0.5, 0.95, -0.4], [0.75, 0.95, -0.4], [0.75, 0.75, 0.55]], 0.055, mat.steel()));
+  g.add(pipe([[0.5, 0.65, -0.4], [0.62, 0.65, -0.4], [0.62, 0.3, 0.55], [0.7, 0.3, 0.55]], 0.055, mat.steel()));
   // Cool mist
-  const snow = particles(90, 0x9fe8ff, [3.2, 2.6, 2.2], -1, 0.1); snow.position.set(0, 0.2, 0); g.add(snow);
+  const snow = particles(50, 0xc8c8c8, [3.2, 2.6, 2.2], -1, 0.08); snow.position.set(0, 0.2, 0); g.add(snow);
   ticks.push(snow.userData.tick);
   g.userData.tick = (dt) => ticks.forEach((f) => f(dt));
   return g;
 }
 
 function epoxySlab(size = 3.6) {
-  const textures = [chevronTex(), metallicTex(), seaTex(), chevronTex(['#04241a', '#0fa958', '#f4f7f5', '#0fa958'], [2, 2])];
+  const textures = [chevronTex(), metallicTex(), seaTex(), chevronTex(['#0e1a14', '#ffffff', '#c9d1cd', '#ffffff'], [2, 2])];
   const m = mat.glossy(textures[0]);
   const slab = box(size, 0.18, size, m, 0.06);
   slab.position.y = -0.09;
@@ -261,7 +260,7 @@ function interiorRoom() {
   const back = box(4.2, 2.8, 0.12, wallM, 0.01); back.position.set(0, 1.4, -2.05); g.add(back);
   const side = box(0.12, 2.8, 4.2, wallM, 0.01); side.position.set(-2.05, 1.4, 0); g.add(side);
   // Fluted wall panel (green slats) on the back wall
-  for (let i = 0; i < 16; i++) { const s = box(0.1, 2.2, 0.06, mat.green(), 0.02); s.position.set(-0.75 + i * 0.12, 1.25, -1.96); g.add(s); }
+  for (let i = 0; i < 16; i++) { const s = box(0.1, 2.2, 0.06, new THREE.MeshStandardMaterial({ color: 0xe6e6e6, roughness: 0.6 }), 0.02); s.position.set(-0.75 + i * 0.12, 1.25, -1.96); g.add(s); }
   // TV / feature
   const tv = box(1.3, 0.72, 0.05, new THREE.MeshStandardMaterial({ color: 0x0a0f0d, roughness: 0.2, metalness: 0.5 }), 0.02); tv.position.set(0.15, 1.4, -1.9); g.add(tv);
   // Gypsum bulkhead with glowing cove
@@ -274,7 +273,7 @@ function interiorRoom() {
   const seat = box(2.2, 0.4, 0.9, sofaM, 0.12); seat.position.set(0, 0.3, 0); sofa.add(seat);
   const backrest = box(2.2, 0.55, 0.25, sofaM, 0.12); backrest.position.set(0, 0.7, -0.42); sofa.add(backrest);
   [-1.1, 1.1].forEach((x) => { const arm = box(0.22, 0.55, 0.9, sofaM, 0.1); arm.position.set(x, 0.45, 0); sofa.add(arm); });
-  const pillow = box(0.45, 0.4, 0.14, mat.red(), 0.1); pillow.position.set(-0.6, 0.68, -0.22); pillow.rotation.z = 0.15; sofa.add(pillow);
+  const pillow = box(0.45, 0.4, 0.14, new THREE.MeshStandardMaterial({ color: 0xbdbdbd, roughness: 0.9 }), 0.1); pillow.position.set(-0.6, 0.68, -0.22); pillow.rotation.z = 0.15; sofa.add(pillow);
   const pillow2 = box(0.45, 0.4, 0.14, mat.green(), 0.1); pillow2.position.set(0.6, 0.68, -0.22); pillow2.rotation.z = -0.15; sofa.add(pillow2);
   sofa.rotation.y = Math.PI / 2; sofa.position.set(-1.45, 0, 0.1); g.add(sofa);
   // Coffee table
@@ -294,16 +293,16 @@ const BUILDERS = {
     const slab = epoxySlab(4.0); root.add(slab);
     const heater = heaterSystem(); heater.scale.setScalar(0.72); heater.position.set(-1.05, 0, -0.6); root.add(heater);
     const chiller = chillerSystem(); chiller.scale.setScalar(0.55); chiller.position.set(1.1, 0, 0.35); root.add(chiller);
-    return { ticks: [slab.userData.tick, heater.userData.tick, chiller.userData.tick], cam: [6.1, 4.8, 7.1], look: [0, 0.6, 0] };
+    return { ticks: [slab.userData.tick, heater.userData.tick, chiller.userData.tick], cam: [5.0, 3.9, 5.9], look: [0, 0.55, 0] };
   },
   heater(root) {
     const h = heaterSystem(); root.add(h);
-    const pad = box(3.6, 0.12, 2, mat.glossy(chevronTex(['#04241a', '#0b4d37'], [3, 2])), 0.05); pad.position.y = -0.06; root.add(pad);
+    const pad = box(3.6, 0.12, 2, new THREE.MeshPhysicalMaterial({ color: 0xeef0ef, roughness: 0.2, clearcoat: 1 }), 0.05); pad.position.y = -0.06; root.add(pad);
     return { ticks: [h.userData.tick], cam: [4.6, 3.6, 6.8], look: [0, 1.15, 0] };
   },
   chiller(root) {
     const c = chillerSystem(); root.add(c);
-    const pad = box(4, 0.12, 2.6, new THREE.MeshStandardMaterial({ color: 0xdfe7e3, roughness: 0.8 }), 0.05); pad.position.y = -0.06; root.add(pad);
+    const pad = box(4, 0.12, 2.6, new THREE.MeshPhysicalMaterial({ color: 0xeef0ef, roughness: 0.2, clearcoat: 1 }), 0.05); pad.position.y = -0.06; root.add(pad);
     return { ticks: [c.userData.tick], cam: [4.6, 3.8, 6.6], look: [0, 0.7, 0] };
   },
   epoxy(root) {
@@ -338,7 +337,7 @@ function mount(el) {
   scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
 
   const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-  const hemi = new THREE.HemisphereLight(0xffffff, el.hasAttribute('data-dark') ? 0x062a1d : 0xd8f5e3, 0.9);
+  const hemi = new THREE.HemisphereLight(0xffffff, 0xe6e6e6, 0.9);
   scene.add(hemi);
   const sun = new THREE.DirectionalLight(0xffffff, 2.2);
   sun.position.set(4, 7, 5);
@@ -348,7 +347,7 @@ function mount(el) {
   sun.shadow.camera.right = sun.shadow.camera.top = 4;
   sun.shadow.radius = 6;
   scene.add(sun);
-  const rim = new THREE.DirectionalLight(0xff7a7a, 0.6); rim.position.set(-5, 3, -4); scene.add(rim);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.5); rim.position.set(-5, 3, -4); scene.add(rim);
 
   // Soft contact shadow under everything
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(14, 14), new THREE.ShadowMaterial({ opacity: 0.18 }));
