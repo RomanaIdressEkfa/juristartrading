@@ -425,22 +425,20 @@ function homePage() {
   const scene3d = (s) => `<div class="relative overflow-hidden rounded-[var(--panel-radius)] border border-line bg-gradient-to-b from-tint to-white"><div class="scene-wrap aspect-[5/4] w-full" data-scene="${s.scene}" role="img" aria-label="${esc(t(s.title))} — 3D"><div class="scene-fallback"><img src="${s.img}" alt="" class="h-full w-full object-cover"></div></div><span class="absolute bottom-4 start-4 rounded-full border border-line bg-white px-3 py-1 text-xs font-semibold text-ink">${tr('3D · move to look around', 'ثلاثي الأبعاد · حرّك للمشاهدة')}</span></div>`;
   const body = `
 <section class="hero-bg">
-  <div class="container-site grid items-center gap-6 py-10 lg:grid-cols-[1fr_1.2fr] lg:py-8">
-    <div class="lg:py-10">
-      <span class="chip-dot" data-hero>${tr('Juri Star Trading · Doha, Qatar', 'جوري ستار للتجارة · الدوحة، قطر')}</span>
-      <h1 class="mt-5 text-[2.5rem] font-bold leading-[1.08] sm:text-5xl lg:text-[3.5rem]" data-hero>${tr('Beautiful spaces.<br><span class="text-grad">Built to last.</span>', 'مساحات جميلة.<br><span class="text-grad">تدوم طويلاً.</span>')}</h1>
-      <p class="sub mt-5 max-w-md" data-hero>${tr('Interior decoration, zigzag epoxy floors, central water heaters and water cooling — supplied and installed across Qatar.', 'ديكور داخلي، أرضيات إيبوكسي زجزاج، سخانات مركزية وتبريد المياه — توريد وتركيب في جميع أنحاء قطر.')}</p>
+  <div class="container-site relative grid items-center gap-2 pt-10 lg:grid-cols-[0.78fr_1.5fr] lg:gap-0 lg:pt-6">
+    <div class="relative z-10 lg:py-16">
+      <span class="chip-dot" data-hero>${tr('Interior decoration · Epoxy &amp; zigzag flooring', 'الديكور الداخلي · أرضيات الإيبوكسي والزجزاج')}</span>
+      <h1 class="mt-5 text-[2.5rem] font-bold leading-[1.06] sm:text-5xl lg:text-[3.6rem]" data-hero>${tr('From bare shell<br>to <span class="text-grad">signature space.</span>', 'من هيكل خام<br>إلى <span class="text-grad">مساحة استثنائية.</span>')}</h1>
+      <p class="sub mt-5 max-w-sm" data-hero>${tr('Zigzag epoxy floors, gypsum ceilings, feature walls and complete interiors — designed, supplied and installed by one Qatar team.', 'أرضيات إيبوكسي زجزاج، أسقف جبس، جدران مميزة وديكور متكامل — تصميم وتوريد وتركيب بفريق واحد في قطر.')}</p>
       <div class="mt-8 flex flex-wrap items-center gap-3" data-hero>
         <a href="${href('quote/')}" class="btn btn-primary">${tr('Get a free quote', 'احصل على عرض سعر')} ${arrow()}</a>
         <a href="${waHello()}" target="_blank" rel="noopener" class="btn btn-wa" data-track="whatsapp">${waIcon()} WhatsApp</a>
       </div>
     </div>
-    <div class="room-host" data-room data-hero role="img" aria-label="${tr('3D living room: bare concrete floor becomes a zigzag epoxy floor with gypsum cove lighting', 'غرفة معيشة ثلاثية الأبعاد: أرضية خرسانية تتحول إلى أرضية إيبوكسي زجزاج مع إضاءة جبس مخفية')}">
+    <div class="room-host" data-room data-hero role="img" aria-label="${tr('3D majlis transformation: bare concrete becomes a zigzag epoxy floor, gypsum ceiling with cove lighting, marble and mashrabiya feature wall and designer furniture', 'تحويل مجلس ثلاثي الأبعاد: من خرسانة خام إلى أرضية إيبوكسي زجزاج وسقف جبس بإضاءة مخفية وجدار رخام ومشربية وأثاث فاخر')}">
       <canvas></canvas>
-      <div class="room-hud">
-        <span class="room-state" data-r-state data-on="${tr('Zigzag epoxy + cove lighting', 'إيبوكسي زجزاج + إضاءة مخفية')}" data-off="${tr('Bare concrete floor', 'أرضية خرسانية')}">${tr('Bare concrete floor', 'أرضية خرسانية')}</span>
-        <span class="room-seg"><button type="button" data-r-mode="off" aria-pressed="true">${tr('Before', 'قبل')}</button><button type="button" data-r-mode="on" aria-pressed="false">${tr('After', 'بعد')}</button></span>
-      </div>
+      <span class="hs" data-spot="floor"><i></i><b>${tr('Zigzag epoxy floor', 'أرضية إيبوكسي زجزاج')}</b></span><span class="hs" data-spot="ceiling"><i></i><b>${tr('Gypsum ceiling + cove light', 'سقف جبس + إضاءة مخفية')}</b></span><span class="hs" data-spot="walls"><i></i><b>${tr('Marble &amp; mashrabiya wall', 'جدار رخام ومشربية')}</b></span><span class="hs" data-spot="decor"><i></i><b>${tr('Furniture &amp; décor', 'الأثاث والديكور')}</b></span>
+      <div class="room-steps" role="group" aria-label="${tr('Transformation steps', 'مراحل التحويل')}"><button type="button" data-ch="shell" aria-pressed="false"><span>0</span>${tr('Before', 'قبل')}</button><button type="button" data-ch="floor" aria-pressed="false"><span>1</span>${tr('Zigzag epoxy', 'إيبوكسي زجزاج')}</button><button type="button" data-ch="ceiling" aria-pressed="false"><span>2</span>${tr('Gypsum ceiling', 'سقف جبس')}</button><button type="button" data-ch="walls" aria-pressed="false"><span>3</span>${tr('Feature walls', 'جدران مميزة')}</button><button type="button" data-ch="decor" aria-pressed="false"><span>4</span>${tr('Décor', 'الديكور')}</button></div>
     </div>
   </div>
 </section>

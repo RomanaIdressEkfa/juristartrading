@@ -151,15 +151,22 @@
     /* Photo card (services) */
     .photo-card { position: relative; display: block; overflow: hidden; border-radius: var(--radius); background: var(--ink); isolation: isolate; }
 
-    /* ---------- 3D room (hero) ---------- */
-    .room-host { position: relative; aspect-ratio: 1 / 0.92; width: 100%; }
+    /* ---------- 3D majlis (hero) ---------- */
+    .room-host { position: relative; width: 100%; aspect-ratio: 1 / 1; }
+    @media (min-width: 1024px) { .room-host { aspect-ratio: 1.22 / 1; min-height: 600px; margin-inline-end: -2rem; } }
     .room-host canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block; }
-    .room-hud { position: absolute; inset-inline: 0; bottom: .5rem; margin-inline: auto; width: max-content; max-width: calc(100% - 1rem); display: flex; align-items: center; gap: .75rem; padding: .35rem .35rem .35rem 1rem; border-radius: 999px; background: rgb(255 255 255 / .9); border: 1px solid var(--line); box-shadow: var(--shadow-card); backdrop-filter: blur(10px); font-size: .82rem; }
-    [dir='rtl'] .room-hud { padding: .35rem 1rem .35rem .35rem; }
-    .room-state { font-weight: 600; color: var(--ink-2); white-space: nowrap; }
-    .room-seg { display: inline-flex; padding: 3px; border-radius: 999px; background: var(--soft); }
-    .room-seg button { padding: .35rem .85rem; border-radius: 999px; font-weight: 600; color: var(--muted); transition: all .2s; }
-    .room-seg button[aria-pressed='true'] { background: var(--brand); color: #fff; }
+    .room-steps { position: absolute; inset-inline: 0; bottom: 1rem; margin-inline: auto; width: max-content; max-width: calc(100% - 1rem); display: flex; gap: 4px; padding: 5px; border-radius: 999px; background: rgb(255 255 255 / .88); border: 1px solid var(--line); box-shadow: var(--shadow-card); backdrop-filter: blur(12px); overflow-x: auto; scrollbar-width: none; }
+    .room-steps button { display: inline-flex; align-items: center; gap: .45rem; padding: .45rem .9rem .45rem .5rem; border-radius: 999px; font-size: .8rem; font-weight: 600; color: var(--ink-2); white-space: nowrap; transition: background .25s, color .25s; }
+    .room-steps button span { display: grid; place-items: center; width: 1.35rem; height: 1.35rem; border-radius: 99px; background: var(--soft); font-size: .7rem; color: var(--muted); transition: inherit; }
+    .room-steps button[aria-pressed='true'] { background: var(--ink); color: #fff; }
+    .room-steps button[aria-pressed='true'] span { background: var(--brand); color: #fff; }
+    .hs { position: absolute; left: 0; top: 0; pointer-events: none; opacity: 0; transition: opacity .5s ease; will-change: transform; }
+    .hs.is-active { opacity: 1; }
+    .hs i { position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; border-radius: 99px; background: var(--brand); box-shadow: 0 0 0 5px rgb(12 154 79 / .22); }
+    .hs.is-active i { animation: hs-pulse 2s ease-out infinite; }
+    .hs b { position: absolute; left: 14px; top: -14px; white-space: nowrap; padding: .3rem .7rem; border-radius: 999px; background: #fff; border: 1px solid var(--line); box-shadow: var(--shadow-card); font-size: .75rem; font-weight: 600; color: var(--ink); }
+    [dir='rtl'] .hs b { left: auto; right: -14px; }
+    @keyframes hs-pulse { 0% { box-shadow: 0 0 0 0 rgb(12 154 79 / .45); } 100% { box-shadow: 0 0 0 14px rgb(12 154 79 / 0); } }
 
     /* ---------- Hero: rounded inset panel ---------- */
     .hero-bg { margin: .625rem .625rem 0; border-radius: var(--panel-radius); background: linear-gradient(180deg, var(--tint) 0%, #fff 100%); border: 1px solid var(--line); overflow: hidden; }
