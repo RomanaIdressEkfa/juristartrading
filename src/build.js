@@ -434,16 +434,16 @@ function homePage() {
   const scene3d = (s) => `<div class="relative overflow-hidden rounded-[var(--panel-radius)] border border-line bg-gradient-to-b from-tint to-white"><div class="scene-wrap aspect-[5/4] w-full" data-scene="${s.scene}" role="img" aria-label="${esc(t(s.title))} — 3D"><div class="scene-fallback"><img src="${s.img}" alt="" class="h-full w-full object-cover"></div></div><span class="absolute bottom-4 start-4 rounded-full border border-line bg-white px-3 py-1 text-xs font-semibold text-ink">${tr('3D · move to look around', 'ثلاثي الأبعاد · حرّك للمشاهدة')}</span></div>`;
   const body = `
 <section class="hero-lux">
-  <div class="container-site relative grid items-center gap-4 py-12 lg:min-h-[660px] lg:grid-cols-[0.9fr_1.3fr] lg:gap-2 lg:py-8">
+  <div class="container-site relative grid items-center gap-4 py-12 lg:min-h-[660px] lg:grid-cols-[0.8fr_1.4fr] lg:gap-2 lg:py-8">
     <div class="relative z-10">
-      <h1 class="text-[2.6rem] font-extrabold leading-[1.05] text-white sm:text-[3.4rem] lg:text-[4.1rem]" data-hero>${tr('Interior decoration<br>&amp; <span class="text-brand-300">zigzag epoxy</span><br>floors', 'الديكور الداخلي<br>و<span class="text-brand-300">أرضيات الإيبوكسي</span><br>الزجزاج')}</h1>
-      <p class="mt-6 max-w-md text-lg text-white/70" data-hero>${tr('Designed, supplied and installed in Qatar.', 'تصميم وتوريد وتركيب في قطر.')}</p>
+      <h1 class="text-[2.1rem] font-extrabold leading-[1.1] text-white sm:text-[2.6rem] lg:text-[3rem]" data-hero>${tr('Interior decoration<br>&amp; <span class="text-[#b9dcc6]">zigzag epoxy floors</span>', 'الديكور الداخلي<br>و<span class="text-[#b9dcc6]">أرضيات الإيبوكسي الزجزاج</span>')}</h1>
+      <p class="mt-5 max-w-md text-base text-white/70" data-hero>${tr('Designed, supplied and installed in Qatar.', 'تصميم وتوريد وتركيب في قطر.')}</p>
       <div class="mt-9 flex flex-wrap items-center gap-3" data-hero>
         <a href="${href('quote/')}" class="btn btn-primary">${tr('Get a free quote', 'احصل على عرض سعر')} ${arrow()}</a>
         <a href="${waHello()}" target="_blank" rel="noopener" class="btn btn-glass" data-track="whatsapp">${waIcon()} WhatsApp</a>
       </div>
     </div>
-    <div class="room-host" data-room data-hero role="img" aria-label="${tr('3D room: a bare concrete room gets a zigzag epoxy floor, feature walls and full decoration', 'غرفة ثلاثية الأبعاد: غرفة خرسانية تحصل على أرضية إيبوكسي زجزاج وجدران مميزة وديكور كامل')}">
+    <div class="room-host" data-room data-hero role="img" aria-label="${tr('3D bedroom: zigzag epoxy floor, gypsum false ceiling with ceiling fan and lights, headboard wall and full decoration', 'غرفة نوم ثلاثية الأبعاد: أرضية إيبوكسي زجزاج وسقف جبس مستعار مع مروحة وإضاءة وجدار سرير وديكور كامل')}">
       <canvas></canvas>
     </div>
   </div>

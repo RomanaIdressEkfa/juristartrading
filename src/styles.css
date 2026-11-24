@@ -210,12 +210,13 @@
 
     /* ---------- Premium hero (full width, deep green) ---------- */
     .hero-lux { position: relative; overflow: hidden; color: #fff; background:
-        radial-gradient(48% 62% at 74% 54%, rgb(255 206 140 / .2) 0%, transparent 70%),
-        radial-gradient(38% 48% at 8% 0%, rgb(12 154 79 / .32) 0%, transparent 65%),
-        linear-gradient(165deg, #0f3326 0%, #0a2219 50%, #06140f 100%); }
+        radial-gradient(48% 62% at 74% 54%, rgb(255 210 150 / .2) 0%, transparent 70%),
+        radial-gradient(40% 50% at 8% 0%, rgb(60 150 100 / .3) 0%, transparent 65%),
+        linear-gradient(165deg, #1f4a39 0%, #173d2f 50%, #113026 100%); }
     .hero-lux::after { content: ''; position: absolute; inset-inline: 0; bottom: 0; height: 1px; background: linear-gradient(90deg, transparent, rgb(201 162 94 / .55), transparent); }
     .hero-lux .room-host { aspect-ratio: 1 / 1; }
-    @media (min-width: 1024px) { .hero-lux .room-host { aspect-ratio: auto; height: 660px; } }
+    @media (min-width: 1024px) { .hero-lux .room-host { aspect-ratio: auto; height: 660px; width: calc(100% + 8.5rem); margin-inline-start: -1.5rem; margin-inline-end: -7rem; } }
+    .hero-lux .room-host { pointer-events: auto; }
 
     /* ---------- 3D majlis (hero) ---------- */
     .room-host { position: relative; width: 100%; aspect-ratio: 1 / 1; }
