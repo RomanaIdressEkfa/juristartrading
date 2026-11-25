@@ -8,8 +8,8 @@
   var $ = function (s, r) { return (r || d).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || d).querySelectorAll(s)); };
   var AR = d.documentElement.lang === 'ar';
-  var WA = '97450790315';
-  var EMAIL = 'info@juristartrading.com';
+  var WA = '97451153838';
+  var EMAIL = 'juristartrading@gmail.com';
 
   /* ---- Conversion tracking (only active when gtag is configured in content.js) ---- */
   function track(kind, extra) {

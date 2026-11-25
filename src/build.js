@@ -245,7 +245,7 @@ const layout = (page, meta, body) => {
     image: C.site.domain + '/assets/img/shop-front.jpg',
     telephone: C.site.phoneHref,
     email: C.site.email,
-    address: { '@type': 'PostalAddress', addressLocality: 'Doha', addressCountry: 'QA' },
+    address: { '@type': 'PostalAddress', streetAddress: 'Building 79, Street 578, Zone 55, Fereej Al Murra', addressLocality: 'Al Rayyan', addressRegion: 'Doha', postOfficeBoxNumber: C.site.poBox, addressCountry: 'QA' },
     areaServed: 'Qatar',
     priceRange: 'QAR',
   }].concat(meta.jsonld ? [].concat(meta.jsonld) : []);
@@ -490,7 +490,7 @@ ${C.services.map((s, i) => feature(s, i, scene3d(s), s.package ? s.package.map((
         <div class="relative">
           <p class="eyebrow !text-brand-300">${tr('Talk to us', 'تحدث معنا')}</p>
           <ul class="mt-6 grid gap-5">
-            ${[['phone', tr('Mobile', 'الجوال'), C.site.phone, `tel:${C.site.phoneHref}`, 'call'], ['building', tr('Landline', 'الهاتف الأرضي'), C.site.landline, `tel:${C.site.landlineHref}`, 'call'], ['chat', 'WhatsApp', C.site.whatsappDisplay, waHello(), 'whatsapp']].map(([ic, label, val, link, tk]) => `<li><a href="${link}" ${tk === 'whatsapp' ? 'target="_blank" rel="noopener"' : ''} class="flex items-center gap-4" data-track="${tk}"><span class="grid h-11 w-11 place-items-center rounded-full bg-white/10 text-brand-300">${icon(ic)}</span><span><span class="block text-xs text-white/55">${label}</span><span class="block font-head text-xl font-bold" dir="ltr">${val}</span></span></a></li>`).join('')}
+            ${[['phone', tr('Mobile', 'الجوال'), C.site.phone, `tel:${C.site.phoneHref}`, 'call'], ['chat', 'WhatsApp', C.site.whatsappDisplay, waHello(), 'whatsapp']].map(([ic, label, val, link, tk]) => `<li><a href="${link}" ${tk === 'whatsapp' ? 'target="_blank" rel="noopener"' : ''} class="flex items-center gap-4" data-track="${tk}"><span class="grid h-11 w-11 place-items-center rounded-full bg-white/10 text-brand-300">${icon(ic)}</span><span><span class="block text-xs text-white/55">${label}</span><span class="block font-head text-xl font-bold" dir="ltr">${val}</span></span></a></li>`).join('')}
           </ul>
         </div>
         <p class="relative flex items-center gap-2 text-sm text-white/60">${icon('clock', 'h-4 w-4 text-brand-300')} ${esc(t(C.site.hours))}</p>
@@ -780,13 +780,12 @@ function contactPage() {
   const page = { key: 'contact', path: 'contact/', nav: 'contact' };
   const cards = [
     ['phone', tr('Mobile', 'الجوال'), C.site.phone, `tel:${C.site.phoneHref}`, 'call', true],
-    ['building', tr('Landline', 'الهاتف الأرضي'), C.site.landline, `tel:${C.site.landlineHref}`, 'call', true],
     ['chat', 'WhatsApp', C.site.whatsappDisplay, waHello(), 'whatsapp', true],
     ['mail', tr('Email', 'البريد الإلكتروني'), C.site.email, `mailto:${C.site.email}`, '', false],
   ];
   const body = `${pageHero({ chip: tr('Contact', 'اتصل بنا'), title: tr('Let’s talk about <span class="text-grad">your project</span>', 'لنتحدث عن <span class="text-grad">مشروعك</span>'), text: tr('Call, WhatsApp, email or visit our shop. We reply the same day.', 'اتصل أو راسلنا واتساب أو بالبريد أو زر محلنا. نرد في نفس اليوم.'), crumbs: [[tr('Contact', 'اتصل بنا')]] })}
 <section class="sec"><div class="container-site">
-  <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">${cards.map(([ic, label, val, link, tk, ltr], i) => `<a href="${link}" ${tk === 'whatsapp' ? 'target="_blank" rel="noopener"' : ''} ${tk ? `data-track="${tk}"` : ''} class="card card-hover p-6" ${reveal('up', i * 70)}><span class="ico ${i % 2 ? 'ico-red' : ''}">${icon(ic)}</span><p class="mt-5 text-xs font-bold uppercase tracking-wider text-muted">${label}</p><p class="mt-1 break-all text-lg font-bold" ${ltr ? 'dir="ltr"' : ''}>${val}</p></a>`).join('')}</div>
+  <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">${cards.map(([ic, label, val, link, tk, ltr], i) => `<a href="${link}" ${tk === 'whatsapp' ? 'target="_blank" rel="noopener"' : ''} ${tk ? `data-track="${tk}"` : ''} class="card card-hover p-6" ${reveal('up', i * 70)}><span class="ico ${i % 2 ? 'ico-red' : ''}">${icon(ic)}</span><p class="mt-5 text-xs font-bold uppercase tracking-wider text-muted">${label}</p><p class="mt-1 break-all text-lg font-bold" ${ltr ? 'dir="ltr"' : ''}>${val}</p></a>`).join('')}</div>
   <div class="mt-8 grid gap-10 lg:grid-cols-2">
     <div ${reveal('left')}><h2 class="h-section mb-6">${tr('Send us a message', 'أرسل لنا رسالة')}</h2>${quoteForm({ source: 'contact', compact: true })}</div>
     <div class="grid content-start gap-5" ${reveal('right')}>
@@ -794,6 +793,7 @@ function contactPage() {
       <div class="card grid gap-3 p-6 text-sm">
         <p class="flex items-center gap-3">${icon('pin', 'h-5 w-5 text-signal-500')} <strong>${esc(t(C.site.address))}</strong></p>
         <p class="flex items-center gap-3">${icon('clock', 'h-5 w-5 text-brand-600')} ${esc(t(C.site.hours))}</p>
+        <p class="flex items-center gap-3">${icon('mail', 'h-5 w-5 text-brand-600')} ${tr('P.O. Box', 'ص.ب')} ${C.site.poBox}</p>
         <p class="flex items-center gap-3">${icon('badge', 'h-5 w-5 text-brand-600')} ${tr('CR No.', 'سجل تجاري رقم')} ${C.site.cr}</p>
       </div>
     </div>

@@ -4,21 +4,20 @@
 
 const site = {
   name: ['Juri Star Trading', 'جوري ستار للتجارة'],
-  legal: ['Juri Star Trading Contracting & Hospitality', 'جوري ستار للتجارة والمقاولات والضيافة'],
+  legal: ['Juri Star Trading, Contracting & Hospitality', 'جوري ستار للتجارة والمقاولات والضيافة'],
   short: 'Juri Star',
   domain: 'https://juristartrading.com',
-  // Contact numbers from the shopfront signboard
-  phone: '+974 7073 9222',
-  phoneHref: '+97470739222',
-  landline: '+974 4468 1697',
-  landlineHref: '+97444681697',
-  whatsapp: '97450790315',
-  whatsappDisplay: '+974 5079 0315',
-  email: 'info@juristartrading.com',
+  // Official company contact details (call and WhatsApp use the same number)
+  phone: '+974 5115 3838',
+  phoneHref: '+97451153838',
+  whatsapp: '97451153838',
+  whatsappDisplay: '+974 5115 3838',
+  email: 'juristartrading@gmail.com',
   cr: '181956',
-  address: ['Doha, Qatar', 'الدوحة، قطر'],
+  poBox: '40096',
+  address: ['Building 79, Street 578, Zone 55, Fereej Al Murra, Al Rayyan, Doha, Qatar', 'مبنى 79، شارع 578، منطقة 55، فريج آل مرة، الريان، الدوحة، قطر'],
   hours: ['Saturday – Thursday · 7:00 AM – 9:00 PM', 'السبت – الخميس · 7:00 ص – 9:00 م'],
-  mapQuery: 'Juri Star Trading Doha Qatar',
+  mapQuery: 'Fereej Al Murra, Al Rayyan, Qatar',
   social: { facebook: '', instagram: '', tiktok: '' },
   // Analytics — paste the real IDs to switch tracking on (left empty = no tracking scripts are loaded)
   analytics: {
