@@ -125,11 +125,9 @@ const header = (page) => {
     [tr('Price guide & data sheet', 'دليل الأسعار وملف المواصفات'), href('services/' + s.slug + '/datasheet/')],
     [tr('Request a quote', 'اطلب عرض سعر'), href('quote/?service=' + s.slug)],
   ], s.img]);
-  const shopCats = C.categories.map((c) => [t(c.t), C.products.filter((p) => p.cat === c.key).map((p) => [t(p.name), href('shop/' + p.slug + '/')]).concat([[tr('View category', 'عرض القسم'), href('shop/?category=' + c.key)]]), (c.service && svc(c.service) && svc(c.service).img) || '/assets/img/shop-front.jpg']);
   // simple dropdown: one short list (icon + name) and a "see all" link
   const ddItems = {
     services: C.services.map((s) => [t(s.title), href('services/' + s.slug + '/'), s.icon]),
-    shop: C.categories.map((c) => [t(c.t), href('shop/?category=' + c.key), (svc(c.service) || {}).icon || 'store']),
   };
   const panel = (key, allLink) => `<div class="dd-panel" data-panel="${key}">
     <ul class="dd-list">${ddItems[key].map(([txt, url, ic]) => `<li><a href="${url}"><span class="dd-ic">${icon(ic, 'h-4 w-4', 2)}</span>${esc(txt)}</a></li>`).join('')}</ul>
@@ -157,7 +155,6 @@ const header = (page) => {
       ${logo()}
       <nav class="hdr-nav hidden xl:flex" aria-label="${tr('Main', 'الرئيسية')}">
         ${ddBtn('services', tr('Services', 'الخدمات'), [href('services/'), tr('All services', 'كل الخدمات')])}
-        ${ddBtn('shop', tr('Shop', 'المتجر'), [href('shop/'), tr('Visit the shop', 'تصفح المتجر')])}
         ${right.map(([p, label, key]) => `<a href="${href(p)}" ${cur(key)}>${label}</a>`).join('')}
       </nav>
       <div class="hdr-actions">
@@ -172,14 +169,13 @@ const header = (page) => {
 <div class="drawer-backdrop" data-drawer-close></div>
 <aside class="drawer" data-drawer aria-label="${tr('Menu', 'القائمة')}">
   <div class="drw-top"><button type="button" class="drw-x" data-drawer-close aria-label="${tr('Close menu', 'إغلاق القائمة')}">${icon('x', 'h-6 w-6', 1.8)}</button>${logo()}</div>
-  <div class="drw-seg"><button type="button" data-seg="services" aria-pressed="true">${tr('Services', 'الخدمات')}</button><button type="button" data-seg="shop" aria-pressed="false">${tr('Shop', 'المتجر')}</button></div>
   <div class="drw-body">
-    <div data-seg-pane="services">${rows(svcCats, 's')}</div>
-    <div data-seg-pane="shop" hidden>${rows(shopCats, 'c')}</div>
+    <p class="drw-heading">${tr('Services', 'الخدمات')}</p>
+    <div>${rows(svcCats, 's')}</div>
     <div class="drw-more">${right.map(([p, label]) => `<a href="${href(p)}">${label}</a>`).join('')}<a href="${otherUrl}" hreflang="${other}">${other === 'ar' ? 'العربية' : 'English'}</a></div>
   </div>
   <div class="drw-cta"><a href="${href('quote/')}" class="btn btn-primary w-full">${tr('Get a Free Quote', 'احصل على عرض سعر مجاني')} ${arrow()}</a></div>
-  ${subs(svcCats, 's')}${subs(shopCats, 'c')}
+  ${subs(svcCats, 's')}
 </aside>`;
 };
 
