@@ -126,15 +126,14 @@ const header = (page) => {
     [tr('Request a quote', 'اطلب عرض سعر'), href('quote/?service=' + s.slug)],
   ], s.img]);
   const shopCats = C.categories.map((c) => [t(c.t), C.products.filter((p) => p.cat === c.key).map((p) => [t(p.name), href('shop/' + p.slug + '/')]).concat([[tr('View category', 'عرض القسم'), href('shop/?category=' + c.key)]]), (c.service && svc(c.service) && svc(c.service).img) || '/assets/img/shop-front.jpg']);
-  const panel = (key, cats, allLink) => `<div class="dd-panel" data-panel="${key}">
-    <div class="dd-in">
-      <div class="dd-cats" role="tablist">${cats.map(([label], i) => `<button type="button" class="dd-cat${i ? '' : ' active'}" data-cat="${i}" role="tab">${esc(label)}<span class="dd-chev">${chevR}</span></button>`).join('')}</div>
-      <div class="dd-card">
-        ${cats.map(([, links], i) => `<ul class="dd-links" data-pane="${i}"${i ? ' hidden' : ''}>${links.map(([txt, url]) => `<li><a href="${url}">${esc(txt)}</a></li>`).join('')}</ul>`).join('')}
-        <a class="dd-all" href="${allLink[0]}">${allLink[1]} ${arrow()}</a>
-      </div>
-      <div class="dd-media">${cats.map(([label, , img], i) => `<img data-pane="${i}"${i ? ' hidden' : ''} src="${img}" alt="${esc(label)}" loading="lazy">`).join('')}</div>
-    </div>
+  // simple dropdown: one short list (icon + name) and a "see all" link
+  const ddItems = {
+    services: C.services.map((s) => [t(s.title), href('services/' + s.slug + '/'), s.icon]),
+    shop: C.categories.map((c) => [t(c.t), href('shop/?category=' + c.key), (svc(c.service) || {}).icon || 'store']),
+  };
+  const panel = (key, allLink) => `<div class="dd-panel" data-panel="${key}">
+    <ul class="dd-list">${ddItems[key].map(([txt, url, ic]) => `<li><a href="${url}"><span class="dd-ic">${icon(ic, 'h-4 w-4', 2)}</span>${esc(txt)}</a></li>`).join('')}</ul>
+    <a class="dd-all" href="${allLink[0]}">${allLink[1]} ${arrow('h-3.5 w-3.5')}</a>
   </div>`;
   const rows = (cats, prefix) => cats.map(([label], i) => `<button type="button" class="drw-row" data-sub="${prefix}${i}">${esc(label)}${chevR}</button>`).join('');
   const subs = (cats, prefix) => cats.map(([label, links], i) => `<div class="drw-sub" data-subpanel="${prefix}${i}">
@@ -142,9 +141,9 @@ const header = (page) => {
       <p class="drw-subtitle">${esc(label)}</p>
       ${links.map(([txt, url]) => `<a class="drw-link" href="${url}">${esc(txt)}</a>`).join('')}
     </div>`).join('');
-  const right = [['projects/', tr('Projects', 'المشاريع'), 'projects'], ['about/', tr('About Us', 'من نحن'), 'about'], ['blog/', tr('Blog', 'المدونة'), 'blog'], ['contact/', tr('Contact Us', 'اتصل بنا'), 'contact']];
+  const right = [['about/', tr('About Us', 'من نحن'), 'about'], ['blog/', tr('Blog', 'المدونة'), 'blog'], ['contact/', tr('Contact Us', 'اتصل بنا'), 'contact']];
 
-  const ddBtn = (key, label) => `<button type="button" class="hdr-dd" data-dd="${key}" aria-expanded="false" ${cur(key)}>${label} ${icon('chevron', 'chev h-3.5 w-3.5', 2.6)}</button>`;
+  const ddBtn = (key, label, allLink) => `<div class="hdr-item"><button type="button" class="hdr-dd" data-dd="${key}" aria-expanded="false" ${cur(key)}>${label} ${icon('chevron', 'chev h-3.5 w-3.5', 2.6)}</button>${panel(key, allLink)}</div>`;
 
   return `<div class="announce no-print">
   <div class="container-site announce-in">
@@ -157,8 +156,8 @@ const header = (page) => {
     <div class="hdr">
       ${logo()}
       <nav class="hdr-nav hidden xl:flex" aria-label="${tr('Main', 'الرئيسية')}">
-        ${ddBtn('services', tr('Services', 'الخدمات'))}
-        ${ddBtn('shop', tr('Shop', 'المتجر'))}
+        ${ddBtn('services', tr('Services', 'الخدمات'), [href('services/'), tr('All services', 'كل الخدمات')])}
+        ${ddBtn('shop', tr('Shop', 'المتجر'), [href('shop/'), tr('Visit the shop', 'تصفح المتجر')])}
         ${right.map(([p, label, key]) => `<a href="${href(p)}" ${cur(key)}>${label}</a>`).join('')}
       </nav>
       <div class="hdr-actions">
@@ -168,8 +167,6 @@ const header = (page) => {
         <button type="button" class="hdr-burger xl:hidden" data-drawer-open aria-label="${tr('Open menu', 'فتح القائمة')}">${icon('menu', 'h-6 w-6', 2)}</button>
       </div>
     </div>
-    ${panel('services', svcCats, [href('services/'), tr('All services', 'كل الخدمات')])}
-    ${panel('shop', shopCats, [href('shop/'), tr('Visit the shop', 'تصفح المتجر')])}
   </div>
 </header>
 <div class="drawer-backdrop" data-drawer-close></div>
