@@ -156,13 +156,11 @@
     .announce-in { display: flex; align-items: center; justify-content: center; gap: .55rem; min-height: 34px; text-align: center; }
     .announce-in b { font-weight: 700; color: var(--brand-2); }
     .announce-dot { width: 7px; height: 7px; border-radius: 99px; background: var(--brand); box-shadow: 0 0 0 4px rgb(12 154 79 / .18); flex-shrink: 0; }
-    .site-header { position: sticky; top: 0; z-index: 50; }
+    .site-header { position: sticky; top: 0; z-index: 50; background: rgb(255 255 255 / .96); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); box-shadow: 0 6px 20px -6px rgb(14 26 20 / .16); transition: box-shadow .3s ease, background .3s ease; }
+    .site-header.scrolled { background: rgb(255 255 255 / .98); box-shadow: 0 10px 28px -8px rgb(14 26 20 / .24); }
     .hdr-wrap { position: relative; max-width: 92rem; }
-    .hdr { display: flex; align-items: center; gap: .75rem; min-height: 64px; padding: .5rem .6rem .5rem 1.1rem; border-radius: 0 0 20px 20px; background: rgb(255 255 255 / .92); border: 1px solid var(--line); border-top: 0; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 0 0 1px rgb(14 26 20 / .03), 0 0 22px rgb(14 26 20 / .12), 0 14px 32px -8px rgb(14 26 20 / .22); transition: box-shadow .3s ease, background .3s ease; }
-    [dir='rtl'] .hdr { padding: .5rem 1.1rem .5rem .6rem; }
-    @media (min-width: 1280px) { .hdr { gap: 1.5rem; min-height: 68px; } }
-    @media (max-width: 639px) { .site-header .container-site { padding-inline: .625rem; } .hdr { padding-inline-start: .8rem !important; } }
-    .site-header.scrolled .hdr { background: rgb(255 255 255 / .97); box-shadow: 0 0 0 1px rgb(14 26 20 / .04), 0 0 28px rgb(14 26 20 / .16), 0 18px 40px -8px rgb(14 26 20 / .28); }
+    .hdr { display: flex; align-items: center; gap: .75rem; min-height: 64px; }
+    @media (min-width: 1280px) { .hdr { gap: 1.5rem; min-height: 72px; } }
     .hdr-nav { flex: 1 1 auto; min-width: 0; justify-content: center; align-items: center; gap: .15rem; }
     .hdr-nav > a, .hdr-dd { position: relative; display: inline-flex; align-items: center; gap: .35rem; padding: .55rem .9rem; border-radius: 999px; font-size: .95rem; font-weight: 600; color: var(--ink-2); transition: color .2s, background .2s; }
     .hdr-nav > a:hover, .hdr-dd:hover, .hdr-dd[aria-expanded='true'] { background: var(--soft); color: var(--ink); }
