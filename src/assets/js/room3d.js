@@ -331,8 +331,9 @@ function init() {
   drape(wz0 - 0.25, 0.8, drapeMat); drape(wz1 + 0.25, 0.8, drapeMat); drape(wzc, wz1 - wz0 - 0.2, mat.sheer);
   add(new THREE.CylinderGeometry(0.02, 0.02, wz1 - wz0 + 1.4, 8), mat.brass, [xl + 0.32, H - 0.42, wzc], { parent: deco, rot: [Math.PI / 2, 0, 0] });
   const artTex = canvasTex(256, 340, (g, w, h) => { const grd = g.createLinearGradient(0, 0, w, h); grd.addColorStop(0, '#ede6d8'); grd.addColorStop(1, '#d6dccf'); g.fillStyle = grd; g.fillRect(0, 0, w, h); g.strokeStyle = '#2f6a4c'; g.lineWidth = 9; g.beginPath(); g.arc(w * 0.5, h * 0.42, w * 0.25, 0, Math.PI * 2); g.stroke(); g.fillStyle = '#c9a25e'; g.fillRect(w * 0.2, h * 0.74, w * 0.6, 6); });
-  add(box(1.05, 1.35, 0.05, 0.02), mat.dark, [3.9, 2.05, zb + 0.16], { parent: deco });
-  add(new THREE.PlaneGeometry(0.93, 1.23), new THREE.MeshStandardMaterial({ map: artTex, roughness: 0.8 }), [3.9, 2.05, zb + 0.19], { parent: deco, cast: false });
+  // small framed art now hangs above the TV wall's right side (the bookshelf takes the old spot)
+  add(box(0.62, 0.8, 0.05, 0.02), mat.dark, [-2.55, 3.35, zb + 0.16], { parent: deco });
+  add(new THREE.PlaneGeometry(0.54, 0.72), new THREE.MeshStandardMaterial({ map: artTex, roughness: 0.8 }), [-2.55, 3.35, zb + 0.19], { parent: deco, cast: false });
 
   const bed = piece();
   add(box(2.3, 0.34, 2.45, 0.05), mat.wood, [0, 0.19, 0], { parent: bed });
@@ -371,6 +372,85 @@ function init() {
   add(box(1.7, 0.16, 0.48, 0.07), fabric('#2f6a4c'), [0, 0.46, 0], { parent: bench });
   [[-0.75, -0.18], [0.75, -0.18], [-0.75, 0.18], [0.75, 0.18]].forEach(([x, zz]) => add(new THREE.CylinderGeometry(0.025, 0.02, 0.38, 8), mat.brass, [x, 0.19, zz], { parent: bench }));
   bench.position.set(BX, 0.02, ZB + T + 3.0);
+
+  /* ---- home decoration: door, TV wall, bookshelf, reading corner ---- */
+  // walnut entrance door on the left wall (between the wardrobe and the window)
+  const doorZ = -0.45, doorW = 1.0, doorH = 2.45, wallIn = X0 + T;
+  add(box(0.06, doorH + 0.12, doorW + 0.16, 0.01), mat.trim, [wallIn + 0.02, (doorH + 0.12) / 2, doorZ], { parent: feature });
+  add(box(0.07, doorH, doorW, 0.01), mat.wood, [wallIn + 0.06, doorH / 2 + 0.01, doorZ], { parent: feature });
+  [0.62, 1.42, 2.1].forEach((y) => add(new THREE.BoxGeometry(0.01, 0.015, doorW - 0.22), mat.dark, [wallIn + 0.1, y, doorZ], { parent: feature, cast: false }));
+  add(new THREE.BoxGeometry(0.03, 0.03, 0.18), mat.brass, [wallIn + 0.13, 1.08, doorZ + doorW / 2 - 0.16], { parent: feature });
+  add(new THREE.CylinderGeometry(0.035, 0.035, 0.03, 16), mat.brass, [wallIn + 0.11, 1.08, doorZ + doorW / 2 - 0.1], { parent: feature, rot: [0, 0, Math.PI / 2] });
+
+  // TV wall: walnut panel, wall-mounted TV, floating console with a vase and books
+  const tvX = -3.45;
+  add(box(2.05, 1.7, 0.06, 0.02), mat.wood, [tvX, 1.95, zb + 0.15], { parent: feature });
+  add(new THREE.BoxGeometry(1.95, 0.025, 0.04), mat.cove, [tvX, 2.82, zb + 0.2], { parent: feature, cast: false });
+  const tvTex = canvasTex(320, 180, (g, w, h) => {
+    const sky = g.createLinearGradient(0, 0, 0, h); sky.addColorStop(0, '#f3b46d'); sky.addColorStop(0.55, '#e9d7b2'); sky.addColorStop(1, '#2f6a4c');
+    g.fillStyle = sky; g.fillRect(0, 0, w, h);
+    g.fillStyle = 'rgba(255,240,200,.9)'; g.beginPath(); g.arc(w * 0.7, h * 0.42, 18, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#1f4d38'; g.beginPath(); g.moveTo(0, h * 0.78); g.quadraticCurveTo(w * 0.3, h * 0.58, w * 0.55, h * 0.75); g.quadraticCurveTo(w * 0.8, h * 0.9, w, h * 0.7); g.lineTo(w, h); g.lineTo(0, h); g.fill();
+  });
+  const tv = piece();
+  add(box(1.42, 0.82, 0.05, 0.015), mat.dark, [0, 0, 0], { parent: tv });
+  add(new THREE.PlaneGeometry(1.36, 0.76), new THREE.MeshStandardMaterial({ color: '#111', map: tvTex, emissive: '#ffffff', emissiveMap: tvTex, emissiveIntensity: 0.55, roughness: 0.15 }), [0, 0, 0.03], { parent: tv, cast: false });
+  tv.position.set(tvX, 1.95, zb + 0.21);
+  const consoleUnit = piece();
+  add(box(2.0, 0.42, 0.42, 0.03), mat.wood, [0, 0, 0], { parent: consoleUnit });
+  [-0.5, 0, 0.5].forEach((x) => add(new THREE.BoxGeometry(0.006, 0.34, 0.01), mat.dark, [x, 0, 0.215], { parent: consoleUnit, cast: false }));
+  [-0.75, -0.25, 0.25, 0.75].forEach((x) => add(new THREE.BoxGeometry(0.16, 0.02, 0.02), mat.brass, [x, 0.08, 0.225], { parent: consoleUnit }));
+  add(new THREE.LatheGeometry([[0, 0], [0.08, 0], [0.11, 0.1], [0.07, 0.26], [0.04, 0.32], [0.05, 0.34]].map(([a, b]) => new THREE.Vector2(a, b)), 24), M('#c97a48', { roughness: 0.35 }), [0.7, 0.21, 0], { parent: consoleUnit });
+  ['#2f6a4c', '#d9c7a5', '#7a5d44'].forEach((c, i) => add(box(0.36 - i * 0.04, 0.05, 0.26, 0.01), M(c, { roughness: 0.8 }), [-0.65, 0.235 + i * 0.05, 0], { parent: consoleUnit }));
+  consoleUnit.position.set(tvX, 0.5, zb + 0.34);
+
+  // open walnut bookshelf with warm shelf lights, books and vases (right of the bed)
+  const shelf = piece();
+  const shW = 1.25, shH = 2.5, shD = 0.34, shelfYs = [0.05, 0.62, 1.19, 1.76, 2.33];
+  add(box(shW, shH, 0.03, 0.01), mat.wood, [0, shH / 2, -shD / 2 + 0.015], { parent: shelf });
+  [-shW / 2, shW / 2].forEach((x) => add(box(0.05, shH, shD, 0.01), mat.wood, [x, shH / 2, 0], { parent: shelf }));
+  shelfYs.forEach((y) => {
+    add(box(shW, 0.05, shD, 0.01), mat.wood, [0, y, 0], { parent: shelf });
+    if (y > 0.1) add(new THREE.BoxGeometry(shW - 0.1, 0.015, 0.02), mat.cove, [0, y - 0.035, shD / 2 - 0.04], { parent: shelf, cast: false });
+  });
+  const bookCols = ['#2f6a4c', '#d9c7a5', '#8c4a32', '#efe7d9', '#3b4a5a', '#c9a25e', '#6f8f7d'];
+  [0, 1, 2, 3].forEach((row) => {
+    const y = shelfYs[row] + 0.025;
+    let x = -shW / 2 + 0.08;
+    const end = row % 2 ? 0.1 : 0.3;
+    while (x < end) {
+      const bw = rnd(0.04, 0.07), bh = rnd(0.24, 0.36);
+      add(new THREE.BoxGeometry(bw, bh, rnd(0.2, 0.25)), M(bookCols[Math.floor(rnd(0, bookCols.length))], { roughness: 0.85 }), [x + bw / 2, y + bh / 2, 0.02], { parent: shelf });
+      x += bw + 0.008;
+    }
+    // a vase or bowl on the other side of each shelf
+    const vx = row % 2 ? 0.35 : -0.08;
+    if (row % 2) add(new THREE.LatheGeometry([[0, 0], [0.07, 0], [0.1, 0.12], [0.05, 0.28], [0.06, 0.3]].map(([a, b]) => new THREE.Vector2(a, b)), 24), mat.ceramic, [vx, y, 0], { parent: shelf });
+    else add(new THREE.SphereGeometry(0.11, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2), M('#c97a48', { roughness: 0.4, side: THREE.DoubleSide }), [vx + 0.35, y + 0.0, 0], { parent: shelf, rot: [Math.PI, 0, 0] });
+  });
+  shelf.position.set(3.55, 0.02, zb + 0.14 + shD / 2);
+
+  // reading corner by the window: armchair, round side table with a lamp
+  const chair = piece();
+  const chairFab = fabric('#d9cfbf');
+  add(box(0.86, 0.22, 0.82, 0.08), mat.wood, [0, 0.2, 0], { parent: chair });
+  add(box(0.74, 0.18, 0.7, 0.08), chairFab, [0.03, 0.39, 0], { parent: chair });
+  add(box(0.18, 0.72, 0.82, 0.08), chairFab, [-0.36, 0.62, 0], { parent: chair, rot: [0, 0, 0.12] });
+  [-0.41, 0.41].forEach((zz) => add(box(0.8, 0.34, 0.14, 0.06), chairFab, [0, 0.5, zz], { parent: chair }));
+  add(box(0.14, 0.34, 0.42, 0.06), fabric('#2f6a4c'), [-0.2, 0.62, 0.05], { parent: chair, rot: [0, 0, 0.18] });
+  [[-0.36, -0.36], [0.36, -0.36], [-0.36, 0.36], [0.36, 0.36]].forEach(([x, zz]) => add(new THREE.CylinderGeometry(0.025, 0.018, 0.12, 8), mat.brass, [x, 0.06, zz], { parent: chair }));
+  chair.position.set(-4.35, 0.02, 1.75);
+  chair.rotation.y = -0.35;
+  const sideTable = piece();
+  add(new THREE.CylinderGeometry(0.28, 0.28, 0.04, 32), mat.wood, [0, 0.56, 0], { parent: sideTable });
+  add(new THREE.CylinderGeometry(0.03, 0.03, 0.54, 12), mat.brass, [0, 0.28, 0], { parent: sideTable });
+  add(new THREE.CylinderGeometry(0.18, 0.2, 0.02, 24), mat.brass, [0, 0.01, 0], { parent: sideTable });
+  add(new THREE.CylinderGeometry(0.03, 0.05, 0.22, 16), mat.ceramic, [0.05, 0.69, 0], { parent: sideTable });
+  const readShade = new THREE.MeshStandardMaterial({ color: '#fff4dc', emissive: '#ffcf87', emissiveIntensity: 0, roughness: 0.6, side: THREE.DoubleSide });
+  add(new THREE.CylinderGeometry(0.1, 0.15, 0.18, 32, 1, true), readShade, [0.05, 0.86, 0], { parent: sideTable, cast: false });
+  lamps.push(readShade);
+  add(box(0.2, 0.04, 0.15, 0.01), M('#8c4a32', { roughness: 0.8 }), [-0.12, 0.6, 0.08], { parent: sideTable });
+  sideTable.position.set(-4.45, 0.02, 2.85);
   // indoor tree in the back-right corner
   const plant = piece();
   const potProfile = [[0, 0], [0.26, 0], [0.33, 0.06], [0.36, 0.5], [0.38, 0.62], [0.34, 0.64], [0.32, 0.6]].map(([a, b]) => new THREE.Vector2(a, b));
