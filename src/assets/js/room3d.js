@@ -456,21 +456,95 @@ function init() {
   const potProfile = [[0, 0], [0.26, 0], [0.33, 0.06], [0.36, 0.5], [0.38, 0.62], [0.34, 0.64], [0.32, 0.6]].map(([a, b]) => new THREE.Vector2(a, b));
   add(new THREE.LatheGeometry(potProfile, 40), mat.ceramic, [0, 0, 0], { parent: plant });
   add(new THREE.CylinderGeometry(0.31, 0.31, 0.02, 32), mat.soil, [0, 0.58, 0], { parent: plant, cast: false });
-  add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(0, 0.55, 0), new THREE.Vector3(0.05, 1.2, 0.03), new THREE.Vector3(-0.06, 1.8, -0.02), new THREE.Vector3(0.04, 2.3, 0.02)]), 24, 0.045, 8), mat.bark, [0, 0, 0], { parent: plant });
-  const leafGeo = new THREE.SphereGeometry(0.5, 10, 6); leafGeo.scale(0.2, 0.025, 0.42); leafGeo.translate(0, 0, 0.2);
-  const leaves = new THREE.InstancedMesh(leafGeo, mat.leaf, 130);
-  const dummy = new THREE.Object3D(), tint = new THREE.Color();
-  const crowns = [[0.3, 2.0, 0.1, 0.42], [-0.32, 2.2, -0.08, 0.42], [0.18, 2.5, -0.15, 0.4], [0, 2.3, 0.05, 0.45]];
-  for (let i = 0; i < 130; i++) {
-    const [cx2, cy2, cz2, r] = crowns[i % crowns.length];
-    const dir = new THREE.Vector3(rnd(-1, 1), rnd(-0.6, 1), rnd(-1, 1)).normalize();
-    dummy.position.set(cx2 + dir.x * r * rnd(0.5, 1), cy2 + dir.y * r * rnd(0.5, 1), cz2 + dir.z * r * rnd(0.5, 1));
-    dummy.lookAt(dummy.position.clone().add(dir)); dummy.rotateX(rnd(-0.6, 0.6)); dummy.rotateZ(rnd(-0.8, 0.8));
-    const sc = rnd(0.75, 1.2); dummy.scale.set(sc, sc, sc); dummy.updateMatrix();
-    leaves.setMatrixAt(i, dummy.matrix);
-    leaves.setColorAt(i, tint.setHSL(rnd(0.27, 0.33), rnd(0.3, 0.5), rnd(0.24, 0.38)));
+  // Fiddle-leaf fig: a real trunk with branches, broad violin-shaped leaves in pairs along each
+  // branch, curved and cupped, with a glossy veined texture. Seeded so it looks the same every load.
+  let seed = 7;
+  const sr = (a, b) => { seed = (seed * 16807) % 2147483647; return a + ((seed - 1) / 2147483646) * (b - a); };
+  const V = (x, y, z) => new THREE.Vector3(x, y, z);
+  const trunk = new THREE.CatmullRomCurve3([V(0, 0.55, 0), V(0.04, 1.1, 0.02), V(-0.03, 1.7, 0.01), V(0.03, 2.3, 0.03)]);
+  add(new THREE.TubeGeometry(trunk, 32, 0.042, 10), mat.bark, [0, 0, 0], { parent: plant });
+  add(new THREE.SphereGeometry(0.06, 12, 8), mat.bark, [0.02, 0.6, 0], { parent: plant }); // root flare
+
+  // leaf texture: deep glossy green, pale midrib and arching side veins (tip at the top)
+  const leafTex = canvasTex(128, 256, (g, w, h) => {
+    const base = g.createLinearGradient(0, 0, w, 0);
+    base.addColorStop(0, '#2c5226'); base.addColorStop(0.5, '#3f6e33'); base.addColorStop(1, '#2c5226');
+    g.fillStyle = base; g.fillRect(0, 0, w, h);
+    const tipShade = g.createLinearGradient(0, 0, 0, h);
+    tipShade.addColorStop(0, 'rgba(120,160,70,.18)'); tipShade.addColorStop(1, 'rgba(10,30,10,.18)');
+    g.fillStyle = tipShade; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 900; i++) { g.fillStyle = `rgba(${sr(20, 90)},${sr(60, 120)},${sr(20, 60)},.12)`; g.fillRect(sr(0, w), sr(0, h), 2, 2); }
+    g.strokeStyle = 'rgba(196,214,140,.55)'; g.lineCap = 'round';
+    for (let y = 40; y < h - 10; y += 22) {
+      [-1, 1].forEach((s) => { g.lineWidth = 1.6; g.beginPath(); g.moveTo(w / 2, y); g.quadraticCurveTo(w / 2 + s * w * 0.22, y - 14, w / 2 + s * w * 0.48, y - 34); g.stroke(); });
+    }
+    g.strokeStyle = 'rgba(214,226,160,.9)';
+    for (let y = 0; y < h; y += 4) { g.lineWidth = 1.2 + 3.2 * (y / h); g.beginPath(); g.moveTo(w / 2, y); g.lineTo(w / 2, y + 5); g.stroke(); }
+  });
+  const leafMat = new THREE.MeshPhysicalMaterial({ map: leafTex, roughness: 0.42, clearcoat: 0.35, clearcoatRoughness: 0.35, side: THREE.DoubleSide, envMapIntensity: 0.6 });
+
+  // leaf mesh: a grid shaped to the violin outline, curled at the tip and cupped along the midrib
+  const LL = 0.44, LW = 0.42;
+  const leafGeo = new THREE.PlaneGeometry(1, 1, 6, 14);
+  {
+    const p = leafGeo.attributes.position, uv = leafGeo.attributes.uv;
+    for (let i = 0; i < p.count; i++) {
+      const u = uv.getX(i) - 0.5, v = uv.getY(i);
+      const hw = Math.max(0.035, 0.5 * Math.pow(Math.sin(Math.PI * Math.pow(v, 0.72)), 0.65) * (0.82 + 0.18 * v) * (1 - 0.1 * Math.exp(-Math.pow((v - 0.45) / 0.08, 2))));
+      const x = u * 2 * hw * LW, z = v * LL;
+      const y = 0.55 * Math.abs(x) * (0.6 + v) - 0.1 * v * v; // cup up at the edges, tip droops
+      p.setXYZ(i, x, y, z);
+    }
+    leafGeo.computeVertexNormals();
   }
-  leaves.castShadow = true; plant.add(leaves);
+
+  // branches: start on the trunk, arch outwards then up; kept away from the back wall and bookshelf
+  const branches = [
+    { y: 1.45, a: 0.15, len: 0.75, rise: 0.25, n: 9 },
+    { y: 1.65, a: 1.35, len: 0.7, rise: 0.35, n: 9 },
+    { y: 1.85, a: 0.75, len: 0.62, rise: 0.4, n: 8 },
+    { y: 2.0, a: 2.45, len: 0.55, rise: 0.5, n: 7 },
+    { y: 2.1, a: -0.35, len: 0.55, rise: 0.45, n: 7 },
+    { y: 2.25, a: 1.9, len: 0.45, rise: 0.55, n: 5 },
+  ];
+  const leafSlots = [];
+  const UPV = V(0, 1, 0);
+  branches.forEach((b) => {
+    const o = V(Math.cos(b.a), 0, Math.sin(b.a));
+    const s = trunk.getPointAt((b.y - 0.55) / 1.75);
+    const curve = new THREE.CatmullRomCurve3([s, s.clone().addScaledVector(o, b.len * 0.35).add(V(0, b.rise * 0.15, 0)), s.clone().addScaledVector(o, b.len * 0.75).add(V(0, b.rise * 0.55, 0)), s.clone().addScaledVector(o, b.len).add(V(0, b.rise, 0))]);
+    add(new THREE.TubeGeometry(curve, 20, 0.018, 6), mat.bark, [0, 0, 0], { parent: plant });
+    for (let k = 0; k < b.n; k++) {
+      const t = 0.3 + (0.7 * k) / (b.n - 1);
+      const side = k % 2 ? 1 : -1;
+      const tan = curve.getTangentAt(t);
+      const sideV = V().crossVectors(tan, UPV).normalize().multiplyScalar(side);
+      // older leaves (near the trunk) droop, young leaves at the tip point up
+      const lift = THREE.MathUtils.lerp(-0.55, 0.75, t) + sr(-0.15, 0.15);
+      const dir = sideV.clone().multiplyScalar(0.75).addScaledVector(tan, 0.55).add(V(0, lift, 0)).normalize();
+      leafSlots.push({ p: curve.getPointAt(t), dir, s: THREE.MathUtils.lerp(1.05, 0.72, t) * sr(0.9, 1.08) });
+    }
+    // a small upright cluster at the branch tip
+    const tip = curve.getPointAt(1);
+    [-0.5, 0.5].forEach((r) => leafSlots.push({ p: tip, dir: V(o.x * 0.35 + Math.cos(b.a + r) * 0.2, 1, o.z * 0.35 + Math.sin(b.a + r) * 0.2).normalize(), s: 0.6 }));
+  });
+  // crown at the top of the trunk
+  for (let k = 0; k < 6; k++) { const a = (k / 6) * Math.PI * 2; leafSlots.push({ p: trunk.getPointAt(1), dir: V(Math.cos(a) * 0.55, 1, Math.sin(a) * 0.55).normalize(), s: k % 2 ? 0.7 : 0.85 }); }
+
+  const leaves = new THREE.InstancedMesh(leafGeo, leafMat, leafSlots.length);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), roll = new THREE.Quaternion(), tint = new THREE.Color();
+  leafSlots.forEach(({ p, dir, s }, i) => {
+    const sideAx = V().crossVectors(UPV, dir); if (sideAx.lengthSq() < 1e-4) sideAx.set(1, 0, 0); sideAx.normalize();
+    const normal = V().crossVectors(dir, sideAx).normalize();
+    m4.makeBasis(sideAx, normal, dir);
+    q.setFromRotationMatrix(m4);
+    roll.setFromAxisAngle(dir, sr(-0.45, 0.45));
+    q.premultiply(roll);
+    m4.compose(p, q, V(s, s, s));
+    leaves.setMatrixAt(i, m4);
+    const k = sr(0.82, 1.08); leaves.setColorAt(i, tint.setRGB(k * sr(0.92, 1), k, k * sr(0.85, 0.98)));
+  });
+  leaves.castShadow = true; leaves.receiveShadow = true; plant.add(leaves);
   plant.position.set(XR - 0.8, 0.02, ZB + 0.9);
 
   /* ---------- lights ---------- */
