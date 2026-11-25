@@ -236,7 +236,7 @@ function init() {
 
   /* ---------- room shell: plinth, floor, two walls and a plain ceiling ---------- */
   VIEW_DIR.set(0.72, 0.07, 1).normalize(); // eye-level cut-away: we look in under the ceiling
-  const W = 11, D = 9, H = 4.0, T = 0.24;
+  const W = 11, D = 9, H = 4.7, T = 0.24;
   const X0 = -W / 2, XR = W / 2, ZB = -D / 2, ZF = D / 2;
   const zb = ZB + T / 2, xl = X0 + T / 2;
   const shell = new THREE.Group(); house.add(shell);
@@ -304,15 +304,15 @@ function init() {
   /* ---------- stage: feature walls (upholstered headboard wall + walnut wardrobe) ---------- */
   const feature = new THREE.Group(); house.add(feature);
   const BX = 0.3; // bed centre (x)
-  add(box(4.8, 3.0, 0.08, 0.02), mat.wood, [BX, 1.5, zb + 0.17], { parent: feature });
+  add(box(4.8, H - 1.0, 0.08, 0.02), mat.wood, [BX, (H - 1.0) / 2, zb + 0.17], { parent: feature });
   const headFab = fabric('#c9cdbf');
   for (let i = 0; i < 11; i++) add(box(0.38, 1.55, 0.14, 0.06), headFab, [BX - 2.0 + i * 0.4, 1.3, zb + 0.27], { parent: feature });
-  add(new THREE.BoxGeometry(4.6, 0.03, 0.04), mat.cove, [BX, 3.02, zb + 0.23], { parent: feature, cast: false });
+  add(new THREE.BoxGeometry(4.6, 0.03, 0.04), mat.cove, [BX, H - 0.98, zb + 0.23], { parent: feature, cast: false });
   const halo = add(new THREE.PlaneGeometry(5.6, 3.8), new THREE.MeshBasicMaterial({ map: radial([[0, 'rgba(255,214,150,0)'], [0.6, 'rgba(255,214,150,0)'], [0.74, 'rgba(255,214,150,.55)'], [1, 'rgba(255,214,150,0)']]), transparent: true, opacity: 0, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending }), [BX, 1.55, zb + 0.13], { parent: feature, cast: false, receive: false });
   // wardrobe on the left wall: four walnut doors with brass pulls
   const wdx = X0 + T + 0.34, wdz = ZB + T + 1.6;
-  add(box(0.66, 3.3, 2.9, 0.02), mat.wood, [wdx, 1.65, wdz], { parent: feature });
-  for (let k = 1; k < 4; k++) add(new THREE.BoxGeometry(0.02, 3.2, 0.015), mat.dark, [wdx + 0.335, 1.65, wdz - 1.45 + k * 0.725], { parent: feature, cast: false });
+  add(box(0.66, H - 0.7, 2.9, 0.02), mat.wood, [wdx, (H - 0.7) / 2, wdz], { parent: feature });
+  for (let k = 1; k < 4; k++) add(new THREE.BoxGeometry(0.02, H - 0.8, 0.015), mat.dark, [wdx + 0.335, (H - 0.7) / 2, wdz - 1.45 + k * 0.725], { parent: feature, cast: false });
   [-1.09, -0.36, 0.36, 1.09].forEach((dz, k) => add(new THREE.BoxGeometry(0.03, 0.7, 0.03), mat.brass, [wdx + 0.35, 1.7, wdz + dz + (k % 2 ? -0.28 : 0.28)], { parent: feature }));
 
   /* ---------- stage: decoration (bed, lamps, hanging lights, curtains, rug, art, plant, paint) ---------- */
@@ -434,11 +434,11 @@ function init() {
   /* ---------- stages: bare room -> epoxy -> false ceiling -> walls -> decoration ---------- */
   const STAGES = ['shell', 'floor', 'ceiling', 'walls', 'decor'];
   const CAM = {
-    shell: { x: -0.3, y: 1.85, z: -0.8, d: 23.5 },
-    floor: { x: -0.3, y: 1.7, z: -0.6, d: 23 },
-    ceiling: { x: -0.1, y: 2.1, z: -0.6, d: 23 },
-    walls: { x: -0.4, y: 1.85, z: -1.0, d: 22.5 },
-    decor: { x: -0.3, y: 1.85, z: -0.8, d: 23 },
+    shell: { x: -0.3, y: 2.2, z: -0.8, d: 24.5 },
+    floor: { x: -0.3, y: 2.05, z: -0.6, d: 24 },
+    ceiling: { x: -0.1, y: 2.45, z: -0.6, d: 24 },
+    walls: { x: -0.4, y: 2.2, z: -1.0, d: 23.5 },
+    decor: { x: -0.3, y: 2.2, z: -0.8, d: 24 },
   };
   Object.assign(focus, CAM.shell);
   ceiling.position.y = -0.6; ceiling.scale.set(1, 1, 1); ceiling.visible = false;
@@ -497,6 +497,8 @@ function init() {
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.fov = w / h < 0.95 ? 40 : 30;
+    const shift = w >= 900 ? w * 0.07 : 0; // move the room towards the right
+    if (shift) camera.setViewOffset(w, h, -shift, 0, w, h); else camera.clearViewOffset();
     camera.updateProjectionMatrix();
   }
   resize();
