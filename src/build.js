@@ -144,25 +144,33 @@ const header = (page) => {
     </div>`).join('');
   const right = [['projects/', tr('Projects', 'المشاريع'), 'projects'], ['about/', tr('About Us', 'من نحن'), 'about'], ['blog/', tr('Blog', 'المدونة'), 'blog'], ['contact/', tr('Contact Us', 'اتصل بنا'), 'contact']];
 
+  const ddBtn = (key, label) => `<button type="button" class="hdr-dd" data-dd="${key}" aria-expanded="false" ${cur(key)}>${label} ${icon('chevron', 'chev h-3.5 w-3.5', 2.6)}</button>`;
+
   return `<div class="announce no-print">
-  <div class="announce-in">
-    <span class="hidden sm:inline"><b>${tr('Free site visit', 'زيارة مجانية')}</b> ${tr('across Qatar — supply &amp; installation by our own team.', 'في جميع أنحاء قطر — توريد وتركيب بفريقنا.')}</span>
-    <a href="tel:${C.site.phoneHref}" data-track="call"><b dir="ltr">${C.site.phone}</b></a>
-    <a href="${otherUrl}" hreflang="${other}" lang="${other}" class="announce-lang">${other === 'ar' ? 'العربية' : 'English'}</a>
+  <div class="container-site announce-in">
+    <span class="announce-dot"></span>
+    <span><b>${tr('Free site visit', 'زيارة مجانية')}</b><span class="hidden sm:inline"> ${tr('across Qatar — supply &amp; installation by our own team.', 'في جميع أنحاء قطر — توريد وتركيب بفريقنا.')}</span></span>
   </div>
 </div>
 <header class="site-header" data-nav>
-  <div class="container-site hdr">
-    <button type="button" class="hdr-burger lg:hidden" data-drawer-open aria-label="${tr('Open menu', 'فتح القائمة')}">${icon('menu', 'h-7 w-7', 2)}</button>
-    ${logo()}
-    <div class="hdr-pill hidden lg:flex">
-      <button type="button" class="hdr-dd" data-dd="services" aria-expanded="false" ${cur('services')}>${tr('Services', 'الخدمات')} ${icon('chevron', 'chev h-4 w-4', 2.4)}</button>
-      <button type="button" class="hdr-dd" data-dd="shop" aria-expanded="false" ${cur('shop')}>${tr('Shop', 'المتجر')} ${icon('chevron', 'chev h-4 w-4', 2.4)}</button>
+  <div class="container-site hdr-wrap">
+    <div class="hdr">
+      ${logo()}
+      <nav class="hdr-nav hidden xl:flex" aria-label="${tr('Main', 'الرئيسية')}">
+        ${ddBtn('services', tr('Services', 'الخدمات'))}
+        ${ddBtn('shop', tr('Shop', 'المتجر'))}
+        ${right.map(([p, label, key]) => `<a href="${href(p)}" ${cur(key)}>${label}</a>`).join('')}
+      </nav>
+      <div class="hdr-actions">
+        <a href="${otherUrl}" hreflang="${other}" lang="${other}" class="hdr-lang">${icon('globe', 'h-5 w-5 sm:h-4 sm:w-4', 1.8)}<span class="hidden sm:inline">${other === 'ar' ? 'العربية' : 'English'}</span></a>
+        <a href="tel:${C.site.phoneHref}" class="hdr-phone hidden md:inline-flex" data-track="call" aria-label="${tr('Call us', 'اتصل بنا')}"><span class="hdr-phone-ic">${icon('phone', 'h-4 w-4', 2)}</span><b dir="ltr" class="hidden 2xl:inline">${C.site.phone}</b></a>
+        <a href="${href('quote/')}" class="hdr-cta hidden sm:inline-flex">${tr('Free Quote', 'عرض سعر مجاني')} ${arrow('h-4 w-4')}</a>
+        <button type="button" class="hdr-burger xl:hidden" data-drawer-open aria-label="${tr('Open menu', 'فتح القائمة')}">${icon('menu', 'h-6 w-6', 2)}</button>
+      </div>
     </div>
-    <nav class="hdr-links hidden lg:flex" aria-label="${tr('Main', 'الرئيسية')}">${right.map(([p, label, key]) => `<a href="${href(p)}" ${cur(key)}>${label}</a>`).join('')}</nav>
+    ${panel('services', svcCats, [href('services/'), tr('All services', 'كل الخدمات')])}
+    ${panel('shop', shopCats, [href('shop/'), tr('Visit the shop', 'تصفح المتجر')])}
   </div>
-  ${panel('services', svcCats, [href('services/'), tr('All services', 'كل الخدمات')])}
-  ${panel('shop', shopCats, [href('shop/'), tr('Visit the shop', 'تصفح المتجر')])}
 </header>
 <div class="drawer-backdrop" data-drawer-close></div>
 <aside class="drawer" data-drawer aria-label="${tr('Menu', 'القائمة')}">
