@@ -491,10 +491,11 @@ const BUILDERS = {
   },
 };
 
-function mount(el) {
+/** Build one live scene inside `el`; returns a function that tears it down (frees the WebGL context). */
+function create(el) {
   const type = el.getAttribute('data-scene');
   const build = BUILDERS[type];
-  if (!build) return;
+  if (!build) return null;
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, el.hasAttribute('data-lite') ? 1 : 1.5));
@@ -529,7 +530,8 @@ function mount(el) {
   scene.add(root);
   const texFrom = ALL_TEX.length;
   const cfg = build(root);
-  ALL_TEX.slice(texFrom).forEach((tx) => renderer.initTexture(tx));
+  const myTex = ALL_TEX.slice(texFrom);
+  myTex.forEach((tx) => renderer.initTexture(tx));
   const look = new THREE.Vector3(...cfg.look);
   camera.position.set(...cfg.cam);
   camera.lookAt(look);
@@ -550,23 +552,26 @@ function mount(el) {
     camera.zoom = Math.min(1, camera.aspect * 1.05);
     camera.updateProjectionMatrix();
   };
-  new ResizeObserver(resize).observe(el);
+  const ro = new ResizeObserver(resize);
+  ro.observe(el);
   resize();
 
   // Pointer parallax
   const target = { x: 0, y: 0 };
+  const ac = new AbortController();
   el.addEventListener('pointermove', (e) => {
     const r = el.getBoundingClientRect();
     target.x = ((e.clientX - r.left) / r.width - 0.5) * 2;
     target.y = ((e.clientY - r.top) / r.height - 0.5) * 2;
-  });
-  el.addEventListener('pointerleave', () => { target.x = target.y = 0; });
+  }, { signal: ac.signal });
+  el.addEventListener('pointerleave', () => { target.x = target.y = 0; }, { signal: ac.signal });
 
-  let visible = false, last = performance.now(), time = 0;
-  new IntersectionObserver((entries) => { visible = entries[0].isIntersecting; if (visible) { last = performance.now(); loop(); } }, { rootMargin: '100px' }).observe(el);
+  let visible = false, alive = true, raf = 0, last = performance.now(), time = 0;
+  const io = new IntersectionObserver((entries) => { visible = entries[0].isIntersecting; if (visible) { last = performance.now(); cancelAnimationFrame(raf); loop(); } }, { rootMargin: '100px' });
+  io.observe(el);
 
   function loop() {
-    if (!visible) return;
+    if (!visible || !alive) return;
     const now = performance.now();
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
@@ -579,13 +584,39 @@ function mount(el) {
     }
     renderer.render(scene, camera);
     if (reduce) return; // one static frame
-    requestAnimationFrame(loop);
+    raf = requestAnimationFrame(loop);
   }
   renderer.render(scene, camera);
+
+  return function destroy() {
+    alive = false;
+    cancelAnimationFrame(raf);
+    io.disconnect(); ro.disconnect(); ac.abort();
+    scene.traverse((o) => {
+      if (o.geometry) o.geometry.dispose();
+      if (o.material) [].concat(o.material).forEach((m) => m.dispose());
+    });
+    myTex.forEach((tx) => { tx.dispose(); const k = ALL_TEX.indexOf(tx); if (k > -1) ALL_TEX.splice(k, 1); });
+    if (scene.environment) scene.environment.dispose();
+    pmrem.dispose();
+    renderer.dispose();
+    renderer.forceContextLoss();
+    renderer.domElement.remove();
+    if (fb) fb.hidden = false;
+  };
+}
+
+/* Many scenes on one page: only keep a WebGL context for scenes near the screen
+   (browsers cap live contexts at ~16), and free it again when the scene scrolls far away. */
+function mount(el) {
+  let destroy = null;
+  new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      if (!destroy) { try { destroy = create(el); } catch (e) { console.warn('3D scene failed', e); } }
+    } else if (destroy) { destroy(); destroy = null; }
+  }, { rootMargin: '700px 0px' }).observe(el);
 }
 
 if (webgl()) {
-  document.querySelectorAll('[data-scene]').forEach((el) => {
-    try { mount(el); } catch (e) { console.warn('3D scene failed', e); }
-  });
+  document.querySelectorAll('[data-scene]').forEach(mount);
 }

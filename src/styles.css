@@ -28,7 +28,7 @@
     --font-head: 'Inter', 'IBM Plex Sans Arabic', system-ui, sans-serif;
     --font-body: 'Inter', 'IBM Plex Sans Arabic', system-ui, sans-serif;
     --font-arabic: 'IBM Plex Sans Arabic', system-ui, sans-serif;
-    --container-site: 78rem;
+    --container-site: 82rem; /* 1312px, same as the reference */
     /* soft UI (same recipe as the Exotic Tint site, in green) */
     --neu-bg: #f2f8f4;
     --neu-surface: linear-gradient(145deg, #f8fcf9, #e9f2ec);
@@ -61,7 +61,8 @@
 }
 
 @layer components {
-    .container-site { margin-inline: auto; width: 100%; max-width: var(--container-site); padding-inline: 1.25rem; }
+    .container-site { margin-inline: auto; width: 100%; max-width: var(--container-site); padding-inline: 1rem; }
+    @media (min-width: 640px) { .container-site { padding-inline: 1.5rem; } }
     @media (min-width: 1024px) { .container-site { padding-inline: 2rem; } }
 
     /* ---------- Section rhythm ---------- */
@@ -171,7 +172,7 @@
     .announce-dot { width: 7px; height: 7px; border-radius: 99px; background: var(--brand); box-shadow: 0 0 0 4px rgb(12 154 79 / .18); flex-shrink: 0; }
     .site-header { position: sticky; top: 0; z-index: 50; background: rgb(255 255 255 / .96); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); box-shadow: 0 6px 20px -6px rgb(14 26 20 / .16); transition: box-shadow .3s ease, background .3s ease; }
     .site-header.scrolled { background: rgb(255 255 255 / .98); box-shadow: 0 10px 28px -8px rgb(14 26 20 / .24); }
-    .hdr-wrap { position: relative; max-width: 92rem; }
+    .hdr-wrap { position: relative; }
     .hdr { display: flex; align-items: center; gap: .75rem; min-height: 64px; }
     @media (min-width: 1280px) { .hdr { gap: 1.5rem; min-height: 72px; } }
     .hdr-nav { flex: 1 1 auto; min-width: 0; justify-content: center; align-items: center; gap: .15rem; }
@@ -416,6 +417,20 @@
     .bento-go { position: absolute; z-index: 2; inset-inline-end: 1rem; bottom: 1rem; display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 999px; color: #fff; background: linear-gradient(145deg, #13b35d, #0a8443); box-shadow: 4px 4px 10px rgb(132 166 146 / .55); transition: transform .25s ease; }
     .bento-tile:hover .bento-go { transform: translateX(3px); }
     [dir='rtl'] .bento-tile:hover .bento-go { transform: translateX(-3px); }
+
+
+    /* ---------- Home: one story section per service ---------- */
+    .story-chip { display: inline-flex; align-items: center; gap: .45rem; padding: .4rem .85rem; border-radius: 999px; font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--brand-2); background: var(--neu-surface); box-shadow: var(--neu-out-sm); }
+    .story-tag { display: inline-flex; align-items: center; gap: .4rem; padding: .45rem .85rem; border-radius: 999px; font-size: .82rem; font-weight: 600; color: var(--ink-2); background: #fff; box-shadow: var(--neu-out-sm); }
+    .story-tag svg { color: var(--brand); }
+    .story-stage { position: relative; overflow: hidden; aspect-ratio: 4 / 3; border-radius: 30px; background: radial-gradient(60% 55% at 50% 28%, rgb(255 214 150 / .42), transparent 72%), linear-gradient(180deg, #f6fbf8, #e3f0e8); box-shadow: var(--neu-out-lg); }
+    @media (min-width: 768px) { .story-stage { aspect-ratio: 16 / 8; } }
+    @media (min-width: 1024px) { .story-stage { aspect-ratio: auto; height: 460px; } }
+    .story-stage .scene-wrap { position: absolute; inset: 0; }
+    .story-badge { position: absolute; z-index: 2; display: inline-flex; align-items: center; gap: .45rem; padding: .5rem .9rem; border-radius: 999px; font-size: .8rem; color: var(--ink); background: rgb(255 255 255 / .92); box-shadow: var(--neu-out-sm); }
+    .story-badge svg { color: var(--brand); }
+    .story-badge-l { inset-inline-start: 1rem; bottom: 1rem; }
+    .story-badge-r { inset-inline-end: 1rem; top: 1rem; font-weight: 700; }
 
     /* ---------- Home: steps ---------- */
     .step-card { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.1rem; border-radius: 20px; background: var(--neu-surface); box-shadow: var(--neu-out-sm); transition: transform .25s ease, box-shadow .25s ease; }

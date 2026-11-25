@@ -447,6 +447,38 @@ function homePage() {
     <div class="bento-scene scene-wrap" data-scene="${s.scene}" data-lite role="img" aria-label="${esc(t(s.title))} — 3D"><div class="scene-fallback"><img src="${s.img}" alt="" class="h-full w-full object-cover" loading="lazy"></div></div>
     <span class="bento-go">${arrow()}</span>
   </a>`;
+  // one short story section per service (like the reference's "Same sun. Two rooms."), each with a wide live 3D stage
+  const storyTitles = {
+    heater: [['Hot water.', 'Every tap.'], ['ماء ساخن.', 'في كل صنبور.']],
+    chiller: [['Summer heat.', 'Cool water.'], ['حر الصيف.', 'ماء بارد.']],
+    epoxy: [['One pour.', 'Zero joints.'], ['صبة واحدة.', 'بلا فواصل.']],
+    interior: [['Bare walls.', 'Finished room.'], ['جدران عارية.', 'غرفة جاهزة.']],
+    pump: [['Full pressure.', 'Every floor.'], ['ضغط كامل.', 'في كل طابق.']],
+    maintenance: [['One call.', 'Fixed right.'], ['اتصال واحد.', 'إصلاح متقن.']],
+  };
+  const story = (s, i) => {
+    const pair = storyTitles[s.scene] ? storyTitles[s.scene][L === 'ar' ? 1 : 0] : [t(s.title), ''];
+    const chips = (s.package ? s.package.map((x) => x.t) : s.features).slice(0, 3);
+    return `<section class="sec ${i % 2 ? 'sec-band' : ''}">
+  <div class="container-site">
+    <div class="mx-auto max-w-2xl text-center" ${reveal('up')}>
+      <span class="story-chip">${icon(s.icon, 'h-3.5 w-3.5', 2.2)} 0${i + 1} · ${esc(t(s.menu))}</span>
+      <h2 class="h-section mt-4">${esc(pair[0])} <span class="text-grad">${esc(pair[1])}</span></h2>
+      <p class="sub mt-2">${esc(t(s.tagline))}</p>
+      <div class="mt-5 flex flex-wrap justify-center gap-2">${chips.map((c) => `<span class="story-tag">${icon('check', 'h-3.5 w-3.5', 3)} ${esc(t(c))}</span>`).join('')}</div>
+    </div>
+    <div class="story-stage mt-10" ${reveal('up', 100)}>
+      <div class="scene-wrap h-full w-full" data-scene="${s.scene}" role="img" aria-label="${esc(t(s.title))} — 3D"><div class="scene-fallback"><img src="${s.img}" alt="" class="h-full w-full object-cover" loading="lazy"></div></div>
+      ${s.price ? `<span class="story-badge story-badge-l">${fromQar(s.price)}</span>` : ''}
+      <span class="story-badge story-badge-r">${icon('badge', 'h-4 w-4', 2)} ${tr('Free site visit', 'زيارة مجانية')}</span>
+    </div>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a href="${href('quote/?service=' + s.slug)}" class="btn btn-primary">${tr('Get a quote', 'اطلب عرض سعر')} ${arrow()}</a>
+      <a href="${href('services/' + s.slug + '/')}" class="btn btn-white">${tr('View details', 'التفاصيل')}</a>
+    </div>
+  </div>
+</section>`;
+  };
   const body = `
 <section class="hero-soft">
   <div class="hero-soft-in">
@@ -487,17 +519,7 @@ function homePage() {
   </div>
 </section>
 
-<section class="sec">
-  <div class="container-site grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
-    <div class="overflow-hidden rounded-[26px] shadow-[var(--neu-out-lg)]" ${reveal('left')}><img src="/assets/img/shop-front.jpg" alt="${tr('Juri Star Trading shopfront in Qatar', 'واجهة محل جوري ستار للتجارة في قطر')}" class="aspect-[16/11] w-full object-cover transition duration-700 hover:scale-105" loading="lazy" width="1600" height="900"></div>
-    <div>
-      ${sectionHead({ eyebrow: tr('Why Juri Star', 'لماذا جوري ستار'), title: tr('Our own shop, <span class="text-grad">our own team</span>', 'محلنا الخاص، <span class="text-grad">وفريقنا الخاص</span>'), text: tr('Materials in stock and one company responsible for the job.', 'المواد متوفرة لدينا وشركة واحدة مسؤولة عن العمل.') })}
-      <ul class="mt-8 grid gap-3.5 sm:grid-cols-2">
-        ${C.why.map((w, i) => `<li class="step-card" ${reveal('up', i * 70)}><span class="step-ic !h-10 !w-10">${icon(w.icon, 'h-5 w-5')}</span><span class="font-bold text-ink">${esc(t(w.t))}</span></li>`).join('')}
-      </ul>
-    </div>
-  </div>
-</section>`;
+${C.services.map((s, i) => story(s, i)).join('\n')}`;
   return layout(page, {
     title: tr('Juri Star Trading — Central Water Heaters, Tank Chillers & Epoxy Flooring in Qatar', 'جوري ستار للتجارة — سخانات مركزية ومبردات خزانات وأرضيات إيبوكسي في قطر'),
     description: tr('Central water heaters with pump & filter, water tank chillers, zigzag/3D/metallic epoxy, PVC barkia flooring and interior decoration in Doha, Qatar. Free site visit — call or WhatsApp.', 'سخانات مياه مركزية مع المضخة والفلتر، مبردات خزانات، إيبوكسي زجزاج وثلاثي الأبعاد ومعدني، باركيه PVC وديكور داخلي في الدوحة، قطر. زيارة مجانية — اتصل أو واتساب.'),
@@ -724,7 +746,7 @@ function aboutPage() {
   const page = { key: 'about', path: 'about/', nav: 'about' };
   const body = `${pageHero({ chip: tr('About us', 'من نحن'), title: tr('Trading, contracting &amp; <span class="text-grad">hospitality</span> in Qatar', 'التجارة والمقاولات <span class="text-grad">والضيافة</span> في قطر'), text: tr('Juri Star Trading combines a well-stocked trading shop with an experienced installation team — so homes and businesses get materials and workmanship from one place.', 'تجمع جوري ستار للتجارة بين محل تجاري متكامل وفريق تركيب ذي خبرة — ليحصل المنازل والشركات على المواد والتنفيذ من مكان واحد.'), crumbs: [[tr('About', 'من نحن')]] })}
 <section class="sec"><div class="container-site grid items-center gap-12 lg:grid-cols-2">
-  <img src="/assets/img/shop-front.jpg" alt="${tr('Juri Star Trading shopfront', 'واجهة محل جوري ستار للتجارة')}" class="w-full rounded-[2rem] object-cover shadow-soft" loading="lazy" width="1600" height="900" ${reveal('left')}>
+  <img src="${C.photos.interior}" alt="${tr('Interior decoration by Juri Star', 'ديكور داخلي من جوري ستار')}" class="aspect-[16/11] w-full rounded-[26px] object-cover shadow-[var(--neu-out-lg)]" loading="lazy" ${reveal('left')}>
   <div ${reveal('right')}>
     <span class="eyebrow">${tr('Our story', 'قصتنا')}</span>
     <h2 class="h-section mt-4">${tr('Materials and installation, <span class="text-grad">under one roof</span>', 'المواد والتركيب <span class="text-grad">تحت سقف واحد</span>')}</h2>
@@ -735,10 +757,17 @@ function aboutPage() {
     </div>
   </div>
 </div></section>
-<section class="sec sec-tint"><div class="container-site">
-  ${sectionHead({ center: true, eyebrow: tr('What we stand for', 'قيمنا'), title: tr('Why customers choose us', 'لماذا يختارنا العملاء') })}
-  <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">${C.why.map((w, i) => `<div class="card p-6" ${reveal('up', i * 80)}><span class="ico ${i % 2 ? 'ico-red' : ''}">${icon(w.icon)}</span><h3 class="mt-5 text-lg font-bold">${esc(t(w.t))}</h3><p class="mt-2 text-sm leading-relaxed text-muted">${esc(t(w.d))}</p></div>`).join('')}</div>
-</div></section>
+<section class="sec sec-tint">
+  <div class="container-site grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+    <div class="overflow-hidden rounded-[26px] shadow-[var(--neu-out-lg)]" ${reveal('left')}><img src="/assets/img/shop-front.jpg" alt="${tr('Juri Star Trading shopfront in Qatar', 'واجهة محل جوري ستار للتجارة في قطر')}" class="aspect-[16/11] w-full object-cover transition duration-700 hover:scale-105" loading="lazy" width="1600" height="900"></div>
+    <div>
+      ${sectionHead({ eyebrow: tr('Why Juri Star', 'لماذا جوري ستار'), title: tr('Our own shop, <span class="text-grad">our own team</span>', 'محلنا الخاص، <span class="text-grad">وفريقنا الخاص</span>'), text: tr('Materials in stock and one company responsible for the job.', 'المواد متوفرة لدينا وشركة واحدة مسؤولة عن العمل.') })}
+      <ul class="mt-8 grid gap-3.5 sm:grid-cols-2">
+        ${C.why.map((w, i) => `<li class="step-card" ${reveal('up', i * 70)}><span class="step-ic !h-10 !w-10">${icon(w.icon, 'h-5 w-5')}</span><span class="font-bold text-ink">${esc(t(w.t))}</span></li>`).join('')}
+      </ul>
+    </div>
+  </div>
+</section>
 <section class="sec"><div class="container-site">
   ${sectionHead({ eyebrow: tr('Areas we serve', 'المناطق التي نخدمها'), title: tr('Across <span class="text-grad">Qatar</span>', 'في جميع أنحاء <span class="text-grad">قطر</span>') })}
   <div class="mt-8 flex flex-wrap gap-3">${C.areas.map((a, i) => `<span class="pill" ${reveal('up', i * 40)}>${icon('pin', 'h-4 w-4 text-signal-500')} ${esc(t(a))}</span>`).join('')}</div>
