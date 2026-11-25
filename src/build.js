@@ -155,12 +155,12 @@ const header = (page) => {
       ${logo()}
       <nav class="hdr-nav hidden xl:flex" aria-label="${tr('Main', 'الرئيسية')}">
         ${ddBtn('services', tr('Services', 'الخدمات'), [href('services/'), tr('All services', 'كل الخدمات')])}
-        ${right.map(([p, label, key]) => `<a href="${href(p)}" ${cur(key)}>${label}</a>`).join('')}
+        ${right.filter(([, , key]) => key !== 'contact').map(([p, label, key]) => `<a href="${href(p)}" ${cur(key)}>${label}</a>`).join('')}
       </nav>
       <div class="hdr-actions">
         <a href="${otherUrl}" hreflang="${other}" lang="${other}" class="hdr-lang">${icon('globe', 'h-5 w-5 sm:h-4 sm:w-4', 1.8)}<span class="hidden sm:inline">${other === 'ar' ? 'العربية' : 'English'}</span></a>
-        <a href="tel:${C.site.phoneHref}" class="hdr-phone hidden md:inline-flex" data-track="call" aria-label="${tr('Call us', 'اتصل بنا')}"><span class="hdr-phone-ic">${icon('phone', 'h-4 w-4', 2)}</span><b dir="ltr" class="hidden 2xl:inline">${C.site.phone}</b></a>
-        <a href="${href('quote/')}" class="hdr-cta hidden sm:inline-flex">${tr('Free Quote', 'عرض سعر مجاني')} ${arrow('h-4 w-4')}</a>
+        <a href="${href('contact/')}" class="hdr-contact hidden md:inline-flex" ${cur('contact')}>${icon('mail', 'h-4 w-4', 2)}${tr('Contact Us', 'اتصل بنا')}</a>
+        <a href="${waHello()}" target="_blank" rel="noopener" class="hdr-wa" data-track="whatsapp" aria-label="WhatsApp">${waIcon('h-[18px] w-[18px]')}<span class="hidden sm:inline">WhatsApp</span></a>
         <button type="button" class="hdr-burger xl:hidden" data-drawer-open aria-label="${tr('Open menu', 'فتح القائمة')}">${icon('menu', 'h-6 w-6', 2)}</button>
       </div>
     </div>
@@ -174,7 +174,7 @@ const header = (page) => {
     <div>${rows(svcCats, 's')}</div>
     <div class="drw-more">${right.map(([p, label]) => `<a href="${href(p)}">${label}</a>`).join('')}<a href="${otherUrl}" hreflang="${other}">${other === 'ar' ? 'العربية' : 'English'}</a></div>
   </div>
-  <div class="drw-cta"><a href="${href('quote/')}" class="btn btn-primary w-full">${tr('Get a Free Quote', 'احصل على عرض سعر مجاني')} ${arrow()}</a></div>
+  <div class="drw-cta"><a href="${href('contact/')}" class="hdr-contact">${icon('mail', 'h-4 w-4', 2)}${tr('Contact Us', 'اتصل بنا')}</a><a href="${waHello()}" target="_blank" rel="noopener" class="hdr-wa" data-track="whatsapp">${waIcon('h-[18px] w-[18px]')}WhatsApp</a></div>
   ${subs(svcCats, 's')}
 </aside>`;
 };
@@ -501,7 +501,7 @@ function servicesPage() {
   const page = { key: 'services', path: 'services/', nav: 'services' };
   const body = `${pageHero({ chip: tr('What we do', 'ماذا نقدم'), title: tr('Our <span class="text-grad">services</span>', '<span class="text-grad">خدماتنا</span>'), text: tr('Supply and installation by one team, with a free site visit and a written quote for every job.', 'توريد وتركيب بواسطة فريق واحد، مع زيارة موقع مجانية وعرض سعر مكتوب لكل عمل.'), crumbs: [[tr('Services', 'الخدمات')]] })}
 <section class="sec"><div class="container-site grid gap-4 md:grid-cols-2 lg:grid-cols-6">${C.services.map((s, i) => serviceCard(s, i)).join('')}
-  <a href="${href('quote/')}" class="card flex flex-col justify-between overflow-hidden bg-tint-2 p-8" ${reveal('up', 400)}>
+  <a href="${href('quote/')}" class="card flex flex-col justify-between gap-6 overflow-hidden bg-tint-2 p-8 md:col-span-2 lg:col-span-6 lg:flex-row lg:items-center" ${reveal('up', 400)}>
     <span class="ico ico-red">${icon('file')}</span>
     <div><h3 class="mt-6 text-2xl font-bold">${tr('Not sure what you need?', 'لست متأكداً مما تحتاجه؟')}</h3><p class="mt-2 text-muted">${tr('Book a free site visit and we will recommend the right solution.', 'احجز زيارة مجانية وسنقترح الحل المناسب.')}</p></div>
     <span class="btn btn-primary mt-6 self-start">${tr('Book a site visit', 'احجز زيارة')} ${arrow()}</span>
