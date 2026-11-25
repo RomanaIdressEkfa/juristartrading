@@ -22,7 +22,7 @@
     --soft: #f7f9f8;
     --radius: 18px;
     --panel-radius: 28px;
-    --sec-gap: 3.5rem;
+    --sec-gap: 2.25rem;
     --shadow-card: 0 1px 2px rgb(14 26 20 / .04), 0 12px 32px -18px rgb(14 26 20 / .16);
     --shadow-lift: 0 2px 4px rgb(14 26 20 / .04), 0 24px 48px -22px rgb(14 26 20 / .24);
     --font-head: 'Inter', 'IBM Plex Sans Arabic', system-ui, sans-serif;
@@ -42,7 +42,7 @@
     --band: linear-gradient(180deg, #eaf6ef 0%, #f3faf6 55%, #f9fcfa 100%);
     --ink-deep: #0b241a;
 }
-@media (min-width: 1024px) { :root { --sec-gap: 5rem; } }
+@media (min-width: 1024px) { :root { --sec-gap: 3rem; } }
 
 @layer base {
     html { scroll-behavior: smooth; scroll-padding-top: 100px; overflow-x: clip; }
