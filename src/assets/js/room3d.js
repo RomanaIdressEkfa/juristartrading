@@ -651,6 +651,8 @@ function init() {
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.fov = w / h < 0.95 ? 40 : 30;
+    // phones/tablets with a wide frame: tighten the vertical FOV so the room keeps the same width as in a square frame
+    if (w < 1024 && w / h > 1.05) camera.fov = (2 * Math.atan(Math.tan((15 * Math.PI) / 180) / (w / h)) * 180) / Math.PI;
     const shift = w >= 900 ? w * 0.07 : 0; // move the room towards the right
     if (shift) camera.setViewOffset(w, h, -shift, 0, w, h); else camera.clearViewOffset();
     camera.updateProjectionMatrix();

@@ -178,6 +178,83 @@
   /* ---- Print data sheet ---- */
   $$('[data-print]').forEach(function (b) { b.addEventListener('click', function () { window.print(); }); });
 
+  /* ---- "How it works": pinned while scrolling — each scroll moves one step, then the page continues ---- */
+  $$('[data-process]').forEach(function (root) {
+    var steps = $$('.proc-step', root), segs = $$('.proc-seg', root);
+    var stage = $('[data-scene="process"]', root), hudNo = $('[data-proc-no]', root), hudT = $('[data-proc-title]', root), now = $('.proc-now', root);
+    var list = $('.proc-steps', root), n = steps.length, cur = -1;
+    var track = root.closest('[data-proc-scroll]');
+    function show(i) {
+      if (i === cur) return;
+      cur = i;
+      steps.forEach(function (s, k) { s.classList.toggle('is-on', k === i); s.classList.toggle('is-done', k < i); s.setAttribute('aria-pressed', k === i ? 'true' : 'false'); });
+      if (list) list.style.setProperty('--proc-prog', n > 1 ? i / (n - 1) : 0);
+      if (now) { now.classList.add('is-swap'); setTimeout(function () { hudNo.textContent = '0' + (cur + 1); hudT.textContent = steps[cur].getAttribute('data-title'); now.classList.remove('is-swap'); }, 200); }
+      if (stage) { stage.setAttribute('data-step', i); if (stage.__setStep) stage.__setStep(i); }
+    }
+    // progress 0..1 through the pinned track → step + fill of each bar segment
+    function update() {
+      if (!track) return;
+      var pin = track.firstElementChild, stick = parseFloat(getComputedStyle(pin).top) || 0;
+      var r = track.getBoundingClientRect(), total = track.offsetHeight - pin.offsetHeight;
+      var p = total > 0 ? Math.min(0.9999, Math.max(0, (stick - r.top) / total)) : 0;
+      var f = p * n, i = Math.floor(f);
+      show(i);
+    }
+    // centre the pinned block in the space under the fixed header, so the gap above and below is even
+    function place() {
+      if (!track) return;
+      var pin = track.firstElementChild, nav = $('[data-nav]');
+      var head = nav ? Math.max(0, nav.getBoundingClientRect().bottom) : 0, room = window.innerHeight - head;
+      if (window.innerWidth < 1024) { pin.style.top = head + 'px'; pin.style.height = room + 'px'; return; } // phones: fill the screen
+      pin.style.height = '';
+      pin.style.top = Math.max(head, head + (room - pin.offsetHeight) / 2) + 'px';
+    }
+    window.addEventListener('resize', place);
+    place();
+    var ticking = false;
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; update(); }); } }, { passive: true });
+    window.addEventListener('resize', update);
+    // clicking a step scrolls to that step's position
+    $$('[data-proc-go]', root).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var i = +b.getAttribute('data-proc-go');
+        if (!track) return show(i);
+        var pin = track.firstElementChild, stick = parseFloat(getComputedStyle(pin).top) || 0;
+        var top = track.getBoundingClientRect().top + window.scrollY, total = track.offsetHeight - pin.offsetHeight;
+        window.scrollTo({ top: top - stick + total * ((i + 0.5) / n), behavior: 'smooth' });
+      });
+    });
+    // the 3D scene mounts lazily: sync it to the current step once it exists
+    if (stage) new MutationObserver(function () { if (stage.__setStep) stage.__setStep(cur); }).observe(stage, { childList: true });
+    update();
+    if (cur < 0) show(0);
+  });
+
+  /* ---- Phones: services row slides by itself (like Exotic Tint); a touch pauses it ---- */
+  $$('.bento').forEach(function (rail) {
+    var mq = window.matchMedia('(max-width: 767px)');
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var tiles = $$('.bento-tile', rail), inView = false, holdUntil = 0;
+    function centreOf(el) { var r = el.getBoundingClientRect(); return r.left + r.width / 2; }
+    function current() {
+      var rr = rail.getBoundingClientRect(), c = rr.left + rr.width / 2, best = 0, bd = 1e9;
+      tiles.forEach(function (t, i) { var dd = Math.abs(centreOf(t) - c); if (dd < bd) { bd = dd; best = i; } });
+      return best;
+    }
+    function goTo(i) {
+      var t = tiles[i], rr = rail.getBoundingClientRect(), tr2 = t.getBoundingClientRect();
+      rail.scrollTo({ left: rail.scrollLeft + (tr2.left - rr.left) - (rr.width - tr2.width) / 2, behavior: 'smooth' });
+    }
+    ['pointerdown', 'touchstart', 'wheel'].forEach(function (ev) { rail.addEventListener(ev, function () { holdUntil = Date.now() + 7000; }, { passive: true }); });
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (e) { inView = e[0].isIntersecting; }, { threshold: 0.5 }).observe(rail);
+    setInterval(function () {
+      if (!mq.matches || !inView || Date.now() < holdUntil || document.hidden) return;
+      var i = current();
+      goTo(i >= tiles.length - 1 ? 0 : i + 1);
+    }, 3200);
+  });
+
   /* ---- Footer year ---- */
   $$('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
 })();

@@ -2,6 +2,9 @@
 const fs = require('fs');
 const path = require('path');
 const C = require('./content');
+// No prices anywhere on the site (client decision): strip them from the data before any page is built
+C.services.forEach((s) => { delete s.price; });
+(C.products || []).forEach((p) => { delete p.price; });
 const POSTS = require('./blog');
 
 const ROOT = path.join(__dirname, '..');
@@ -22,6 +25,7 @@ const waLink = (msg) => `https://wa.me/${C.site.whatsapp}?text=${encodeURICompon
 const waHello = (topic) => waLink(topic
   ? tr(`Hello Juri Star Trading, I would like a quote for ${topic}.`, `مرحباً جوري ستار للتجارة، أرغب في عرض سعر لـ ${topic}.`)
   : tr('Hello Juri Star Trading, I would like a free quote.', 'مرحباً جوري ستار للتجارة، أرغب في عرض سعر مجاني.'));
+const ASSET_V = Date.now().toString(36); // cache-buster: every build gets fresh CSS/JS
 const reveal = (kind = 'up', d = 0) => `data-reveal="${kind}"${d ? ` data-delay="${d}"` : ''}`;
 const fmtDate = (d) => new Date(d + 'T00:00:00').toLocaleDateString(L === 'ar' ? 'ar-QA' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric', numberingSystem: 'latn' });
 const svc = (slug) => C.services.find((s) => s.slug === slug);
@@ -180,57 +184,49 @@ const header = (page) => {
 };
 
 const footer = () => `
-<footer class="site-footer">
-  <div class="f-grid-bg"></div>
-  <div class="f-topline"></div>
-  <div class="container-site relative flex flex-col gap-8 py-14 lg:flex-row lg:items-end lg:justify-between lg:py-20">
-    <div>
-      <p class="f-eyebrow">${tr('Interiors · Flooring · Water systems · Qatar', 'ديكور · أرضيات · أنظمة مياه · قطر')}</p>
-      <p class="f-talk" aria-label="${tr('Let’s talk', 'لنتحدث')}">${L === 'ar' ? '<span>لنتحدث</span>' : '<span>L</span><span>e</span><span>t</span><span>’</span><span>s</span>&nbsp;<span>t</span><span>a</span><span>l</span><span>k</span>'}</p>
-      <p class="f-tag">${tr('Cooler water, smarter floors, <em>beautiful</em> <b>interiors</b>.', 'مياه أبرد، أرضيات أذكى، <em>وديكور</em> <b>جميل</b>.')}</p>
-    </div>
-    <div class="lg:text-end">
-      <a href="${href('quote/')}" class="f-cta">${tr('Get a free quote', 'احصل على عرض سعر مجاني')} ${arrow('h-5 w-5')}</a>
-      <p class="mt-3 text-xs text-white/45">${tr('Reply the same day on WhatsApp.', 'نرد في نفس اليوم عبر واتساب.')}</p>
-    </div>
-  </div>
-  <div class="container-site relative !px-0 sm:!px-5 lg:!px-8">
-    <div class="f-cols">
-      <div>
-        <p class="f-h">${tr('Contact', 'تواصل معنا')}</p>
-        <div class="mt-5">${logo(true)}</div>
-        <p class="mt-5 font-bold">${tr('Doha, Qatar', 'الدوحة، قطر')}</p>
-        <p class="mt-1 text-xs leading-relaxed text-white/50">${esc(t(C.site.address))}</p>
-        <a href="mailto:${C.site.email}" class="mt-4 block break-all text-sm font-bold">${C.site.email}</a>
-        <a href="tel:${C.site.phoneHref}" class="mt-1 block text-sm text-white/80" dir="ltr" data-track="call">${C.site.phone}</a>
+<footer class="site-footer ft">
+  <div class="container-site">
+    <div class="ft-top">
+      <div class="ft-brand">
+        ${logo(true)}
+        <p class="ft-line">${tr('Water heaters, tank chillers, pumps, epoxy floors and interiors — supplied and installed across Qatar.', 'سخانات ومبردات خزانات ومضخات وأرضيات إيبوكسي وديكور — توريد وتركيب في جميع أنحاء قطر.')}</p>
       </div>
-      <div>
-        <p class="f-h">${tr('Services', 'الخدمات')}</p>
-        <ul class="f-links">${C.services.map((s) => `<li><a href="${href('services/' + s.slug + '/')}">${esc(t(s.title))}</a></li>`).join('')}</ul>
-      </div>
-      <div>
-        <p class="f-h">${tr('Company', 'الشركة')}</p>
-        <ul class="f-links">${[['', tr('Home', 'الرئيسية')], ['about/', tr('About', 'من نحن')], ['projects/', tr('Projects', 'المشاريع')], ['shop/', tr('Shop', 'المتجر')], ['blog/', tr('Blog', 'المدونة')], ['contact/', tr('Contact', 'اتصل بنا')]].map(([p, label]) => `<li><a href="${href(p)}">${label}</a></li>`).join('')}</ul>
-      </div>
-      <div>
-        <p class="f-h">${tr('Follow us', 'تابعنا')}</p>
-        <div class="mt-5 grid gap-2.5">
-          ${[['facebook', 'Facebook', fbIcon], ['instagram', 'Instagram', igIcon], ['tiktok', 'TikTok', ttIcon]].filter(([k]) => C.site.social[k]).map(([k, label, fn]) => `<a href="${C.site.social[k]}" target="_blank" rel="noopener" class="f-box">${label} ${fn('h-4 w-4 text-white/60')}</a>`).join('')}
-          <a href="${waHello()}" target="_blank" rel="noopener" class="f-box" data-track="whatsapp">WhatsApp ${waIcon('h-4 w-4 text-white/60')}</a>
-          <a href="tel:${C.site.phoneHref}" class="f-box" data-track="call">${tr('Call us', 'اتصل بنا')} ${icon('phone', 'h-4 w-4 text-white/60')}</a>
-          <a href="mailto:${C.site.email}" class="f-box">${tr('Email', 'البريد')} ${icon('mail', 'h-4 w-4 text-white/60')}</a>
-        </div>
+      <div class="ft-actions">
+        <a href="${href('quote/')}" class="btn btn-primary">${tr('Get a free quote', 'احصل على عرض سعر مجاني')} ${arrow()}</a>
+        <a href="${waHello()}" target="_blank" rel="noopener" class="ft-wa" data-track="whatsapp">${waIcon('h-5 w-5')} WhatsApp</a>
       </div>
     </div>
-  </div>
-  <div class="f-bottom">
-    <p class="f-word" aria-hidden="true">${L === 'ar' ? 'جوري ستار' : 'Juri Star'}</p>
-    <div class="container-site relative flex flex-col items-center justify-between gap-4 py-6 text-xs text-white/60 sm:flex-row">
+    <div class="ft-cols">
+      <div>
+        <p class="ft-h">${tr('Services', 'الخدمات')}</p>
+        <ul class="ft-links">${C.services.map((s) => `<li><a href="${href('services/' + s.slug + '/')}">${esc(t(s.title))}</a></li>`).join('')}</ul>
+      </div>
+      <div>
+        <p class="ft-h">${tr('Company', 'الشركة')}</p>
+        <ul class="ft-links">${[['', tr('Home', 'الرئيسية')], ['about/', tr('About', 'من نحن')], ['projects/', tr('Projects', 'المشاريع')], ['shop/', tr('Shop', 'المتجر')], ['blog/', tr('Blog', 'المدونة')], ['contact/', tr('Contact', 'تواصل معنا')]].map(([u, l]) => `<li><a href="${href(u)}">${l}</a></li>`).join('')}</ul>
+      </div>
+      <div>
+        <p class="ft-h">${tr('Contact', 'تواصل معنا')}</p>
+        <ul class="ft-links">
+          <li><a href="tel:${C.site.phoneHref}" dir="ltr" data-track="call">${C.site.phone}</a></li>
+          <li><a href="mailto:${C.site.email}" class="break-all">${C.site.email}</a></li>
+          <li class="ft-muted">${esc(t(C.site.address))}</li>
+        </ul>
+      </div>
+      <div>
+        <p class="ft-h">${tr('Opening hours', 'ساعات العمل')}</p>
+        <ul class="ft-links">
+          <li>${tr('Saturday – Thursday', 'السبت – الخميس')}</li>
+          <li class="ft-muted">${tr('7 AM – 9 PM', '7 صباحاً – 9 مساءً')}</li>
+          <li class="ft-open"><i></i>${tr('Free site visits across Qatar', 'زيارات مجانية في جميع أنحاء قطر')}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="ft-bottom">
       <p>© <span data-year>2026</span> ${esc(t(C.site.legal))} · ${tr('CR No.', 'س.ت')} ${C.site.cr}</p>
-      <div class="flex items-center gap-2">
-        <span class="f-pill f-open">${tr('Sat – Thu · 7 AM – 9 PM', 'السبت – الخميس · 7ص – 9م')}</span>
-        <a href="${base(L === 'ar' ? 'en' : 'ar')}" class="f-pill">${icon('globe', 'h-3.5 w-3.5', 1.8)} ${L === 'ar' ? 'English' : 'العربية'}</a>
-        <a href="#main" class="f-top" aria-label="${tr('Back to top', 'إلى الأعلى')}">${icon('chevron', 'h-4 w-4 rotate-180', 2.4)}</a>
+      <div class="ft-social">
+        ${[['facebook', 'Facebook', fbIcon], ['instagram', 'Instagram', igIcon], ['tiktok', 'TikTok', ttIcon]].filter(([k]) => C.site.social[k]).map(([k, label, fn]) => `<a href="${C.site.social[k]}" target="_blank" rel="noopener" aria-label="${label}">${fn('h-4 w-4')}</a>`).join('')}
+        <a href="${base(L === 'ar' ? 'en' : 'ar')}" class="ft-lang">${icon('globe', 'h-3.5 w-3.5', 1.8)} ${L === 'ar' ? 'English' : 'العربية'}</a>
       </div>
     </div>
   </div>
@@ -239,11 +235,6 @@ const footer = () => `
   <a href="${waHello()}" target="_blank" rel="noopener" class="wa" aria-label="WhatsApp" data-track="whatsapp">${waIcon('h-6 w-6')}</a>
   <a href="tel:${C.site.phoneHref}" class="call" aria-label="${tr('Call us', 'اتصل بنا')}" data-track="call">${icon('phone', 'h-5 w-5')}</a>
 </div>
-<nav class="mobile-bar no-print" aria-label="${tr('Quick contact', 'تواصل سريع')}">
-  <a href="tel:${C.site.phoneHref}" data-track="call">${icon('phone', 'h-5 w-5')}${tr('Call', 'اتصال')}</a>
-  <a href="${waHello()}" target="_blank" rel="noopener" data-track="whatsapp">${waIcon('h-5 w-5')}WhatsApp</a>
-  <a href="${href('quote/')}">${icon('file', 'h-5 w-5')}${tr('Quote', 'عرض سعر')}</a>
-</nav>
 <div class="lightbox" data-lightbox role="dialog" aria-modal="true"><button type="button" class="absolute end-5 top-5 grid h-11 w-11 place-items-center rounded-full bg-white/10 text-white" data-lightbox-close aria-label="${tr('Close', 'إغلاق')}">${icon('x', 'h-6 w-6')}</button><img alt=""></div>`;
 
 const layout = (page, meta, body) => {
@@ -262,7 +253,6 @@ const layout = (page, meta, body) => {
     email: C.site.email,
     address: { '@type': 'PostalAddress', streetAddress: 'Building 79, Street 578, Zone 55, Fereej Al Murra', addressLocality: 'Al Rayyan', addressRegion: 'Doha', postOfficeBoxNumber: C.site.poBox, addressCountry: 'QA' },
     areaServed: 'Qatar',
-    priceRange: 'QAR',
   }].concat(meta.jsonld ? [].concat(meta.jsonld) : []);
   const uses3d = page.scene || page.room;
 
@@ -291,13 +281,13 @@ ${page.noindex ? '<meta name="robots" content="noindex">' : ''}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=${L === 'ar' ? 'IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=' : ''}Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/app.css">
+<link rel="stylesheet" href="/assets/css/app.css?v=${ASSET_V}">
 <script>(function(d){d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('gsap-ready');setTimeout(function(){if(!window.__gsapOn)d.classList.remove('gsap-ready')},4000)}})(document.documentElement)</script>
 ${uses3d ? '<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>' : ''}
 ${graph.map((g) => `<script type="application/ld+json">${JSON.stringify(g)}</script>`).join('\n')}
 ${analytics()}
 </head>
-<body class="pb-16 md:pb-0">
+<body>
 <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:start-2 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">${tr('Skip to content', 'انتقل إلى المحتوى')}</a>
 ${header(page)}
 <main id="main">
@@ -306,10 +296,10 @@ ${body}
 ${footer()}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
-<script src="/assets/js/main.js" defer></script>
-<script src="/assets/js/motion.js" defer></script>
-${uses3d ? '<script type="module" src="/assets/js/scene3d.js"></script>' : ''}
-${page.room ? '<script type="module" src="/assets/js/room3d.js"></script>' : ''}
+<script src="/assets/js/main.js?v=${ASSET_V}" defer></script>
+<script src="/assets/js/motion.js?v=${ASSET_V}" defer></script>
+${uses3d ? `<script type="module" src="/assets/js/scene3d.js?v=${ASSET_V}"></script>` : ''}
+${page.room ? `<script type="module" src="/assets/js/room3d.js?v=${ASSET_V}"></script>` : ''}
 </body>
 </html>`;
 };
@@ -375,7 +365,7 @@ const productCard = (p, i) => {
     <p class="text-xs text-muted">${esc(t(c.t))}</p>
     <h3 class="mt-1 font-bold leading-snug"><a href="${href('shop/' + p.slug + '/')}" class="hover:text-brand-600">${esc(t(p.name))}</a></h3>
     <div class="mt-auto flex items-center justify-between gap-2 pt-4">
-      <p class="text-sm font-semibold">${p.price ? qar(p.price) : `<span class="text-muted font-normal">${tr('Price on request', 'السعر عند الطلب')}</span>`}</p>
+      <span></span>
       <a href="${waLink(tr(`Hello, I am interested in: ${p.name[0]}`, `مرحباً، أنا مهتم بـ: ${p.name[1]}`))}" target="_blank" rel="noopener" class="grid h-9 w-9 place-items-center rounded-full bg-brand-50 text-brand-600 hover:bg-brand-500 hover:text-white" aria-label="${tr('Enquire on WhatsApp', 'استفسر عبر واتساب')}" data-track="whatsapp">${waIcon('h-4 w-4')}</a>
     </div>
   </div>
@@ -458,23 +448,24 @@ function homePage() {
   };
   const story = (s, i) => {
     const pair = storyTitles[s.scene] ? storyTitles[s.scene][L === 'ar' ? 1 : 0] : [t(s.title), ''];
-    const chips = (s.package ? s.package.map((x) => x.t) : s.features).slice(0, 3);
-    return `<section class="sec ${i % 2 ? 'sec-band' : ''}">
+    const items = (s.package ? s.package.map((x) => ({ ic: x.icon, t: x.t, d: x.d })) : s.features.map((f) => ({ ic: 'check', t: f, d: null }))).slice(0, 3);
+    // three layouts that rotate down the page: full-width stage · split (stage + side boxes) · dark showcase
+    const v = ['stack', 'split', 'dark'][i % 3];
+    const cls = `svx svx--${v}${v === 'split' && i > 3 ? ' is-flip' : ''}${v === 'stack' && i ? ' sec-band' : ''}`;
+    return `<section class="sec ${cls}">
   <div class="container-site">
-    <div class="mx-auto max-w-2xl text-center" ${reveal('up')}>
-      <span class="story-chip">${icon(s.icon, 'h-3.5 w-3.5', 2.2)} 0${i + 1} · ${esc(t(s.menu))}</span>
-      <h2 class="h-section mt-4">${esc(pair[0])} <span class="text-grad">${esc(pair[1])}</span></h2>
-      <p class="sub mt-2">${esc(t(s.tagline))}</p>
-      <div class="mt-5 flex flex-wrap justify-center gap-2">${chips.map((c) => `<span class="story-tag">${icon('check', 'h-3.5 w-3.5', 3)} ${esc(t(c))}</span>`).join('')}</div>
-    </div>
-    <div class="story-stage mt-10" ${reveal('up', 100)}>
-      <div class="scene-wrap h-full w-full" data-scene="${s.scene}" role="img" aria-label="${esc(t(s.title))} — 3D"><div class="scene-fallback"><img src="${s.img}" alt="" class="h-full w-full object-cover" loading="lazy"></div></div>
-      ${s.price ? `<span class="story-badge story-badge-l">${fromQar(s.price)}</span>` : ''}
-      <span class="story-badge story-badge-r">${icon('badge', 'h-4 w-4', 2)} ${tr('Free site visit', 'زيارة مجانية')}</span>
-    </div>
-    <div class="mt-8 flex flex-wrap justify-center gap-3">
-      <a href="${href('quote/?service=' + s.slug)}" class="btn btn-primary">${tr('Get a quote', 'اطلب عرض سعر')} ${arrow()}</a>
-      <a href="${href('services/' + s.slug + '/')}" class="btn btn-white">${tr('View details', 'التفاصيل')}</a>
+    <div class="svx-wrap">
+      <div class="svx-stage" ${reveal('up')}>
+        <div class="scene-wrap svx-canvas" data-scene="${s.scene}-wide"${v === 'split' ? ' data-fit="1.7"' : ''} role="img" aria-label="${esc(t(s.title))} — 3D"><div class="scene-fallback proc-loading" aria-hidden="true"><span></span></div></div>
+        <div class="svx-top">
+          <span class="svx-chip"><b dir="ltr">0${i + 1}</b>${esc(t(s.title))}</span>
+          <a href="${href('services/' + s.slug + '/')}" class="svx-more">${tr('Details', 'التفاصيل')} ${arrow('h-4 w-4')}</a>
+        </div>
+      </div>
+      <div class="svx-boxes">
+        ${items.map((it, k) => `<div class="svx-box" ${reveal('up', 60 + k * 60)}><span class="svx-bic">${icon(it.ic || 'check', 'h-4 w-4', 2.2)}</span><p class="svx-bt">${esc(t(it.t))}</p>${it.d ? `<p class="svx-bd">${esc(t(it.d))}</p>` : ''}</div>`).join('')}
+        <a href="${href('quote/?service=' + s.slug)}" class="svx-box svx-go" ${reveal('up', 240)}><span class="svx-bt">${tr('Free site visit &amp; quote', 'زيارة مجانية وعرض سعر')}</span><span class="svx-arrow">${arrow('h-5 w-5')}</span></a>
+      </div>
     </div>
   </div>
 </section>`;
@@ -482,7 +473,7 @@ function homePage() {
   const body = `
 <section class="hero-soft">
   <div class="hero-soft-in">
-    <div class="container-site relative z-10 grid items-center gap-4 py-12 lg:min-h-[620px] lg:grid-cols-[0.85fr_1.35fr] lg:gap-2 lg:py-8">
+    <div class="container-site relative z-10 grid items-center gap-2 pt-10 pb-3 lg:min-h-[620px] lg:grid-cols-[0.85fr_1.35fr] lg:gap-2 lg:py-8">
       <div>
         <span class="hero-chip" data-hero>${tr('Free site visit across Qatar', 'زيارة موقع مجانية في أنحاء قطر')}</span>
         <h1 class="mt-5 text-[2.2rem] font-extrabold leading-[1.08] tracking-tight text-ink sm:text-[2.6rem] lg:text-[3rem]" data-hero>${tr('Interior decoration<br>&amp; <span class="text-grad">zigzag epoxy floors</span>', 'الديكور الداخلي<br>و<span class="text-grad">أرضيات الإيبوكسي الزجزاج</span>')}</h1>
@@ -506,16 +497,32 @@ function homePage() {
   </div>
 </section>
 
-<section class="sec sec-band">
-  <div class="container-site grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14">
-    <div>
-      ${sectionHead({ eyebrow: tr('How it works', 'كيف نعمل'), title: tr(`${C.process.length} simple <span class="text-grad">steps</span>`, `${C.process.length} خطوات <span class="text-grad">بسيطة</span>`) })}
-      <ol class="mt-8 grid gap-3.5">${C.process.map((p, i) => `<li class="step-card" ${reveal('up', i * 80)}><span class="step-ic">${icon(p.icon, 'h-5 w-5')}</span><span><span class="block font-bold text-ink">${esc(t(p.t))}</span><span class="mt-0.5 block text-sm text-muted">${esc(t(p.d))}</span></span></li>`).join('')}</ol>
-      <a href="${waHello()}" target="_blank" rel="noopener" class="btn btn-primary mt-8" data-track="whatsapp">${tr('Start on WhatsApp', 'ابدأ عبر واتساب')} ${arrow()}</a>
+<section class="sec proc-sec">
+  <div class="proc-scroll" data-proc-scroll style="--proc-n:${C.process.length}">
+  <div class="proc-pin">
+  <div class="container-site">
+    <div class="proc" data-process>
+      <div class="proc-head" ${reveal('up')}>
+        <p class="eyebrow mb-3">${tr('How it works', 'كيف نعمل')}</p>
+        <h2 class="h-section">${tr(`${C.process.length} simple <span class="text-grad">steps</span>`, `${C.process.length} خطوات <span class="text-grad">بسيطة</span>`)}</h2>
+      </div>
+
+      <div class="proc-stage" ${reveal('up', 80)}>
+        <div class="proc-canvas scene-wrap" data-scene="process" data-step="0" role="img" aria-label="${tr('3D: the four steps of a Juri Star job', 'ثلاثي الأبعاد: خطوات العمل الأربع')}"><div class="scene-fallback proc-loading" aria-hidden="true"><span></span></div></div>
+        <div class="proc-hud">
+          <div class="proc-now" aria-live="polite"><span class="proc-now-no" data-proc-no>01</span><span class="proc-now-t" data-proc-title>${esc(t(C.process[0].t))}</span></div>
+        </div>
+      </div>
+
+      <div class="proc-list">
+        <ol class="proc-steps">${C.process.map((p, i) => `<li><button type="button" class="proc-step${i === 0 ? ' is-on' : ''}" data-proc-go="${i}" data-title="${esc(t(p.t))}" aria-pressed="${i === 0}" ${reveal('up', i * 70)}>
+          <span class="proc-num" dir="ltr">0${i + 1}</span>
+          <span class="proc-body"><span class="proc-t">${esc(t(p.t))}</span><span class="proc-d">${esc(t(p.d))}</span></span>
+        </button></li>`).join('')}</ol>
+      </div>
     </div>
-    <div class="stage-3d" ${reveal('right')}>
-      <div class="scene-wrap aspect-[5/4] w-full" data-scene="hero" role="img" aria-label="${tr('3D: water heater and chiller on a zigzag epoxy floor', 'ثلاثي الأبعاد: سخان ومبرد على أرضية إيبوكسي زجزاج')}"><div class="scene-fallback"><img src="${C.photos.interior}" alt="" class="h-full w-full object-cover"></div></div>
-    </div>
+  </div>
+  </div>
   </div>
 </section>
 
@@ -552,7 +559,7 @@ function servicePage(s) {
     crumbs: [[tr('Services', 'الخدمات'), href('services/')], [esc(t(s.title))]],
     actions: `<a href="${href('quote/?service=' + s.slug)}" class="btn btn-primary">${tr('Get a Free Quote', 'احصل على عرض سعر مجاني')} ${arrow()}</a>
       <a href="${waHello(topic)}" target="_blank" rel="noopener" class="btn btn-wa" data-track="whatsapp">${waIcon()} WhatsApp</a>
-      ${s.price ? `<span class="flex items-center rounded-full bg-white px-5 py-3 text-sm shadow-card">${icon('tag', 'me-2 h-4 w-4 text-signal-500')} <span>${fromQar(s.price)}</span></span>` : ''}`,
+      `,
     aside: `<img src="${s.img}" alt="${esc(t(s.title))}" class="aspect-[5/4] w-full rounded-[var(--radius)] object-cover" data-hero>`,
   })}
 
@@ -570,7 +577,7 @@ function servicePage(s) {
 
 ${s.package ? `<section class="sec sec-dark">
   <div class="container-site relative">
-    ${sectionHead({ center: true, eyebrow: tr('What’s in the package', 'محتويات الباقة'), title: tr('Heater + pump + filter + piping', 'سخان + مضخة + فلتر + تمديدات'), text: fromQar(s.price) })}
+    ${sectionHead({ center: true, eyebrow: tr('What’s in the package', 'محتويات الباقة'), title: tr('Heater + pump + filter + piping', 'سخان + مضخة + فلتر + تمديدات') })}
     <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
       ${s.package.map((p, i) => `<div class="relative rounded-[var(--radius)] bg-white p-6 text-ink" ${reveal('up', i * 90)}>
         <span class="absolute end-5 top-5 font-head text-3xl font-bold text-brand-500">0${i + 1}</span>
@@ -605,12 +612,11 @@ ${s.package ? `<section class="sec sec-dark">
     <aside class="lg:pt-16" ${reveal('right')}>
       <div class="card sticky top-28 overflow-hidden">
         <div class="border-b border-line bg-tint-2 p-6">
-          <p class="text-sm font-semibold text-muted">${tr('Price guide', 'دليل الأسعار')}</p>
-          <p class="mt-1 text-3xl font-bold text-brand-600">${tr('From', 'من')} ${qar(s.price.from)}</p>
-          <p class="text-sm text-muted">${esc(t(s.price.unit))}</p>
+          <p class="text-sm font-semibold text-muted">${tr('Free site visit', 'زيارة موقع مجانية')}</p>
+          <p class="mt-1 text-2xl font-bold text-ink">${tr('Get a quote for your site', 'احصل على عرض سعر لموقعك')}</p>
         </div>
         <div class="grid gap-3 p-6">
-          <p class="text-sm text-muted">${tr('Final price depends on size, site conditions and the options you choose. Get an exact quote after a free site visit.', 'السعر النهائي يعتمد على الحجم وظروف الموقع والخيارات التي تختارها. احصل على سعر دقيق بعد زيارة مجانية.')}</p>
+          <p class="text-sm text-muted">${tr('We visit, measure and recommend the right system — then send a clear written quote.', 'نزورك ونقيس ونقترح النظام المناسب — ثم نرسل عرض سعر مكتوب وواضح.')}</p>
           <a href="${href('quote/?service=' + s.slug)}" class="btn btn-primary w-full">${tr('Get exact quote', 'احصل على سعر دقيق')} ${arrow()}</a>
           <a href="${href('services/' + s.slug + '/datasheet/')}" class="btn btn-outline w-full">${icon('download', 'h-4 w-4')} ${tr('PDF data sheet', 'ملف المواصفات PDF')}</a>
         </div>
@@ -645,7 +651,7 @@ ${prods.length ? `<section class="sec"><div class="container-site">
     title: tr(`${s.title[0]} in Qatar — Supply & Installation`, `${s.title[1]} في قطر — توريد وتركيب`),
     description: t(s.summary),
     jsonld: [
-      { '@context': 'https://schema.org', '@type': 'Service', name: t(s.title), description: t(s.summary), areaServed: 'Qatar', provider: { '@type': 'HomeAndConstructionBusiness', name: t(C.site.legal), telephone: C.site.phoneHref }, offers: { '@type': 'Offer', priceCurrency: 'QAR', price: s.price.from, description: t(s.price.unit) } },
+      { '@context': 'https://schema.org', '@type': 'Service', name: t(s.title), description: t(s.summary), areaServed: 'Qatar', provider: { '@type': 'HomeAndConstructionBusiness', name: t(C.site.legal), telephone: C.site.phoneHref } },
       faqJsonLd(s.faqs),
     ],
   }, body);
@@ -665,7 +671,6 @@ function datasheetPage(s) {
     </header>
     <h1 class="mt-8 text-3xl font-bold">${esc(t(s.title))}</h1>
     <p class="mt-2 text-lg text-muted">${esc(t(s.summary))}</p>
-    <p class="mt-4 inline-block rounded-full bg-tint px-4 py-2 text-sm font-bold text-brand-700">${fromQar(s.price)}</p>
     <h2 class="mt-10 text-xl font-bold">${tr('Specifications', 'المواصفات')}</h2>
     <div class="mt-4">${specTable(s.specs)}</div>
     ${s.package ? `<h2 class="mt-10 text-xl font-bold">${tr('Package contents', 'محتويات الباقة')}</h2><ul class="mt-4 grid gap-3 sm:grid-cols-2">${s.package.map((p) => `<li class="rounded-xl border border-line p-4"><strong>${esc(t(p.t))}</strong><br><span class="text-sm text-muted">${esc(t(p.d))}</span></li>`).join('')}</ul>` : ''}
@@ -673,7 +678,7 @@ function datasheetPage(s) {
     <ul class="mt-4 grid gap-2 sm:grid-cols-2">${s.features.map((f) => `<li class="flex items-center gap-2">${icon('check', 'h-4 w-4 text-brand-600', 3)} ${esc(t(f))}</li>`).join('')}</ul>
     <h2 class="mt-10 text-xl font-bold">${tr('Options', 'الخيارات')}</h2>
     <ul class="mt-4 grid gap-2">${s.options.map((o) => `<li><strong>${esc(t(o.t))}</strong> — ${esc(t(o.d))}</li>`).join('')}</ul>
-    <p class="mt-10 border-t border-line pt-6 text-xs text-muted">${tr('Prices are indicative starting prices in Qatari Riyals and depend on site survey. Specifications may vary by model.', 'الأسعار تقديرية بالريال القطري وتعتمد على معاينة الموقع. قد تختلف المواصفات حسب الموديل.')} · ${tr('CR No.', 'س.ت')} ${C.site.cr}</p>
+    <p class="mt-10 border-t border-line pt-6 text-xs text-muted">${tr('Specifications may vary by model.', 'قد تختلف المواصفات حسب الموديل.')} · ${tr('CR No.', 'س.ت')} ${C.site.cr}</p>
   </article>
 </div></section>`;
   return layout(page, { title: `${t(s.title)} — ${tr('Data Sheet', 'ملف المواصفات')}`, description: t(s.summary) }, body);
@@ -695,7 +700,7 @@ function projectsPage() {
 
 function shopPage() {
   const page = { key: 'shop', path: 'shop/', nav: 'shop' };
-  const body = `${pageHero({ chip: tr('Trading shop', 'المحل التجاري'), title: tr('Products &amp; <span class="text-grad">materials</span>', 'المنتجات <span class="text-grad">والمواد</span>'), text: tr('Heaters, pumps, chillers, epoxy, PVC flooring, pipes, paints and tools. Enquire on WhatsApp for stock and the best price.', 'سخانات ومضخات ومبردات وإيبوكسي وأرضيات PVC وأنابيب ودهانات وعدد. استفسر عبر واتساب عن التوفر وأفضل سعر.'), crumbs: [[tr('Shop', 'المتجر')]] })}
+  const body = `${pageHero({ chip: tr('Trading shop', 'المحل التجاري'), title: tr('Products &amp; <span class="text-grad">materials</span>', 'المنتجات <span class="text-grad">والمواد</span>'), text: tr('Heaters, pumps, chillers, epoxy, PVC flooring, pipes, paints and tools. Enquire on WhatsApp for stock and availability.', 'سخانات ومضخات ومبردات وإيبوكسي وأرضيات PVC وأنابيب ودهانات وعدد. استفسر عبر واتساب عن التوفر.'), crumbs: [[tr('Shop', 'المتجر')]] })}
 <section class="sec"><div class="container-site" data-filter-scope>
   <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
     <div class="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2" role="tablist">
@@ -723,7 +728,6 @@ function productPage(p) {
       <span class="chip-dot">${esc(t(c.t))}</span>
       <h1 class="mt-4 text-3xl font-bold sm:text-4xl">${esc(t(p.name))}</h1>
       <p class="lead-text mt-4">${esc(t(p.excerpt))}</p>
-      <p class="mt-6 text-2xl font-bold">${p.price ? `${tr('From', 'من')} <span class="text-brand-700">${qar(p.price)}</span> <span class="text-base font-medium text-muted">/ ${esc(t(p.unit))}</span>` : `<span class="text-brand-700">${tr('Price on request', 'السعر عند الطلب')}</span>`}</p>
       <div class="mt-6 flex flex-wrap gap-3">
         <a href="${waLink(tr(`Hello, I am interested in: ${p.name[0]}`, `مرحباً، أنا مهتم بـ: ${p.name[1]}`))}" target="_blank" rel="noopener" class="btn btn-wa" data-track="whatsapp">${waIcon()} ${tr('Enquire on WhatsApp', 'استفسر عبر واتساب')}</a>
         <a href="tel:${C.site.phoneHref}" class="btn btn-outline" data-track="call">${icon('phone', 'h-5 w-5')} ${tr('Call', 'اتصل')}</a>
@@ -793,7 +797,7 @@ function postPage(p) {
   <aside class="grid content-start gap-5">
     <div class="card overflow-hidden lg:sticky lg:top-28">
       ${media({ ph: s.ph, ic: s.icon, alt: t(s.title), cls: 'aspect-[16/9]' })}
-      <div class="p-6"><p class="text-xs font-bold uppercase tracking-wider text-muted">${tr('Related service', 'خدمة ذات صلة')}</p><h3 class="mt-1 text-lg font-bold">${esc(t(s.title))}</h3><p class="mt-2 text-sm text-muted">${fromQar(s.price)}</p>
+      <div class="p-6"><p class="text-xs font-bold uppercase tracking-wider text-muted">${tr('Related service', 'خدمة ذات صلة')}</p><h3 class="mt-1 text-lg font-bold">${esc(t(s.title))}</h3>
       <div class="mt-4 grid gap-2"><a href="${href('services/' + s.slug + '/')}" class="btn btn-primary btn-sm">${tr('View service', 'عرض الخدمة')} ${arrow()}</a><a href="${waHello(t(s.title))}" target="_blank" rel="noopener" class="btn btn-wa btn-sm" data-track="whatsapp">${waIcon('h-4 w-4')} WhatsApp</a></div></div>
     </div>
   </aside>
