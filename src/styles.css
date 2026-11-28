@@ -705,3 +705,22 @@
     .ft-social .ft-lang { display: inline-flex; align-items: center; white-space: nowrap; }
     .site-footer.ft { margin-top: .625rem; }
 }
+
+/* ---------- Footer: short premium ---------- */
+@layer components {
+    .site-footer.ft-lux { position: relative; background:
+        radial-gradient(60% 120% at 0% 0%, rgb(19 179 93 / .16) 0%, transparent 60%),
+        radial-gradient(50% 120% at 100% 100%, rgb(201 162 94 / .1) 0%, transparent 60%),
+        linear-gradient(160deg, #11241b 0%, #0b1712 100%); }
+    .site-footer.ft-lux::before { content: ''; position: absolute; inset-inline: 8%; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgb(201 162 94 / .7), transparent); }
+    .ft-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.25rem 2rem; padding: 2rem 0 1.5rem; }
+    .ft-nav { display: flex; flex-wrap: wrap; gap: .25rem 1.75rem; font-size: .92rem; font-weight: 500; }
+    .ft-nav a { color: rgb(255 255 255 / .75); transition: color .2s ease; }
+    .site-footer .ft-nav a:hover { color: #fff; }
+    .ft-lux .ft-wa { padding: .5rem 1rem; font-size: .875rem; }
+    .ft-info { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; padding-bottom: 1.5rem; }
+    .ft-info > * { display: inline-flex; align-items: center; gap: .5rem; padding: .45rem .9rem; border-radius: 999px; font-size: .85rem; color: rgb(255 255 255 / .72); background: rgb(255 255 255 / .04); border: 1px solid rgb(255 255 255 / .08); }
+    .ft-info svg { color: #c9a25e; }
+    .site-footer .ft-info a:hover { color: #fff; border-color: rgb(201 162 94 / .5); }
+    .ft-lux .ft-bottom { padding: 1rem 0 1.2rem; }
+}

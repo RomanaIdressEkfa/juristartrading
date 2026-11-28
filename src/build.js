@@ -184,43 +184,21 @@ const header = (page) => {
 };
 
 const footer = () => `
-<footer class="site-footer ft">
+<footer class="site-footer ft ft-lux">
   <div class="container-site">
-    <div class="ft-top">
-      <div class="ft-brand">
-        ${logo(true)}
-        <p class="ft-line">${tr('Water heaters, tank chillers, pumps, epoxy floors and interiors — supplied and installed across Qatar.', 'سخانات ومبردات خزانات ومضخات وأرضيات إيبوكسي وديكور — توريد وتركيب في جميع أنحاء قطر.')}</p>
-      </div>
+    <div class="ft-row">
+      ${logo(true)}
+      <nav class="ft-nav" aria-label="${tr('Footer', 'التذييل')}">${[['services/', tr('Services', 'الخدمات')], ['about/', tr('About', 'من نحن')], ['projects/', tr('Projects', 'المشاريع')], ['blog/', tr('Blog', 'المدونة')], ['contact/', tr('Contact', 'تواصل معنا')]].map(([u, l]) => `<a href="${href(u)}">${l}</a>`).join('')}</nav>
       <div class="ft-actions">
-        <a href="${href('quote/')}" class="btn btn-primary">${tr('Get a free quote', 'احصل على عرض سعر مجاني')} ${arrow()}</a>
-        <a href="${waHello()}" target="_blank" rel="noopener" class="ft-wa" data-track="whatsapp">${waIcon('h-5 w-5')} WhatsApp</a>
+        <a href="${waHello()}" target="_blank" rel="noopener" class="ft-wa" data-track="whatsapp">${waIcon('h-4 w-4')} WhatsApp</a>
+        <a href="${href('quote/')}" class="btn btn-primary btn-sm">${tr('Free quote', 'عرض سعر مجاني')} ${arrow()}</a>
       </div>
     </div>
-    <div class="ft-cols">
-      <div>
-        <p class="ft-h">${tr('Services', 'الخدمات')}</p>
-        <ul class="ft-links">${C.services.map((s) => `<li><a href="${href('services/' + s.slug + '/')}">${esc(t(s.title))}</a></li>`).join('')}</ul>
-      </div>
-      <div>
-        <p class="ft-h">${tr('Company', 'الشركة')}</p>
-        <ul class="ft-links">${[['', tr('Home', 'الرئيسية')], ['about/', tr('About', 'من نحن')], ['projects/', tr('Projects', 'المشاريع')], ['shop/', tr('Shop', 'المتجر')], ['blog/', tr('Blog', 'المدونة')], ['contact/', tr('Contact', 'تواصل معنا')]].map(([u, l]) => `<li><a href="${href(u)}">${l}</a></li>`).join('')}</ul>
-      </div>
-      <div>
-        <p class="ft-h">${tr('Contact', 'تواصل معنا')}</p>
-        <ul class="ft-links">
-          <li><a href="tel:${C.site.phoneHref}" dir="ltr" data-track="call">${C.site.phone}</a></li>
-          <li><a href="mailto:${C.site.email}" class="break-all">${C.site.email}</a></li>
-          <li class="ft-muted">${esc(t(C.site.address))}</li>
-        </ul>
-      </div>
-      <div>
-        <p class="ft-h">${tr('Opening hours', 'ساعات العمل')}</p>
-        <ul class="ft-links">
-          <li>${tr('Saturday – Thursday', 'السبت – الخميس')}</li>
-          <li class="ft-muted">${tr('7 AM – 9 PM', '7 صباحاً – 9 مساءً')}</li>
-          <li class="ft-open"><i></i>${tr('Free site visits across Qatar', 'زيارات مجانية في جميع أنحاء قطر')}</li>
-        </ul>
-      </div>
+    <div class="ft-info">
+      <a href="tel:${C.site.phoneHref}" data-track="call">${icon('phone', 'h-4 w-4')} <span dir="ltr">${C.site.phone}</span></a>
+      <a href="mailto:${C.site.email}">${icon('mail', 'h-4 w-4')} ${C.site.email}</a>
+      <span>${icon('clock', 'h-4 w-4')} ${tr('Sat – Thu · 7 AM – 9 PM', 'السبت – الخميس · 7 ص – 9 م')}</span>
+      <span>${icon('pin', 'h-4 w-4')} ${tr('Doha, Qatar', 'الدوحة، قطر')}</span>
     </div>
     <div class="ft-bottom">
       <p>© <span data-year>2026</span> ${esc(t(C.site.legal))} · ${tr('CR No.', 'س.ت')} ${C.site.cr}</p>

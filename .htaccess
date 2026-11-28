@@ -1,0 +1,12 @@
+# Local dev only (Laragon/Apache): serve the built site in dist/ as the web root.
+DirectoryIndex index.html
+ErrorDocument 404 /dist/404.html
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !^/dist/
+RewriteRule ^(.*)$ /dist/$1 [L]
+# Local dev: always revalidate so edits show up on refresh
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|css|js)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
